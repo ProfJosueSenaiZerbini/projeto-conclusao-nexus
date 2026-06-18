@@ -1,7 +1,8 @@
-Este readme deve ser modificado.
+Scrum Master - Yuri Cristhian R. dos Anjos
+Desenvolvedor - Felipe Costa Nogueira
+Desenvolvedor - Rafael Gentil Veiga
+Desenvolvedora - Jullya de Freitas Carvalho
 
-Acrescente
+Sistema para registro e gerenciamento de denúncias de infrações, problemas e acidentes em locais públicos, com envio de fotos, vídeos e áudios. Será utilizado por cidadãos, fiscais e órgãos públicos para acompanhar e resolver demandas da sociedade.
 
-- Nome dos integrantes
-- Descrição resumida do trabalho
 - Descrição de como instalar o sistema
