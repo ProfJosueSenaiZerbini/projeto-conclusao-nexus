@@ -1,27 +1,49 @@
-*{
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
-
+body {
     background: #e2e0e0;
+    color: #222;
 }
 
-/* Pagina */
-.pagina{
+
+/* =====================================================
+   PÁGINA
+===================================================== */
+
+.pagina {
     width: 98%;
     min-height: 100vh;
+
     margin: 10px auto;
-    background: white;
+
+    background: #f7f7f7;
+
+    border-radius: 4px;
+
+    overflow: hidden;
 }
 
-/* Barra superior */
-.topo{
+
+/* =====================================================
+   BARRA SUPERIOR
+===================================================== */
+
+.topo {
     height: 60px;
-    border-bottom: 2px solid #222;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #d5d5d5;
 
     display: flex;
     align-items: center;
@@ -29,248 +51,708 @@ body{
     padding: 0 20px;
 }
 
-.menu-btn{
-    background: none;
+.menu-btn {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
     border: none;
 
-    font-size: 32px;
+    font-size: 28px;
+
     cursor: pointer;
 
-    margin-right: 28px;
+    color: #222;
 }
 
-.titulo-topo{
-    font-size: 22px;
+.menu-btn:hover {
+    background: #f0f0f0;
+
+    border-radius: 6px;
 }
 
-.topo-direita{
+.titulo-topo {
+    margin-left: 18px;
+
+    font-size: 21px;
+    font-weight: 600;
+
+    color: #222;
+}
+
+.topo-direita {
     margin-left: auto;
 
     display: flex;
     align-items: center;
-    gap: 30px;
+
+    gap: 22px;
 }
 
-.notificacao{
+
+/* =====================================================
+   NOTIFICAÇÃO
+===================================================== */
+
+.notificacao {
     position: relative;
-    font-size: 28px;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    font-size: 22px;
+
+    cursor: pointer;
 }
 
-.numero{
+.notificacao:hover {
+    background: #f0f0f0;
+
+    border-radius: 50%;
+}
+
+.numero {
     position: absolute;
 
-    top: -4px;
-    right: -7px;
+    top: 2px;
+    right: 1px;
 
-    border-radius: red;
-    color:white;
+    width: 17px;
+    height: 17px;
 
-    width: 15px;
-    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #c62828;
+
+    color: white;
 
     border-radius: 50%;
 
     font-size: 10px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-weight: bold;
 }
 
-.usuario{
-    width: 45px;
-    height: 45px;
+
+/* =====================================================
+   USUÁRIO
+===================================================== */
+
+.usuario {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
 
     border-radius: 50%;
 
     background: #dce1ec;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 22px;
 
-    font-size: 25px;
+    cursor: pointer;
 }
 
-/* Conteudo */
 
-.conteudo{
+/* =====================================================
+   CONTEÚDO
+===================================================== */
+
+.conteudo {
     display: flex;
+
     min-height: calc(100vh - 60px);
 }
 
-/* Menu lateral */
 
-.menu-lateral{
+/* =====================================================
+   MENU LATERAL
+===================================================== */
+
+.menu-lateral {
     width: 178px;
 
-    border-right:2px solid #222;
+    flex-shrink: 0;
+
+    background: #ffffff;
+
+    border-right: 1px solid #d5d5d5;
 }
 
-.item-menu{
+.item-menu {
     height: 66px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-bottom: 2px solid #222;
+    margin: 0 10px;
+
+    border-bottom: 1px solid #dedede;
 
     text-decoration: none;
+
     color: #222;
 
-    font-size: 20px;
+    font-size: 17px;
+
+    transition: 0.2s;
 }
 
-.item-menu.ativo{
+.item-menu:hover {
+    background: #f2f2f2;
+
+    border-radius: 7px;
+}
+
+.item-menu.ativo {
+    height: 45px;
+
     margin: 10px 15px;
 
-    height: 43px;
+    border: 1px solid #10271c;
 
-    border: 2px solid #111;
-    border-radius: 25px;
+    border-radius: 24px;
 
     background: #1C4532;
+
     color: white;
+
+    font-weight: 600;
 }
 
-.item-menu.ativo:hover{
-    background: #275d44
+.item-menu.ativo:hover {
+    background: #275d44;
 }
 
-/* Area principal */
-.area-denuncia{
+
+/* =====================================================
+   ÁREA PRINCIPAL
+===================================================== */
+
+.area-denuncia {
     flex: 1;
 
-    display: flex;
+    max-width: 1100px;
 
-    padding: 70px 50px;
+    margin: 0 auto;
 
-    gap: 60px;
+    padding: 40px 50px 60px;
 }
 
-/* Formulario */
-.formulario{
-    width: 50%;
 
+/* =====================================================
+   CABEÇALHO DO FORMULÁRIO
+===================================================== */
+
+.cabecalho-formulario {
     display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+.cabecalho-formulario h1 {
+    font-size: 27px;
+
+    color: #1C4532;
+
+    margin-bottom: 7px;
+}
+
+.cabecalho-formulario p {
+    color: #666;
+
+    font-size: 14px;
+}
+
+.campo-obrigatorio {
+    font-size: 12px;
+
+    color: #777;
+}
+
+
+/* =====================================================
+   FORMULÁRIO
+===================================================== */
+
+.formulario {
+    display: flex;
+
     flex-direction: column;
-    align-items: center;
+
+    gap: 20px;
 }
 
-/* Anonimo / Público */
-.tipo{
-    width: 100%;
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.card {
+    background: #ffffff;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 10px;
+
+    padding: 25px 28px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-cabecalho {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 25px;
+}
+
+.numero-secao {
+    width: 35px;
+    height: 35px;
+
+    flex-shrink: 0;
 
     display: flex;
+    align-items: center;
     justify-content: center;
 
-    gap: 25px;
+    background: #e8f0eb;
 
-    margin-bottom: 40px;
-}
+    color: #1C4532;
 
-.tipo label{
-    font-size: 13px;
-}
-
-.tipo input{
-    appearance: none;
-
-    width: 18px;
-    height: 18px;
     border-radius: 50%;
 
-    background: #ffffff;
-    border: 9px;
+    font-size: 13px;
 
-    vertical-align: middle;
-
-    margin-right: 5px;
+    font-weight: bold;
 }
 
-.tipo input:checked {
-    background: #ffffff;
-    border: 4px solid #3093f0;
-    box-shadow: inset 0 0 4 4px #ffffff;
+.card-cabecalho h2 {
+    font-size: 18px;
+
+    color: #222;
+
+    margin-bottom: 4px;
+}
+
+.card-cabecalho p {
+    font-size: 13px;
+
+    color: #777;
 }
 
 
-/* TÍTULO */
+/* =====================================================
+   IDENTIFICAÇÃO
+===================================================== */
 
-.titulo-denuncia {
+.tipo {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+}
+
+.opcao-radio {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 17px;
+
+    border: 1px solid #d5d5d5;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.opcao-radio:hover {
+    border-color: #1C4532;
+
+    background: #f8fbf9;
+}
+
+.opcao-radio input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.radio-personalizado {
+    width: 19px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    margin-top: 1px;
+
+    border: 2px solid #999;
+
+    border-radius: 50%;
+
+    position: relative;
+}
+
+.opcao-radio input:checked + .radio-personalizado {
+    border-color: #1C4532;
+}
+
+.opcao-radio input:checked + .radio-personalizado::after {
+    content: "";
+
+    position: absolute;
+
+    top: 4px;
+    left: 4px;
+
+    width: 7px;
+    height: 7px;
+
+    background: #1C4532;
+
+    border-radius: 50%;
+}
+
+.texto-radio {
     display: flex;
 
-    align-items: center;
+    flex-direction: column;
 
-    gap: 25px;
+    gap: 5px;
 }
 
-.titulo-denuncia > label {
+.texto-radio strong {
+    font-size: 14px;
+
+    color: #222;
+}
+
+.texto-radio small {
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 17px;
+}
+
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.campo {
+    display: flex;
+
+    flex-direction: column;
+
+    margin-bottom: 20px;
+}
+
+.campo:last-child {
+    margin-bottom: 0;
+}
+
+.campo label {
+    margin-bottom: 7px;
+
+    font-size: 13px;
+
     font-weight: bold;
-    text-align: center;
+
+    color: #333;
+}
+
+.campo label span {
+    color: #c62828;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+
+    border: 1px solid #cfcfcf;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #222;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+.campo input,
+.campo select {
+    height: 45px;
+
+    padding: 0 13px;
+}
+
+.campo textarea {
+    min-height: 125px;
+
+    padding: 13px;
+
+    resize: vertical;
 
     line-height: 20px;
 }
 
-.categorias {
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    border-color: #1C4532;
+
+    box-shadow: 0 0 0 2px rgba(28, 69, 50, 0.08);
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: #999;
+}
+
+
+/* =====================================================
+   DESCRIÇÃO
+===================================================== */
+
+.label-descricao {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.label-descricao label {
+    margin-bottom: 7px;
+}
+
+.label-descricao small {
+    color: #888;
+
+    font-size: 11px;
+}
+
+.contador {
+    margin-top: 5px;
+
+    text-align: right;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   LOCAL E DATA
+===================================================== */
+
+.linha-campos {
     display: grid;
 
-    grid-template-columns: 75px 75px;
+    grid-template-columns: 2fr 1fr;
 
-    gap: 10px 16px;
+    gap: 18px;
 }
 
-.categorias input {
-    width: 75px;
-    height: 37px;
-
-    border: 1px solid #555;
-    border-radius: 5px;
-
-    outline: none;
+.campo-local,
+.campo-data {
+    margin-bottom: 0;
 }
 
-.categorias input:focus {
-    border: 2px solid #3188ed;
-}
+.btn-localizacao {
+    margin-top: 18px;
 
-.categorias button {
-    grid-column: 1 / 3;
+    padding: 10px 15px;
 
-    height: 33px;
+    background: #ffffff;
 
-    border-radius: 20px;
+    border: 1px solid #1C4532;
 
-    background: white;
+    border-radius: 6px;
 
-    border: 1.5px solid #111;
+    color: #1C4532;
+
+    font-size: 13px;
 
     font-weight: bold;
 
     cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.btn-localizacao:hover {
+    background: #eaf1ed;
 }
 
 
-/* BOTÃO DENUNCIAR */
+/* =====================================================
+   UPLOAD
+===================================================== */
+
+.upload-area {
+    min-height: 150px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border: 2px dashed #bdbdbd;
+
+    border-radius: 8px;
+
+    background: #fafafa;
+
+    cursor: pointer;
+
+    text-align: center;
+
+    transition: 0.2s;
+}
+
+.upload-area:hover {
+    border-color: #1C4532;
+
+    background: #f5f9f6;
+}
+
+.upload-area input {
+    display: none;
+}
+
+.upload-icone {
+    font-size: 28px;
+
+    margin-bottom: 3px;
+}
+
+.upload-area strong {
+    font-size: 14px;
+
+    color: #333;
+}
+
+.upload-area > span:not(.upload-icone) {
+    font-size: 12px;
+
+    color: #777;
+}
+
+.upload-area small {
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   AÇÕES
+===================================================== */
+
+.acoes {
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 5px;
+}
+
+.btn-cancelar {
+    height: 45px;
+
+    padding: 0 25px;
+
+    border: 1px solid #aaa;
+
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #444;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.btn-cancelar:hover {
+    background: #eeeeee;
+}
 
 .btn-denunciar {
-    width: 230px;
-    height: 50px;
+    height: 45px;
 
-    margin-top: 23px;
+    padding: 0 28px;
 
-    border-radius: 25px;
+    border: 1px solid #10271c;
 
-    border: 2px solid #10271c;
+    border-radius: 6px;
 
     background: #1C4532;
-    color: white;
 
-    font-size: 22px;
+    color: #ffffff;
+
+    font-size: 14px;
+
     font-weight: bold;
 
     cursor: pointer;
+
+    transition: 0.2s;
 }
 
 .btn-denunciar:hover {
@@ -278,91 +760,137 @@ body{
 }
 
 
-/* PARTE DIREITA */
+/* =====================================================
+   AVISO FINAL
+===================================================== */
 
-.informacoes {
-    width: 300px;
+.aviso-final {
+    max-width: 700px;
 
-    display: flex;
-    flex-direction: column;
-
-    gap: 24px;
-}
-
-
-/* CAIXAS */
-
-.caixa {
-    width: 100%;
-
-    border: 2px solid #222;
-    border-radius: 15px;
-
-    background: rgb(228, 228, 228);
-}
-
-
-/* UPLOAD */
-
-.arquivo {
-    height: 103px;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
+    margin: 0 auto;
 
     text-align: center;
 
-    font-weight: bold;
+    color: #888;
 
-    font-size: 12px;
+    font-size: 11px;
 
-    cursor: pointer;
-}
-
-.arquivo input {
-    display: none;
+    line-height: 17px;
 }
 
 
-/* DESCRIÇÃO */
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
 
-.descricao {
-    height: 103px;
+@media (max-width: 900px) {
 
-    resize: none;
+    .area-denuncia {
+        padding: 30px;
+    }
 
-    padding: 40px 15px;
+    .tipo {
+        grid-template-columns: 1fr;
+    }
 
-    font-size: 16px;
+    .linha-campos {
+        grid-template-columns: 1fr;
+    }
 
-    font-weight: bold;
-
-    color: #111;
 }
 
-.descricao::placeholder {
-    color: #111;
-    opacity: 1;
+@media (max-width: 650px) {
+
+    .pagina {
+        width: 100%;
+
+        margin: 0;
+
+        border-radius: 0;
+    }
+
+    .menu-lateral {
+        width: 120px;
+    }
+
+    .item-menu {
+        font-size: 13px;
+    }
+
+    .area-denuncia {
+        padding: 25px 18px 40px;
+    }
+
+    .cabecalho-formulario {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 10px;
+    }
+
+    .cabecalho-formulario h1 {
+        font-size: 23px;
+    }
+
+    .card {
+        padding: 20px 18px;
+    }
+
+    .card-cabecalho h2 {
+        font-size: 16px;
+    }
+
+    .card-cabecalho p {
+        font-size: 12px;
+    }
+
+    .acoes {
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+    }
+
+    .btn-cancelar,
+    .btn-denunciar {
+        width: 100%;
+    }
+
 }
 
+@media (max-width: 450px) {
 
-/* LOCAL */
+    .titulo-topo {
+        font-size: 17px;
+    }
 
-.local {
-    height: 63px;
+    .topo {
+        padding: 0 12px;
+    }
 
-    padding: 15px;
+    .topo-direita {
+        gap: 5px;
+    }
 
-    text-align: center;
+    .menu-lateral {
+        width: 100px;
+    }
 
-    font-weight: bold;
+    .item-menu {
+        margin-left: 5px;
+        margin-right: 5px;
 
-    outline: none;
+        font-size: 11px;
+    }
+
+    .item-menu.ativo {
+        margin-left: 7px;
+        margin-right: 7px;
+    }
+
+    .area-denuncia {
+        padding: 20px 12px 30px;
+    }
+
 }
 
-.local::placeholder {
-    color: #111;
-    opacity: 1;
-}
