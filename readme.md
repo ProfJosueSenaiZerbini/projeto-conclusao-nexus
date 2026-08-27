@@ -13,7 +13,7 @@ Sistema desenvolvido para o **registro e gerenciamento de denúncias** relaciona
 
 A plataforma permite o envio de **fotos e vídeos**, possibilitando que cidadãos registrem ocorrências e acompanhem suas denúncias, enquanto fiscais e órgãos públicos podem gerenciá-las e contribuir para a resolução das demandas.
 
-## ⚙️ Instalação
+## Instalação
 
 1. Clone o repositório:
 
