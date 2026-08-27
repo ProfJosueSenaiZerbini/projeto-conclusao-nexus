@@ -7,178 +7,147 @@
     <title>Notificações</title>
 
     <link rel="stylesheet" href="/css/notificacoes.css">
+    <!-- Ícones Phosphor -->
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+
+    <link rel="stylesheet" href="/css/header.css">
+
+    <link rel="stylesheet" href="/css/menu.css">
 </head>
 
 <body>
 
+    <%- include("partials/header") %>
+
     <div class="pagina">
 
-        <!-- CABEÇALHO -->
-        <header class="topo">
+                <%- include("partials/menu") %>
 
-            <button class="menu-btn" type="button" aria-label="Abrir menu">
-                ☰
-            </button>
+                    <main class="area-notificacoes">
 
-            <span class="titulo-topo">
-                Notificações
-            </span>
+                        <!-- Cabeçalho da área de notificações -->
+                        <div class="cabecalho-notificacoes">
 
-            <div class="topo-direita">
+                            <div>
+                                <p>
+                                    Acompanhe as atualizações das suas denúncias.
+                                </p>
 
-                <!-- Sino de notificações -->
-                <button class="notificacao" type="button" aria-label="Notificações">
-                    🔔
-                    <span class="numero">1</span>
-                </button>
+                                <button class="marcar-lidas" type="button">
+                                    Marcar todas como lidas
+                                </button>
+                            </div>
 
-                <button class="usuario" type="button" aria-label="Perfil do usuário">
-                    👤
-                </button>
+                        </div>
 
+
+                        <!-- Lista de notificações -->
+                        <article class="notificacao-item nao-lida">
+
+                            <div class="notificacao-indicador"></div>
+                            <div class="notificacao-icone">
+                                🔔
+                            </div>
+
+                            <div class="notificacao-conteudo">
+                                <div class="notificacao-cabecalho">
+                                    <h2>
+                                        Denúncia encaminhada
+                                    </h2>
+
+                                    <span class="notificacao-horario">
+                                        11:08
+                                    </span>
+                                </div>
+
+                                <p>
+                                    Sua denúncia foi encaminhada para o órgão responsável pela análise.
+                                </p>
+
+                                <span class="notificacao-data">
+                                    Hoje
+                                </span>
+                            </div>
+                        </article>
+
+                        <!-- NOTIFICAÇÃO LIDA -->
+                        <article class="notificacao-item">
+
+                            <div class="notificacao-indicador"></div>
+
+                            <div class="notificacao-icone">
+                                ✓
+                            </div>
+
+                            <div class="notificacao-conteudo">
+
+                                <div class="notificacao-cabecalho">
+
+                                    <h2>
+                                        Denúncia recebida
+                                    </h2>
+
+                                    <span class="notificacao-horario">
+                                        16:45
+                                    </span>
+
+                                </div>
+
+                                <p>
+                                    Sua denúncia foi registrada e está aguardando análise.
+                                </p>
+
+                                <span class="notificacao-data">
+                                    Ontem
+                                </span>
+
+                            </div>
+
+                        </article>
+
+
+                        <!-- NOTIFICAÇÃO LIDA -->
+                        <article class="notificacao-item">
+
+                            <div class="notificacao-indicador"></div>
+
+                            <div class="notificacao-icone">
+                                ✓
+                            </div>
+
+                            <div class="notificacao-conteudo">
+
+                                <div class="notificacao-cabecalho">
+
+                                    <h2>
+                                        Atualização da denúncia
+                                    </h2>
+
+                                    <span class="notificacao-horario">
+                                        10:21
+                                    </span>
+
+                                </div>
+
+                                <p>
+                                    Houve uma atualização no andamento da sua denúncia.
+                                </p>
+
+                                <span class="notificacao-data">
+                                    18/08/2026
+                                </span>
+
+                            </div>
+                        </article>
+                        </section>
+
+                    </main>
             </div>
-
-        </header>
-
-        <div class="conteudo">
-
-            <!-- MENU LATERAL -->
-            <aside class="menu-lateral">
-
-                <a href="/dashboardUsuario" class="item-menu">
-                    Dashboard
-                </a>
-
-                <a href="denunciaUsuario" class="item-menu">
-                    Denúncia
-                </a>
-
-                <a href="/notificacoes" class="item-menu">
-                    Notificações
-                </a>
-
-            </aside>
-
-            <!-- ÁREA PRINCIPAL -->
-            <main class="area-notificacoes">
-
-                <!-- Cabeçalho da área de notificações -->
-                <div class="cabecalho-notificacoes">
-
-                    <div>
-                        <p>
-                            Acompanhe as atualizações das suas denúncias.
-                        </p>
-
-                        <button class="marcar-lidas" type="button">
-                            Marcar todas como lidas
-                        </button>
-                    </div>
-
-                </div>
-
-
-                <!-- Lista de notificações -->
-                <article class="notificacao-item nao-lida">
-
-                    <div class="notificacao-indicador"></div>
-                    <div class="notificacao-icone">
-                        🔔
-                    </div>
-
-                    <div class="notificacao-conteudo">
-                        <div class="notificacao-cabecalho">
-                            <h2>
-                                Denúncia encaminhada
-                            </h2>
-
-                            <span class="notificacao-horario">
-                                11:08
-                            </span>
-                        </div>
-
-                        <p>
-                            Sua denúncia foi encaminhada para o órgão responsável pela análise.
-                        </p>
-
-                        <span class="notificacao-data">
-                            Hoje
-                        </span>
-                    </div>
-                </article>
-
-                <!-- NOTIFICAÇÃO LIDA -->
-                <article class="notificacao-item">
-
-                    <div class="notificacao-indicador"></div>
-
-                    <div class="notificacao-icone">
-                        ✓
-                    </div>
-
-                    <div class="notificacao-conteudo">
-
-                        <div class="notificacao-cabecalho">
-
-                            <h2>
-                                Denúncia recebida
-                            </h2>
-
-                            <span class="notificacao-horario">
-                                16:45
-                            </span>
-
-                        </div>
-
-                        <p>
-                            Sua denúncia foi registrada e está aguardando análise.
-                        </p>
-
-                        <span class="notificacao-data">
-                            Ontem
-                        </span>
-
-                    </div>
-
-                </article>
-
-
-                <!-- NOTIFICAÇÃO LIDA -->
-                <article class="notificacao-item">
-
-                    <div class="notificacao-indicador"></div>
-
-                    <div class="notificacao-icone">
-                        ✓
-                    </div>
-
-                    <div class="notificacao-conteudo">
-
-                        <div class="notificacao-cabecalho">
-
-                            <h2>
-                                Atualização da denúncia
-                            </h2>
-
-                            <span class="notificacao-horario">
-                                10:21
-                            </span>
-
-                        </div>
-
-                        <p>
-                            Houve uma atualização no andamento da sua denúncia.
-                        </p>
-
-                        <span class="notificacao-data">
-                            18/08/2026
-                        </span>
-
-                    </div>
-                </article>
-                </section>
-            </main>
-        </div>
     </div>
+    
+    <script src="/js/menu.js"></script>
+    <script src="/js/notificacoes.js"></script>
+
 </body>
+
 </html>

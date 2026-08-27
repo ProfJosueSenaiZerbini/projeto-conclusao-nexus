@@ -8,50 +8,19 @@
     <title>Denúncias</title>
 
     <link rel="stylesheet" href="/css/denuncias.css">
+
+    <link rel="stylesheet" href="/css/header.css">
+
+    <link rel="stylesheet" href="/css/menu.css">
 </head>
 
 <body>
 
+    <%- include("partials/header") %>
+
     <div class="pagina">
 
-        <!-- Barra superior-->
-         <header class="topo">
-
-            <button class="menu-btn">☰</button>
-
-            <span class="titulo-topo">Denúncia</span>
-
-            <div class="topo-direita">
-
-                <span class="notificacao">
-
-                    <span class="numero">1</span>
-                </span>
-
-                <span class="usuario">👤</span>
-
-            </div>
-
-         </header>
-     
-         <div class="conteudo">
-
-            <!-- Menu lateral-->
-             <aside class="menu-lateral">
-
-                <a href="dashboardUsuario" class="item-menu ativo">
-                    Dashboard
-                </a>
-
-                <a href="/denuncia" class="item-menu ativo">
-                    Denúncia
-                </a>
-
-                <a href="notificacoes" class="item-menu ativo">
-                    notificações
-                </a>
-
-             </aside>
+            <%- include("partials/header") %>
 
              <!-- Área da denuncia-->
               <main class="area-denuncia">
@@ -134,7 +103,7 @@
          </div>
     </div>
 
-    
+    <script src="/js/menu.js"></script>
     
 </body>
 </html>

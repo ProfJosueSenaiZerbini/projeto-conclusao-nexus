@@ -1,0 +1,180 @@
+/* ===== HEADER ===== */
+
+.header {
+    height: 64px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: relative;
+    z-index: 30;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    gap: 18px;
+}
+
+.header-right {
+    gap: 16px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+
+/* ===== BOTÕES DO HEADER ===== */
+
+button {
+    font-family: inherit;
+}
+
+.icon-button,
+.notification-button,
+.profile-button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.icon-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #64748b;
+    font-size: 25px;
+}
+
+.icon-button:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
+
+
+/* ===== NOTIFICAÇÕES ===== */
+
+.notification-button {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 23px;
+    border-radius: 6px;
+}
+
+.notification-button:hover {
+    background: #f1f5f9;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ef4444;
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+/* ===== PERFIL ===== */
+
+.header-divider {
+    width: 1px;
+    height: 30px;
+    background: #e5e7eb;
+}
+
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px;
+    border-radius: 6px;
+}
+
+.profile-button:hover {
+    background: #f8fafc;
+}
+
+.profile-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.profile-info strong {
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-info span {
+    color: #64748b;
+    margin-top: 2px;
+    font-size: 11px;
+}
+
+.profile-arrow {
+    color: #94a3b8;
+}
+
+
+/* ===== RESPONSIVO DO HEADER ===== */
+
+@media (max-width: 768px) {
+
+    .header {
+        padding: 0 14px;
+    }
+
+    .profile-info,
+    .profile-arrow,
+    .header-divider {
+        display: none;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .header h1 {
+        font-size: 17px;
+    }
+
+}
