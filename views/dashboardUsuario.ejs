@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,137 +9,20 @@
 
     <link rel="stylesheet" href="/css/dashUsuario.css">
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/header.css">
+
+    <link rel="stylesheet" href="/css/menu.css">
 </head>
 
 <body>
 
-    <header class="header">
+    <%- include("partials/header") %>
 
-        <div class="header-left">
+        <div class="page">
 
-            <button
-                id="menu-toggle"
-                class="icon-button"
-                type="button"
-                aria-label="Abrir menu"
-            >
-                <i class="ph ph-list"></i>
-            </button>
-
-            <h1>Cidade Segura</h1>
-
-        </div>
-
-
-        <div class="header-right">
-
-            <button
-                class="notification-button"
-                type="button"
-                aria-label="Notificações"
-            >
-                <i class="ph ph-bell"></i>
-
-                <span class="notification-badge">
-                    1
-                </span>
-            </button>
-
-
-            <div class="header-divider"></div>
-
-
-            <button class="profile-button" type="button">
-
-                <div class="profile-icon">
-                    <i class="ph ph-user"></i>
-                </div>
-
-                <div class="profile-info">
-
-                    <strong>
-                        Nome do Usuário
-                    </strong>
-
-                    <span>
-                        Usuário Padrão
-                    </span>
-
-                </div>
-
-                <i class="ph ph-caret-down profile-arrow"></i>
-
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <div
-        id="sidebar-overlay"
-        class="sidebar-overlay"
-    ></div>
-
-
-    <div class="page">
-
-        <aside
-            id="sidebar"
-            class="sidebar"
-        >
-
-            <nav class="sidebar-nav">
-
-                <a
-                    href="/dashboard"
-                    class="nav-item active"
-                >
-                    <i class="ph ph-squares-four"></i>
-                    <span>Dashboard</span>
-                </a>
-
-
-                <a
-                    href="/denuncias"
-                    class="nav-item"
-                >
-                    <i class="ph ph-warning-circle"></i>
-                    <span>Denúncia</span>
-                </a>
-
-
-                <a
-                    href="/notificacoes"
-                    class="nav-item"
-                >
-                    <i class="ph ph-bell-ringing"></i>
-                    <span>Notificações</span>
-                </a>
-
-            </nav>
-
-
-            <div class="sidebar-footer">
-
-                <a
-                    href="/logout"
-                    class="logout"
-                >
-                    <i class="ph ph-sign-out"></i>
-                    <span>Sair da conta</span>
-                </a>
-
-            </div>
-
-        </aside>
-
+            <%- include("partials/menu") %>
 
         <main class="content">
 
@@ -160,11 +44,7 @@
 
                 <section class="report-banner">
 
-                    <img
-                        src="/img/banner-cidade-segura.png"
-                        alt=""
-                        class="banner-image"
-                    >
+                    <img src="/img/banner-cidade-segura.png" alt="" class="banner-image">
 
                     <div class="banner-overlay"></div>
 
@@ -186,10 +66,7 @@
                         </div>
 
 
-                        <a
-                            href="/denuncias/nova"
-                            class="report-button"
-                        >
+                        <a href="/denuncias/nova" class="report-button">
                             <i class="ph ph-plus-circle"></i>
 
                             Realizar denúncia
@@ -277,10 +154,14 @@
 
         </main>
 
+        </div>
     </div>
 
 
-    <script src="/js/dashboard.js"></script>
+        <script src="/js/dashboard.js"></script>
+        <script src="/js/menu.js"></script>
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
 </body>
+
 </html>

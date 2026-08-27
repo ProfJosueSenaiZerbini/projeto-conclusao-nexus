@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/css/denunciaAdm.css">
+
+    <link rel="stylesheet" href="/css/menu.css">
+
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+
+<body>
+
+    <%- include('partials/header')  %>
+
+    <div class="pagina">
+
+        <%- include('partials/menu')  %>
+        <div class="conteudo">
+
+            <!-- MENU LATERAL -->
+            <aside class="menu-lateral">
+
+                <a href="/dashboardUsuario" class="item-menu">
+                    Dashboard
+                </a>
+
+                <a href="denunciaUsuario" class="item-menu">
+                    Denúncia
+                </a>
+
+                <a href="/notificacoes" class="item-menu">
+                    Notificações
+                </a>
+
+            </aside>
+
+            <!-- ÁREA PRINCIPAL -->
+            <main class="area-principal">
+
+                <!-- BUSCA -->
+                <div class="area-busca">
+
+                    <div class="campo-busca">
+
+                        <input type="text" placeholder="Buscar por denúncia" aria-label="Buscar por denúncia">
+
+                        <button type="button" aria-label="Pesquisar">
+                            🔍
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FILTROS -->
+                <div class="filtros">
+
+                    <div class="filtro">
+                        <label for="categoria">Categoria</label>
+
+                        <select id="categoria">
+                            <option>Todos</option>
+                            <option>Criação de Sites</option>
+                            <option>Design</option>
+                            <option>Consultoria</option>
+                        </select>
+                    </div>
+
+
+                    <div class="filtro">
+                        <label for="bairro">Bairro</label>
+
+                        <select id="bairro">
+                            <option>Todos</option>
+                            <option>Centro</option>
+                            <option>Jardim América</option>
+                            <option>Vila Nova</option>
+                        </select>
+                    </div>
+
+
+                    <div class="filtro">
+                        <label for="status">Status</label>
+
+                        <select id="status">
+                            <option>Todos</option>
+                            <option>Em análise</option>
+                            <option>Resolvida</option>
+                        </select>
+                    </div>
+
+
+                    <div class="filtro">
+                        <label for="data">Data</label>
+
+                        <input type="date" id="data" name="data">
+                    </div>
+
+                </div>
+
+
+                <!-- TABELA -->
+                <div class="tabela">
+
+                    <div class="cabecalho">
+
+                        <div>ID</div>
+                        <div>TIPO</div>
+                        <div>LOCAL</div>
+                        <div>DATA</div>
+                        <div>USUÁRIO</div>
+                        <div>STATUS</div>
+                        <div>PRIORIDADE</div>
+                        <div>AÇÕES</div>
+
+                    </div>
+
+
+                    <div class="linha">
+
+                        <div class="celula">001</div>
+                        <div class="celula">Buraco</div>
+                        <div class="celula">Centro</div>
+                        <div class="celula">20/08/2026</div>
+                        <div class="celula">João</div>
+
+                        <div class="celula">
+                            <span class="status em-analise">
+                                Em análise
+                            </span>
+                        </div>
+
+                        <div class="celula">
+                            <span class="prioridade alta">
+                                Alta
+                            </span>
+                        </div>
+
+                        <div class="celula acoes">
+
+                            <button type="button" title="Visualizar">
+                                👁
+                            </button>
+
+                            <button type="button" title="Editar">
+                                ✎
+                            </button>
+
+                            <button type="button" title="Mais opções">
+                                ⋮
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="linha">
+
+                        <div class="celula">002</div>
+                        <div class="celula">Iluminação</div>
+                        <div class="celula">Vila Nova</div>
+                        <div class="celula">19/08/2026</div>
+                        <div class="celula">Maria</div>
+
+                        <div class="celula">
+                            <span class="status resolvida">
+                                Resolvida
+                            </span>
+                        </div>
+
+                        <div class="celula">
+                            <span class="prioridade media">
+                                Média
+                            </span>
+                        </div>
+
+                        <div class="celula acoes">
+
+                            <button type="button" title="Visualizar">
+                                👁
+                            </button>
+
+                            <button type="button" title="Editar">
+                                ✎
+                            </button>
+
+                            <button type="button" title="Mais opções">
+                                ⋮
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="linha">
+
+                        <div class="celula">003</div>
+                        <div class="celula">Lixo</div>
+                        <div class="celula">Centro</div>
+                        <div class="celula">18/08/2026</div>
+                        <div class="celula">Carlos</div>
+
+                        <div class="celula">
+                            <span class="status em-analise">
+                                Em análise
+                            </span>
+                        </div>
+
+                        <div class="celula">
+                            <span class="prioridade baixa">
+                                Baixa
+                            </span>
+                        </div>
+
+                        <div class="celula acoes">
+
+                            <button type="button" title="Visualizar">
+                                👁
+                            </button>
+
+                            <button type="button" title="Editar">
+                                ✎
+                            </button>
+
+                            <button type="button" title="Mais opções">
+                                ⋮
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
