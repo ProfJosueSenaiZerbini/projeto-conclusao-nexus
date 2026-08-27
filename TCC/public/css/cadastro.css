@@ -1,0 +1,112 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #e2e0e0;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cadastro-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgb(228, 228, 228);
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 500px;
+    height: 550px;
+}
+
+.titulo {
+    padding-bottom: 40px;
+    margin-top: -20px;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 100px;
+    height: 100px;      /* deixa largura e altura iguais */
+    border-radius: 50%; /* transforma em círculo */
+    object-fit: cover;  /* evita distorção da imagem */
+}
+
+.input-box{
+    display: flex;
+}
+
+.input-box form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0;
+}
+
+.input-cadastro{
+    width: 80%;
+    height: 45px;
+    padding: 0 45px 0 15px;
+    border-radius: 25px;
+    border: 2px solid #10271c;
+    outline: none;
+    font-size: 15px;
+    margin: 0 auto;
+}
+
+.linha-inputs {
+    display: flex;
+    gap: 5px;
+    padding: 0 48px;
+}
+
+.linha-inputs .input-cadastro {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.senha {
+    width: 80%;
+    height: 40px;
+    padding: 0 45px 0 15px;
+    border-radius: 25px;
+    border: 2px solid #10271c;
+    outline: none;
+    font-size: 15px;
+    margin: 0 auto;
+}
+
+.btn-cadastro{
+    width: 50%;
+    height: 45px;
+    border-radius: 25px;
+    border: 2px solid #10271c;
+    background: #1c4532;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 5px;
+    margin: 0 auto;
+}
+
+.btn-cadastro:hover{
+    background: #275d44;
+}

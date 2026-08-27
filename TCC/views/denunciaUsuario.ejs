@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Denúncias</title>
+
+    <link rel="stylesheet" href="/css/denuncias.css">
+</head>
+
+<body>
+
+    <div class="pagina">
+
+        <!-- Barra superior-->
+         <header class="topo">
+
+            <button class="menu-btn">☰</button>
+
+            <span class="titulo-topo">Denúncia</span>
+
+            <div class="topo-direita">
+
+                <span class="notificacao">
+
+                    <span class="numero">1</span>
+                </span>
+
+                <span class="usuario">👤</span>
+
+            </div>
+
+         </header>
+     
+         <div class="conteudo">
+
+            <!-- Menu lateral-->
+             <aside class="menu-lateral">
+
+                <a href="dashboardUsuario" class="item-menu ativo">
+                    Dashboard
+                </a>
+
+                <a href="/denuncia" class="item-menu ativo">
+                    Denúncia
+                </a>
+
+                <a href="notificacoes" class="item-menu ativo">
+                    notificações
+                </a>
+
+             </aside>
+
+             <!-- Área da denuncia-->
+              <main class="area-denuncia">
+
+                <div class="formulario">
+
+                    <!-- Tipo de denuncia-->
+                     <div class="tipo">
+
+                        <label>
+                            <input type="radio" name="visibilidade" value="anonimo" checked>
+                            Anônimo
+                        </label>
+
+                        <label>
+                            <input type="radio" name="visibilidade" value="publico">
+                            Público
+                        </label>
+                     </div>
+
+                     <!-- titulo-->
+                      <div class="titulo-denuncia">
+
+                        <label>
+                            Título da <br>
+                            Denúncia:
+                        </label>
+
+                        <div class="categorias">
+
+                            <input type="text">
+                            <input type="text">
+
+                            <input type="text">
+                            <input type="text">
+
+                            <button type="button">
+                                Outros
+                            </button>
+                        </div>
+                      </div>
+
+                      <!--Botão denunciar-->
+                      <button class="btn-denunciar">
+                        Denuncia
+                      </button>
+                
+                    </div>
+
+                    <!--Parte direita-->
+                    <div class="informacoes">
+
+                        <!--Arquivo-->
+                        <label class="caixa arquivo">
+
+                            <input type="file" accept="image/*,video/*">
+
+                            <span>
+                                Adicionar arquivo de foto ou<br>
+                                vídeo da denúncia
+                            </span>
+
+                        </label>
+
+                        <!--Descrição-->
+                        <textarea
+                        class="caixa descricao"
+                        placeholder="Descrição.."
+                        ></textarea>
+
+                        <!--Local-->
+                        <input
+                        type="text"
+                        class="caixa local"
+                        placeholder="Local"
+                        >
+
+                    </div>
+              </main>
+         </div>
+    </div>
+
+    
+    
+</body>
+</html>

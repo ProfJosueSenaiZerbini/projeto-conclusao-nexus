@@ -1,0 +1,368 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+
+    background: #e2e0e0;
+}
+
+/* Pagina */
+.pagina{
+    width: 98%;
+    min-height: 100vh;
+    margin: 10px auto;
+    background: white;
+}
+
+/* Barra superior */
+.topo{
+    height: 60px;
+    border-bottom: 2px solid #222;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 20px;
+}
+
+.menu-btn{
+    background: none;
+    border: none;
+
+    font-size: 32px;
+    cursor: pointer;
+
+    margin-right: 28px;
+}
+
+.titulo-topo{
+    font-size: 22px;
+}
+
+.topo-direita{
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.notificacao{
+    position: relative;
+    font-size: 28px;
+}
+
+.numero{
+    position: absolute;
+
+    top: -4px;
+    right: -7px;
+
+    border-radius: red;
+    color:white;
+
+    width: 15px;
+    height: 15px;
+
+    border-radius: 50%;
+
+    font-size: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.usuario{
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #dce1ec;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+/* Conteudo */
+
+.conteudo{
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* Menu lateral */
+
+.menu-lateral{
+    width: 178px;
+
+    border-right:2px solid #222;
+}
+
+.item-menu{
+    height: 66px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-bottom: 2px solid #222;
+
+    text-decoration: none;
+    color: #222;
+
+    font-size: 20px;
+}
+
+.item-menu.ativo{
+    margin: 10px 15px;
+
+    height: 43px;
+
+    border: 2px solid #111;
+    border-radius: 25px;
+
+    background: #1C4532;
+    color: white;
+}
+
+.item-menu.ativo:hover{
+    background: #275d44
+}
+
+/* Area principal */
+.area-denuncia{
+    flex: 1;
+
+    display: flex;
+
+    padding: 70px 50px;
+
+    gap: 60px;
+}
+
+/* Formulario */
+.formulario{
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Anonimo / Público */
+.tipo{
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    gap: 25px;
+
+    margin-bottom: 40px;
+}
+
+.tipo label{
+    font-size: 13px;
+}
+
+.tipo input{
+    appearance: none;
+
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+
+    background: #ffffff;
+    border: 9px;
+
+    vertical-align: middle;
+
+    margin-right: 5px;
+}
+
+.tipo input:checked {
+    background: #ffffff;
+    border: 4px solid #3093f0;
+    box-shadow: inset 0 0 4 4px #ffffff;
+}
+
+
+/* TÍTULO */
+
+.titulo-denuncia {
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+}
+
+.titulo-denuncia > label {
+    font-weight: bold;
+    text-align: center;
+
+    line-height: 20px;
+}
+
+.categorias {
+    display: grid;
+
+    grid-template-columns: 75px 75px;
+
+    gap: 10px 16px;
+}
+
+.categorias input {
+    width: 75px;
+    height: 37px;
+
+    border: 1px solid #555;
+    border-radius: 5px;
+
+    outline: none;
+}
+
+.categorias input:focus {
+    border: 2px solid #3188ed;
+}
+
+.categorias button {
+    grid-column: 1 / 3;
+
+    height: 33px;
+
+    border-radius: 20px;
+
+    background: white;
+
+    border: 1.5px solid #111;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* BOTÃO DENUNCIAR */
+
+.btn-denunciar {
+    width: 230px;
+    height: 50px;
+
+    margin-top: 23px;
+
+    border-radius: 25px;
+
+    border: 2px solid #10271c;
+
+    background: #1C4532;
+    color: white;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-denunciar:hover {
+    background: #275d44;
+}
+
+
+/* PARTE DIREITA */
+
+.informacoes {
+    width: 300px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 24px;
+}
+
+
+/* CAIXAS */
+
+.caixa {
+    width: 100%;
+
+    border: 2px solid #222;
+    border-radius: 15px;
+
+    background: rgb(228, 228, 228);
+}
+
+
+/* UPLOAD */
+
+.arquivo {
+    height: 103px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.arquivo input {
+    display: none;
+}
+
+
+/* DESCRIÇÃO */
+
+.descricao {
+    height: 103px;
+
+    resize: none;
+
+    padding: 40px 15px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    color: #111;
+}
+
+.descricao::placeholder {
+    color: #111;
+    opacity: 1;
+}
+
+
+/* LOCAL */
+
+.local {
+    height: 63px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    outline: none;
+}
+
+.local::placeholder {
+    color: #111;
+    opacity: 1;
+}

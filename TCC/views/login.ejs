@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br"> 
+<head>
+    <meta charset="UTF-8">
+    <title>PÁGINA LOGIN</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" href="/img/logo.png">
+</head>
+<body>
+    
+    <div class="container">
+        
+        <div class="login-box">
+
+
+            <form action="/login" method="POST">
+
+                <div class="logo">
+                    <img src="/img/logo.png" alt="Logo">
+                </div>
+
+                <% if (mensagemErro) { %>
+                    <p style="color: red; text-align: center;"><%= mensagemErro %></p>
+                <% } %>
+
+                <div class="tipo">
+                    <label>
+                        <input type="radio" name="tipo" value="admin"> Administrador
+                    </label>
+                    <label>
+                        <input type="radio" name="tipo" value="usuario" checked> Usuário
+                    </label>
+                </div>
+
+                <input 
+                    type="email"
+                    name="email"
+                    placeholder="E-mail"
+                    required
+                />
+
+                <div class="senha">
+                    <input 
+                        type="password"
+                        id="inputSenha"
+                        name="senha"
+                        placeholder="Senha"
+                        required
+                    />
+                    <button type="button" onclick="alternarSenha()"></button>
+                </div>
+
+                <button type="submit" class="btn-btn">Entrar</button>
+
+                <p class="cadastro-link" style="margin: 0 auto;">
+                    Não tem uma conta?
+                    <a href="/cadastro">Cadastre-se</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function alternarSenha(){
+            const campoSenha = document.getElementById('inputSenha');
+            if (campoSenha.type === 'password') {
+                campoSenha.type = 'text';
+            } else {
+                campoSenha.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>
