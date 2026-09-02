@@ -1,472 +1,271 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Nova Denúncia - SafeZone</title>
 
-    <link rel="stylesheet" href="/css/denuncias.css">
+    <link rel="stylesheet" href="/css/denuncias.css" />
 
-    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/header.css" />
 
-    <link rel="stylesheet" href="/css/menu.css">
-</head>
+    <link rel="stylesheet" href="/css/menu.css" />
+  </head>
 
-<body>
-
+  <body>
     <%- include("partials/header") %>
 
     <div class="pagina">
+      <div class="conteudo">
+        <%- include("partials/menu") %>
 
-<<<<<<< HEAD
         <!-- =========================
-             BARRA SUPERIOR
-        ========================== -->
-        <header class="topo">
-
-            <button class="menu-btn" aria-label="Abrir menu">
-                ☰
-            </button>
-
-            <span class="titulo-topo">
-                Nova denúncia
-            </span>
-
-            <div class="topo-direita">
-
-                <button class="notificacao" aria-label="Notificações">
-                    🔔
-                    <span class="numero">1</span>
-                </button>
-
-                <button class="usuario" aria-label="Perfil do usuário">
-                    👤
-                </button>
-
-            </div>
-
-        </header>
-
-
-        <div class="conteudo">
-
-            <!-- =========================
-                 MENU LATERAL
-            ========================== -->
-            <aside class="menu-lateral">
-
-                <a href="/dashboardUsuario" class="item-menu">
-                    Dashboard
-                </a>
-
-                <a href="/denuncia" class="item-menu ativo">
-                    Denúncia
-                </a>
-
-                <a href="/notificacoes" class="item-menu">
-                    Notificações
-                </a>
-
-            </aside>
-=======
-            <%- include("partials/header") %>
->>>>>>> 91d7caf1a542a28452e9c8e7a5c97d9e9e8cb676
-
-
-            <!-- =========================
                  ÁREA PRINCIPAL
             ========================== -->
-            <main class="area-denuncia">
+        <main class="area-denuncia">
+          <div class="cabecalho-formulario">
+            <div>
+              <h1>Registrar denúncia</h1>
 
-                <div class="cabecalho-formulario">
+              <p>
+                Preencha as informações abaixo para registrar uma ocorrência.
+              </p>
+            </div>
 
-                    <div>
-                        <h1>Registrar denúncia</h1>
+            <span class="campo-obrigatorio"> * Campos obrigatórios </span>
+          </div>
 
-                        <p>
-                            Preencha as informações abaixo para registrar
-                            uma ocorrência.
-                        </p>
-                    </div>
-
-                    <span class="campo-obrigatorio">
-                        * Campos obrigatórios
-                    </span>
-
-                </div>
-
-
-                <form class="formulario">
-
-
-                    <!-- =========================
+          <form class="formulario">
+            <!-- =========================
                          IDENTIFICAÇÃO
                     ========================== -->
-                    <section class="card">
+            <section class="card">
+              <div class="card-cabecalho">
+                <div class="numero-secao">01</div>
 
-                        <div class="card-cabecalho">
+                <div>
+                  <h2>Identificação</h2>
 
-                            <div class="numero-secao">
-                                01
-                            </div>
+                  <p>Escolha como deseja realizar sua denúncia.</p>
+                </div>
+              </div>
 
-                            <div>
-                                <h2>Identificação</h2>
+              <div class="tipo">
+                <label class="opcao-radio">
+                  <input
+                    type="radio"
+                    name="visibilidade"
+                    value="anonimo"
+                    checked
+                  />
 
-                                <p>
-                                    Escolha como deseja realizar sua denúncia.
-                                </p>
-                            </div>
+                  <span class="radio-personalizado"></span>
 
-                        </div>
+                  <span class="texto-radio">
+                    <strong>Denúncia anônima</strong>
 
+                    <small>
+                      Seus dados pessoais não serão vinculados à denúncia.
+                    </small>
+                  </span>
+                </label>
 
-                        <div class="tipo">
+                <label class="opcao-radio">
+                  <input
+                    type="radio"
+                    name="visibilidade"
+                    value="identificado"
+                  />
 
-                            <label class="opcao-radio">
+                  <span class="radio-personalizado"></span>
 
-                                <input
-                                    type="radio"
-                                    name="visibilidade"
-                                    value="anonimo"
-                                    checked
-                                >
+                  <span class="texto-radio">
+                    <strong>Denúncia identificada</strong>
 
-                                <span class="radio-personalizado"></span>
+                    <small>
+                      Seus dados poderão ser utilizados para contato.
+                    </small>
+                  </span>
+                </label>
+              </div>
+            </section>
 
-                                <span class="texto-radio">
-
-                                    <strong>Denúncia anônima</strong>
-
-                                    <small>
-                                        Seus dados pessoais não serão vinculados
-                                        à denúncia.
-                                    </small>
-
-                                </span>
-
-                            </label>
-
-
-                            <label class="opcao-radio">
-
-                                <input
-                                    type="radio"
-                                    name="visibilidade"
-                                    value="identificado"
-                                >
-
-                                <span class="radio-personalizado"></span>
-
-                                <span class="texto-radio">
-
-                                    <strong>Denúncia identificada</strong>
-
-                                    <small>
-                                        Seus dados poderão ser utilizados
-                                        para contato.
-                                    </small>
-
-                                </span>
-
-                            </label>
-
-                        </div>
-
-                    </section>
-
-
-
-                    <!-- =========================
+            <!-- =========================
                          INFORMAÇÕES DA OCORRÊNCIA
                     ========================== -->
-                    <section class="card">
+            <section class="card">
+              <div class="card-cabecalho">
+                <div class="numero-secao">02</div>
 
-                        <div class="card-cabecalho">
+                <div>
+                  <h2>Informações da ocorrência</h2>
 
-                            <div class="numero-secao">
-                                02
-                            </div>
+                  <p>Conte o que aconteceu e classifique a ocorrência.</p>
+                </div>
+              </div>
 
-                            <div>
-                                <h2>Informações da ocorrência</h2>
+              <div class="campo">
+                <label for="categoria">
+                  Categoria
+                  <span>*</span>
+                </label>
 
-                                <p>
-                                    Conte o que aconteceu e classifique
-                                    a ocorrência.
-                                </p>
-                            </div>
+                <select id="categoria" name="categoria" required>
+                  <option value="" selected disabled>
+                    Selecione uma categoria
+                  </option>
 
-                        </div>
+                  <option value="pichacao">Pichação</option>
 
+                  <option value="vandalismo">Vandalismo</option>
 
-                        <div class="campo">
+                  <option value="iluminacao">Iluminação pública</option>
 
-                            <label for="categoria">
-                                Categoria
-                                <span>*</span>
-                            </label>
+                  <option value="lixo">Descarte irregular de lixo</option>
 
-                            <select id="categoria" name="categoria" required>
+                  <option value="via">Problemas em vias públicas</option>
 
-                                <option value="" selected disabled>
-                                    Selecione uma categoria
-                                </option>
+                  <option value="perturbacao">Perturbação</option>
 
-                                <option value="pichacao">
-                                    Pichação
-                                </option>
+                  <option value="outros">Outros</option>
+                </select>
+              </div>
 
-                                <option value="vandalismo">
-                                    Vandalismo
-                                </option>
+              <div class="campo">
+                <label for="titulo">
+                  Título da denúncia
+                  <span>*</span>
+                </label>
 
-                                <option value="iluminacao">
-                                    Iluminação pública
-                                </option>
+                <input
+                  type="text"
+                  id="titulo"
+                  name="titulo"
+                  placeholder="Ex.: Pichação em patrimônio público"
+                  maxlength="100"
+                  required
+                />
+              </div>
 
-                                <option value="lixo">
-                                    Descarte irregular de lixo
-                                </option>
+              <div class="campo">
+                <div class="label-descricao">
+                  <label for="descricao">
+                    Descrição
+                    <span>*</span>
+                  </label>
 
-                                <option value="via">
-                                    Problemas em vias públicas
-                                </option>
+                  <small>
+                    Seja objetivo e informe os detalhes importantes.
+                  </small>
+                </div>
 
-                                <option value="perturbacao">
-                                    Perturbação
-                                </option>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  placeholder="Descreva o que aconteceu, onde ocorreu e outras informações que possam ajudar na análise da denúncia."
+                  maxlength="1000"
+                  required
+                ></textarea>
 
-                                <option value="outros">
-                                    Outros
-                                </option>
+                <div class="contador">Máximo de 1000 caracteres</div>
+              </div>
+            </section>
 
-                            </select>
-
-                        </div>
-
-
-                        <div class="campo">
-
-                            <label for="titulo">
-                                Título da denúncia
-                                <span>*</span>
-                            </label>
-
-                            <input
-                                type="text"
-                                id="titulo"
-                                name="titulo"
-                                placeholder="Ex.: Pichação em patrimônio público"
-                                maxlength="100"
-                                required
-                            >
-
-                        </div>
-
-
-                        <div class="campo">
-
-                            <div class="label-descricao">
-
-                                <label for="descricao">
-                                    Descrição
-                                    <span>*</span>
-                                </label>
-
-                                <small>
-                                    Seja objetivo e informe os detalhes
-                                    importantes.
-                                </small>
-
-                            </div>
-
-                            <textarea
-                                id="descricao"
-                                name="descricao"
-                                placeholder="Descreva o que aconteceu, onde ocorreu e outras informações que possam ajudar na análise da denúncia."
-                                maxlength="1000"
-                                required
-                            ></textarea>
-
-                            <div class="contador">
-                                Máximo de 1000 caracteres
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-
-                    <!-- =========================
+            <!-- =========================
                          LOCAL E DATA
                     ========================== -->
-                    <section class="card">
+            <section class="card">
+              <div class="card-cabecalho">
+                <div class="numero-secao">03</div>
 
-                        <div class="card-cabecalho">
+                <div>
+                  <h2>Local da ocorrência</h2>
 
-                            <div class="numero-secao">
-                                03
-                            </div>
+                  <p>Informe onde a situação aconteceu.</p>
+                </div>
+              </div>
 
-                            <div>
-                                <h2>Local da ocorrência</h2>
+              <div class="linha-campos">
+                <div class="campo campo-local">
+                  <label for="local">
+                    Local / endereço
+                    <span>*</span>
+                  </label>
 
-                                <p>
-                                    Informe onde a situação aconteceu.
-                                </p>
-                            </div>
+                  <input
+                    type="text"
+                    id="local"
+                    name="local"
+                    placeholder="Rua, número, bairro ou ponto de referência"
+                    required
+                  />
+                </div>
 
-                        </div>
+                <div class="campo campo-data">
+                  <label for="data"> Data da ocorrência </label>
 
+                  <input type="date" id="data" name="data" />
+                </div>
+              </div>
 
-                        <div class="linha-campos">
+              <button type="button" class="btn-localizacao">
+                📍 Usar minha localização
+              </button>
+            </section>
 
-                            <div class="campo campo-local">
-
-                                <label for="local">
-                                    Local / endereço
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="local"
-                                    name="local"
-                                    placeholder="Rua, número, bairro ou ponto de referência"
-                                    required
-                                >
-
-                            </div>
-
-
-                            <div class="campo campo-data">
-
-                                <label for="data">
-                                    Data da ocorrência
-                                </label>
-
-                                <input
-                                    type="date"
-                                    id="data"
-                                    name="data"
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="btn-localizacao"
-                        >
-                            📍 Usar minha localização
-                        </button>
-
-                    </section>
-
-
-
-                    <!-- =========================
+            <!-- =========================
                          EVIDÊNCIAS
                     ========================== -->
-                    <section class="card">
+            <section class="card">
+              <div class="card-cabecalho">
+                <div class="numero-secao">04</div>
 
-                        <div class="card-cabecalho">
+                <div>
+                  <h2>Evidências</h2>
 
-                            <div class="numero-secao">
-                                04
-                            </div>
+                  <p>Adicione fotos ou vídeos que possam ajudar na análise.</p>
+                </div>
+              </div>
 
-                            <div>
-                                <h2>Evidências</h2>
+              <label class="upload-area">
+                <input
+                  type="file"
+                  id="arquivo"
+                  name="arquivo"
+                  accept="image/*,video/*"
+                  multiple
+                />
 
-                                <p>
-                                    Adicione fotos ou vídeos que possam
-                                    ajudar na análise.
-                                </p>
-                            </div>
+                <span class="upload-icone"> 📎 </span>
 
-                        </div>
+                <strong> Adicionar fotos ou vídeos </strong>
 
+                <span> Clique aqui para selecionar os arquivos </span>
 
-                        <label class="upload-area">
+                <small> Formatos aceitos: JPG, PNG e MP4 </small>
+              </label>
+            </section>
 
-                            <input
-                                type="file"
-                                id="arquivo"
-                                name="arquivo"
-                                accept="image/*,video/*"
-                                multiple
-                            >
-
-                            <span class="upload-icone">
-                                📎
-                            </span>
-
-                            <strong>
-                                Adicionar fotos ou vídeos
-                            </strong>
-
-                            <span>
-                                Clique aqui para selecionar os arquivos
-                            </span>
-
-                            <small>
-                                Formatos aceitos: JPG, PNG e MP4
-                            </small>
-
-                        </label>
-
-                    </section>
-
-
-
-                    <!-- =========================
+            <!-- =========================
                          AÇÕES
                     ========================== -->
-                    <div class="acoes">
+            <div class="acoes">
+              <button type="button" class="btn-cancelar">Cancelar</button>
 
-                        <button
-                            type="button"
-                            class="btn-cancelar"
-                        >
-                            Cancelar
-                        </button>
+              <button type="submit" class="btn-denunciar">
+                Enviar denúncia
+              </button>
+            </div>
 
-                        <button
-                            type="submit"
-                            class="btn-denunciar"
-                        >
-                            Enviar denúncia
-                        </button>
-
-                    </div>
-
-
-                    <p class="aviso-final">
-                        Ao enviar, sua denúncia será encaminhada para
-                        análise. Certifique-se de que as informações
-                        estão corretas antes de continuar.
-                    </p>
-
-                </form>
-
-            </main>
-
-        </div>
-
+            <p class="aviso-final">
+              Ao enviar, sua denúncia será encaminhada para análise.
+              Certifique-se de que as informações estão corretas antes de
+              continuar.
+            </p>
+          </form>
+        </main>
+      </div>
     </div>
-
-<<<<<<< HEAD
-=======
-    <script src="/js/menu.js"></script>
-    
->>>>>>> 91d7caf1a542a28452e9c8e7a5c97d9e9e8cb676
-</body>
-
+  </body>
 </html>

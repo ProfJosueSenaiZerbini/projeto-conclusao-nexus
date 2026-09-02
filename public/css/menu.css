@@ -13,6 +13,13 @@
     border-right: 1px solid #e4e7ec;
 
     padding: 18px 12px;
+
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+
+    z-index: 900;
 }
 
 .item-menu {

@@ -10,11 +10,14 @@ body{
     color: #1f2937;
 }
 
-/* Pagina */
-.pagina{
-    width: 100%;
+.pagina {
     min-height: 100vh;
-    background: #e2e0e0;
+    background: #f8f9fb;
+}
+
+.conteudo {
+    display: flex;
+    min-height: calc(100vh - 64px);
 }
 
 /* Cabeçalho */
