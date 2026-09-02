@@ -1,55 +1,50 @@
-/* ===== MENU LATERAL ===== */
+/* =========================
+   MENU LATERAL
+========================= */
 
-.sidebar {
-    width: 240px;
-    min-width: 240px;
-    height: 100%;
+.menu-lateral {
+    width: 230px;
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+
     background: #ffffff;
-    border-right: 1px solid #e5e7eb;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 12px;
-    transition: transform 0.2s ease;
+    border-right: 1px solid #e4e7ec;
+
+    padding: 18px 12px;
 }
 
-
-/* ===== NAVEGAÇÃO ===== */
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.nav-item {
-    min-height: 44px;
+.item-menu {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0 12px;
-    color: #64748b;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 13px 16px;
+    margin-bottom: 4px;
+
+    border-radius: 8px;
+
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 6px;
+
+    color: #344054;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: 0.2s;
 }
 
-.nav-item i {
-    font-size: 20px;
-}
-
-.nav-item:hover {
-    background: #f8fafc;
-    color: #334155;
-}
-
-.nav-item.active {
-    background: #eff6ff;
-    color: #1d4ed8;
+.item-menu:hover {
+    background: #f2f6ff;
+    color: #2563eb;
 }
 
 
-/* ===== RODAPÉ DO MENU ===== */
+/* =========================
+   RODAPÉ
+========================= */
 
 .sidebar-footer {
     margin-top: auto;
@@ -60,7 +55,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
+
     color: #64748b;
+
     font-size: 13px;
     text-decoration: none;
 }
@@ -74,39 +71,51 @@
 }
 
 
-/* ===== FUNDO AO ABRIR O MENU NO CELULAR ===== */
+/* =========================
+   OVERLAY MOBILE
+========================= */
 
 .sidebar-overlay {
     display: none;
+
     position: fixed;
+
     top: 64px;
     right: 0;
     bottom: 0;
     left: 0;
+
     z-index: 20;
+
     background: rgba(15, 23, 42, 0.35);
 }
 
 
-/* ===== RESPONSIVO ===== */
+/* =========================
+   RESPONSIVO
+========================= */
 
 @media (max-width: 768px) {
 
-    .sidebar {
+    .menu-lateral {
         position: fixed;
+
         top: 64px;
         bottom: 0;
         left: 0;
+
         z-index: 25;
+
         transform: translateX(-100%);
+
+        transition: transform 0.3s ease;
     }
 
-    .sidebar.open {
+    .menu-lateral.open {
         transform: translateX(0);
     }
 
     .sidebar-overlay.visible {
         display: block;
     }
-
 }
