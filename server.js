@@ -12,7 +12,7 @@ const notificacoesRoutes = require('./routes/notificacoesRoutes');
 const denunciaAdmRoutes = require('./routes/denunciaAdm.routes');
 
 const app = express();
-const PORT = 3000;
+const PORTA = Number(process.env.PORTA);
 
 //configura o EJS como motor de templates
 app.use(morgan("dev")); /* Vai mostrar os status e requisições do servidor no terminal */
@@ -42,7 +42,7 @@ app.use('/denunciaUsuario', denunciaUsuarioRoutes);
 app.use('/notificacoes', notificacoesRoutes);
 app.use('/denunciaAdm', denunciaAdmRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}/login`);
+app.listen(PORTA, () => {
+  console.log(`Servidor rodando em http://localhost:${PORTA}/login`);
 });
 
