@@ -11,8 +11,8 @@ const denunciaUsuarioRoutes = require('./routes/denunciaUsuarioRoutes');
 const notificacoesRoutes = require('./routes/notificacoesRoutes');
 const denunciaAdmRoutes = require('./routes/denunciaAdm.routes');
 
-const app = express(); /* Atribui a aplicação do express na váriavel app */
-const PORTA = Number(process.env.PORTA); /* Pega as informações atribuidas à váriavel PORTA no .env */
+const app = express();
+const PORT = 3000;
 
 //configura o EJS como motor de templates
 app.use(morgan("dev")); /* Vai mostrar os status e requisições do servidor no terminal */
@@ -42,7 +42,7 @@ app.use('/denunciaUsuario', denunciaUsuarioRoutes);
 app.use('/notificacoes', notificacoesRoutes);
 app.use('/denunciaAdm', denunciaAdmRoutes);
 
-app.listen(PORTA, () => {
-  console.log(`Servidor rodando em http://localhost:${PORTA}/login`);
-}); /* Cria um link para acessar diretamente o servidor no terminal */
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}/login`);
+});
 
