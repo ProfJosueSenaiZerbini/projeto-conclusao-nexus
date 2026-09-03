@@ -20,142 +20,141 @@
 
     <%- include("partials/header") %>
 
-        <div class="page">
+        <div class="pagina">
 
-            <%- include("partials/menu") %>
+            <main class="conteudo">
+                
+                <%- include("partials/menu") %>
 
-        <main class="content">
-
-            <div class="content-container">
-
-
-                <div class="page-title">
-
-                    <h2>
-                        Visão Geral
-                    </h2>
-
-                    <p>
-                        Acompanhe o status das suas solicitações.
-                    </p>
-
-                </div>
+                    <div class="content-container">
 
 
-                <section class="report-banner">
-
-                    <img src="/img/banner-cidade-segura.png" alt="" class="banner-image">
-
-                    <div class="banner-overlay"></div>
-
-
-                    <div class="banner-content">
-
-                        <div>
+                        <div class="page-title">
 
                             <h2>
-                                Faça a diferença
+                                Visão Geral
                             </h2>
 
                             <p>
-                                Ajude a manter um ambiente seguro
-                                relatando incidentes importantes
-                                com total sigilo.
+                                Acompanhe o status das suas solicitações.
                             </p>
 
                         </div>
 
 
-                        <a href="/denuncias/nova" class="report-button">
-                            <i class="ph ph-plus-circle"></i>
+                        <section class="report-banner">
 
-                            Realizar denúncia
-                        </a>
+                            <img src="/img/banner-cidade-segura.png" alt="" class="banner-image">
 
-                    </div>
-
-                </section>
+                            <div class="banner-overlay"></div>
 
 
-                <section class="status-section">
+                            <div class="banner-content">
 
-                    <div class="status-title">
+                                <div>
 
-                        <i class="ph ph-chart-line-up"></i>
+                                    <h2>
+                                        Faça a diferença
+                                    </h2>
 
-                        <h2>
-                            Andamento da denúncia atual
-                        </h2>
-
-                    </div>
-
-
-                    <div class="progress-box">
-
-                        <div class="progress">
-
-                            <div class="progress-line"></div>
-
-                            <div class="progress-line-active"></div>
-
-
-                            <div class="progress-step completed">
-
-                                <div class="step-icon">
-
-                                    <i class="ph-bold ph-check"></i>
+                                    <p>
+                                        Ajude a manter um ambiente seguro
+                                        relatando incidentes importantes
+                                        com total sigilo.
+                                    </p>
 
                                 </div>
 
-                                <span>
-                                    Recebida
-                                </span>
+
+                                <a href="/denuncias/nova" class="report-button">
+                                    <i class="ph ph-plus-circle"></i>
+
+                                    Realizar denúncia
+                                </a>
+
+                            </div>
+
+                        </section>
+
+
+                        <section class="status-section">
+
+                            <div class="status-title">
+
+                                <i class="ph ph-chart-line-up"></i>
+
+                                <h2>
+                                    Andamento da denúncia atual
+                                </h2>
 
                             </div>
 
 
-                            <div class="progress-step current">
+                            <div class="progress-box">
 
-                                <div class="step-icon">
+                                <div class="progress">
 
-                                    <i class="ph-bold ph-magnifying-glass"></i>
+                                    <div class="progress-line"></div>
+
+                                    <div class="progress-line-active"></div>
+
+
+                                    <div class="progress-step completed">
+
+                                        <div class="step-icon">
+
+                                            <i class="ph-bold ph-check"></i>
+
+                                        </div>
+
+                                        <span>
+                                            Recebida
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="progress-step current">
+
+                                        <div class="step-icon">
+
+                                            <i class="ph-bold ph-magnifying-glass"></i>
+
+                                        </div>
+
+                                        <span>
+                                            Em Análise
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="progress-step">
+
+                                        <div class="step-icon">
+
+                                            <i class="ph-bold ph-flag-checkered"></i>
+
+                                        </div>
+
+                                        <span>
+                                            Concluída
+                                        </span>
+
+                                    </div>
 
                                 </div>
 
-                                <span>
-                                    Em Análise
-                                </span>
-
                             </div>
 
+                        </section>
 
-                            <div class="progress-step">
-
-                                <div class="step-icon">
-
-                                    <i class="ph-bold ph-flag-checkered"></i>
-
-                                </div>
-
-                                <span>
-                                    Concluída
-                                </span>
-
-                            </div>
-
-                        </div>
 
                     </div>
 
-                </section>
-
-
-            </div>
-
-        </main>
+            </main>
 
         </div>
-    </div>
 
 </body>
 

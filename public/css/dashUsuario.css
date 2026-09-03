@@ -1,28 +1,23 @@
 /* ===== CONFIGURAÇÕES GERAIS ===== */
 
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
-html,
 body {
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: "Inter", Arial, sans-serif;
-    background: #f7f8fa;
-    color: #334155;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8f9fb;
+    color: #1f2937;
 }
 
 
 /* ===== ESTRUTURA PRINCIPAL ===== */
 
-.page {
-    height: calc(100vh - 64px);
-    display: flex;
-    overflow: hidden;
+.pagina {
+    min-height: 100vh;
+    background: #f8f9fb;
 }
 
 
@@ -38,6 +33,7 @@ body {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
+    padding-top: 30px;
 }
 
 

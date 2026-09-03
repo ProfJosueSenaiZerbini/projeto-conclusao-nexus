@@ -110,3 +110,7 @@ body {
 .btn-cadastro:hover{
     background: #275d44;
 }
+
+.login-link{
+    padding-top: 10px;
+}
