@@ -10,7 +10,11 @@ const dashboardUsuarioRoutes = require('./routes/dashboardUsuarioRoutes');
 const denunciaUsuarioRoutes = require('./routes/denunciaUsuarioRoutes');
 const notificacoesRoutes = require('./routes/notificacoesRoutes');
 const denunciaAdmRoutes = require('./routes/denunciaAdm.routes');
+<<<<<<< HEAD
 const feedRoutes = require('./routes/feedDenunciaRoutes');
+=======
+const denunciaDetalheRoutes = require('./routes/denunciaDetalheRoutes');
+>>>>>>> 8069e84 (fix: criacao de nova tela e organizacao de codigo)
 
 const app = express();
 const PORTA = Number(process.env.PORTA);
@@ -43,6 +47,7 @@ app.use('/denunciaUsuario', denunciaUsuarioRoutes);
 app.use('/notificacoes', notificacoesRoutes);
 app.use('/denunciaAdm', denunciaAdmRoutes);
 app.use('/feedDenuncia', feedRoutes);
+app.use('/denunciaDetalhe', denunciaDetalheRoutes);
 
 app.listen(PORTA, () => {
   console.log(`Servidor rodando em http://localhost:${PORTA}/login`);

@@ -1,167 +1,385 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Denúncias</title>
+<!DOCTYPE html> 
+<html lang="en"> 
+  <head> 
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>Denúncias</title> 
+ 
+    <link rel="stylesheet" href="/css/denunciaAdm.css" /> 
+ 
+    <link rel="stylesheet" href="/css/menu.css" /> 
+ 
+    <link rel="stylesheet" href="/css/header.css" /> 
+  </head> 
+ 
+  <body> 
+    <%- include('partials/header') %> 
+ 
+    <div class="pagina"> 
+      <div class="conteudo"> 
+        <%- include('partials/menu') %> 
+ 
+        <!-- ÁREA PRINCIPAL --> 
+        <main class="area-principal"> 
+          
+          <!-- BUSCA --> 
+          <div class="area-busca"> 
+            <div class="campo-busca"> 
+              <input 
+                type="text" 
+                placeholder="Buscar por denúncia" 
+                aria-label="Buscar por denúncia" 
+              /> 
+ 
+              <button type="button" aria-label="Pesquisar">🔍</button> 
+            </div> 
+          </div> 
+ 
+          <!-- FILTROS --> 
+          <div class="filtros"> 
+            
+            <div class="filtro"> 
+              <label for="categoria">Categoria</label> 
+ 
+              <select id="categoria"> 
+                <option>Todos</option> 
+                <option>Criação de Sites</option> 
+                <option>Design</option> 
+                <option>Consultoria</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="bairro">Bairro</label> 
+ 
+              <select id="bairro"> 
+                <option>Todos</option> 
+                <option>Centro</option> 
+                <option>Jardim América</option> 
+                <option>Vila Nova</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="status">Status</label> 
+ 
+              <select id="status"> 
+                <option>Todos</option> 
+                <option>Em análise</option> 
+                <option>Resolvida</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="data">Data</label> 
+ 
+              <input type="date" id="data" name="data" /> 
+            </div> 
 
-    <link rel="stylesheet" href="/css/denunciaAdm.css" />
+          </div> 
+ 
+          <!-- TABELA --> 
+          <div class="tabela"> 
 
-    <link rel="stylesheet" href="/css/menu.css" />
+            <div class="cabecalho"> 
+              <div>ID</div> 
+              <div>TIPO</div> 
+              <div>LOCAL</div> 
+              <div>DATA</div> 
+              <div>USUÁRIO</div> 
+              <div>STATUS</div> 
+              <div>PRIORIDADE</div> 
+              <div>AÇÕES</div> 
+            </div> 
+ 
+            <!-- LINHA 001 --> 
+            <div class="linha"> 
 
-    <link rel="stylesheet" href="/css/header.css" />
-  </head>
+              <div class="celula">001</div> 
+              <div class="celula">Buraco</div> 
+              <div class="celula">Centro</div> 
+              <div class="celula">20/08/2026</div> 
+              <div class="celula">João</div> 
+ 
+              <div class="celula"> 
+                <span class="status em-analise"> 
+                  Em análise 
+                </span> 
+              </div> 
+ 
+              <div class="celula"> 
+                <span class="prioridade alta"> 
+                  Alta 
+                </span> 
+              </div> 
+ 
+              <div class="celula acoes"> 
 
-  <body>
-    <%- include('partials/header') %>
+                <button type="button" title="Visualizar">
+                  👁
+                </button> 
 
-    <div class="pagina">
-      <div class="conteudo">
-        <%- include('partials/menu') %>
 
-        <!-- ÁREA PRINCIPAL -->
-        <main class="area-principal">
-          <!-- BUSCA -->
-          <div class="area-busca">
-            <div class="campo-busca">
-              <input
-                type="text"
-                placeholder="Buscar por denúncia"
-                aria-label="Buscar por denúncia"
-              />
+                <!-- LÁPIS / MENU -->
+                <details class="menu-editar">
 
-              <button type="button" aria-label="Pesquisar">🔍</button>
-            </div>
-          </div>
+                  <summary class="btn-editar" title="Editar">
+                    ✎
+                  </summary>
 
-          <!-- FILTROS -->
-          <div class="filtros">
-            <div class="filtro">
-              <label for="categoria">Categoria</label>
+                  <div class="opcoes-editar">
 
-              <select id="categoria">
-                <option>Todos</option>
-                <option>Criação de Sites</option>
-                <option>Design</option>
-                <option>Consultoria</option>
-              </select>
-            </div>
+                    <form action="/denunciaDetalhe" method="POST">
 
-            <div class="filtro">
-              <label for="bairro">Bairro</label>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="aprovar" 
+                        class="btn btn-aprovar"
+                      >
+                        <span>✓</span>
+                        Aprovar denúncia
+                      </button>
 
-              <select id="bairro">
-                <option>Todos</option>
-                <option>Centro</option>
-                <option>Jardim América</option>
-                <option>Vila Nova</option>
-              </select>
-            </div>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="encaminhar" 
+                        class="btn"
+                      >
+                        <span>→</span>
+                        Encaminhar
+                      </button>
 
-            <div class="filtro">
-              <label for="status">Status</label>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="alterar_status" 
+                        class="btn"
+                      >
+                        <span>↻</span>
+                        Alterar status
+                      </button>
 
-              <select id="status">
-                <option>Todos</option>
-                <option>Em análise</option>
-                <option>Resolvida</option>
-              </select>
-            </div>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="arquivar" 
+                        class="btn btn-arquivar"
+                      >
+                        <span>□</span>
+                        Arquivar denúncia
+                      </button>
 
-            <div class="filtro">
-              <label for="data">Data</label>
+                    </form>
 
-              <input type="date" id="data" name="data" />
-            </div>
-          </div>
+                  </div>
 
-          <!-- TABELA -->
-          <div class="tabela">
-            <div class="cabecalho">
-              <div>ID</div>
-              <div>TIPO</div>
-              <div>LOCAL</div>
-              <div>DATA</div>
-              <div>USUÁRIO</div>
-              <div>STATUS</div>
-              <div>PRIORIDADE</div>
-              <div>AÇÕES</div>
-            </div>
+                </details>
 
-            <div class="linha">
-              <div class="celula">001</div>
-              <div class="celula">Buraco</div>
-              <div class="celula">Centro</div>
-              <div class="celula">20/08/2026</div>
-              <div class="celula">João</div>
 
-              <div class="celula">
-                <span class="status em-analise"> Em análise </span>
-              </div>
+                <button type="button" title="Mais opções">
+                  ⋮
+                </button> 
 
-              <div class="celula">
-                <span class="prioridade alta"> Alta </span>
-              </div>
+              </div> 
+            </div> 
 
-              <div class="celula acoes">
-                <button type="button" title="Visualizar">👁</button>
 
-                <button type="button" title="Editar">✎</button>
+            <!-- LINHA 002 --> 
+            <div class="linha"> 
 
-                <button type="button" title="Mais opções">⋮</button>
-              </div>
-            </div>
+              <div class="celula">002</div> 
+              <div class="celula">Iluminação</div> 
+              <div class="celula">Vila Nova</div> 
+              <div class="celula">19/08/2026</div> 
+              <div class="celula">Maria</div> 
+ 
+              <div class="celula"> 
+                <span class="status resolvida"> 
+                  Resolvida 
+                </span> 
+              </div> 
+ 
+              <div class="celula"> 
+                <span class="prioridade media"> 
+                  Média 
+                </span> 
+              </div> 
+ 
+              <div class="celula acoes"> 
 
-            <div class="linha">
-              <div class="celula">002</div>
-              <div class="celula">Iluminação</div>
-              <div class="celula">Vila Nova</div>
-              <div class="celula">19/08/2026</div>
-              <div class="celula">Maria</div>
+                <button type="button" title="Visualizar">
+                  👁
+                </button> 
 
-              <div class="celula">
-                <span class="status resolvida"> Resolvida </span>
-              </div>
 
-              <div class="celula">
-                <span class="prioridade media"> Média </span>
-              </div>
+                <!-- LÁPIS / MENU -->
+                <details class="menu-editar">
 
-              <div class="celula acoes">
-                <button type="button" title="Visualizar">👁</button>
+                  <summary class="btn-editar" title="Editar">
+                    ✎
+                  </summary>
 
-                <button type="button" title="Editar">✎</button>
+                  <div class="opcoes-editar">
 
-                <button type="button" title="Mais opções">⋮</button>
-              </div>
-            </div>
+                    <form action="/denunciaDetalhe" method="POST">
 
-            <div class="linha">
-              <div class="celula">003</div>
-              <div class="celula">Lixo</div>
-              <div class="celula">Centro</div>
-              <div class="celula">18/08/2026</div>
-              <div class="celula">Carlos</div>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="aprovar" 
+                        class="btn btn-aprovar"
+                      >
+                        <span>✓</span>
+                        Aprovar denúncia
+                      </button>
 
-              <div class="celula">
-                <span class="status em-analise"> Em análise </span>
-              </div>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="encaminhar" 
+                        class="btn"
+                      >
+                        <span>→</span>
+                        Encaminhar
+                      </button>
 
-              <div class="celula">
-                <span class="prioridade baixa"> Baixa </span>
-              </div>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="alterar_status" 
+                        class="btn"
+                      >
+                        <span>↻</span>
+                        Alterar status
+                      </button>
 
-              <div class="celula acoes">
-                <button type="button" title="Visualizar">👁</button>
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="arquivar" 
+                        class="btn btn-arquivar"
+                      >
+                        <span>□</span>
+                        Arquivar denúncia
+                      </button>
 
-                <button type="button" title="Editar">✎</button>
+                    </form>
 
-                <button type="button" title="Mais opções">⋮</button>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
-  </body>
+                  </div>
+
+                </details>
+
+
+                <button type="button" title="Mais opções">
+                  ⋮
+                </button> 
+
+              </div> 
+            </div> 
+
+
+            <!-- LINHA 003 --> 
+            <div class="linha"> 
+
+              <div class="celula">003</div> 
+              <div class="celula">Lixo</div> 
+              <div class="celula">Centro</div> 
+              <div class="celula">18/08/2026</div> 
+              <div class="celula">Carlos</div> 
+ 
+              <div class="celula"> 
+                <span class="status em-analise"> 
+                  Em análise 
+                </span> 
+              </div> 
+ 
+              <div class="celula"> 
+                <span class="prioridade baixa"> 
+                  Baixa 
+                </span> 
+              </div> 
+ 
+              <div class="celula acoes"> 
+
+                <button type="button" title="Visualizar">
+                  👁
+                </button> 
+
+
+                <!-- LÁPIS / MENU -->
+                <details class="menu-editar">
+
+                  <summary class="btn-editar" title="Editar">
+                    ✎
+                  </summary>
+
+                  <div class="opcoes-editar">
+
+                    <form action="/denunciaDetalhe" method="POST">
+
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="aprovar" 
+                        class="btn btn-aprovar"
+                      >
+                        <span>✓</span>
+                        Aprovar denúncia
+                      </button>
+
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="encaminhar" 
+                        class="btn"
+                      >
+                        <span>→</span>
+                        Encaminhar
+                      </button>
+
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="alterar_status" 
+                        class="btn"
+                      >
+                        <span>↻</span>
+                        Alterar status
+                      </button>
+
+                      <button 
+                        type="submit" 
+                        name="acao" 
+                        value="arquivar" 
+                        class="btn btn-arquivar"
+                      >
+                        <span>□</span>
+                        Arquivar denúncia
+                      </button>
+
+                    </form>
+
+                  </div>
+
+                </details>
+
+
+                <button type="button" title="Mais opções">
+                  ⋮
+                </button> 
+
+              </div> 
+
+            </div> 
+
+          </div> 
+
+        </main> 
+
+      </div> 
+    </div> 
+
+  </body> 
 </html>

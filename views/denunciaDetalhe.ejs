@@ -1,0 +1,407 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Detalhes da denúncia</title>
+
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/denunciaDetalhe.css">
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+    <%- include("partials/header") %>
+
+
+    <div class="pagina">
+
+        <div class="container">
+
+            <!-- MENU LATERAL -->
+            <%- include("partials/menu") %>
+
+
+            <!-- CONTEÚDO PRINCIPAL -->
+            <main class="area-detalhes">
+
+
+                <!-- CABEÇALHO DA DENÚNCIA -->
+
+                <div class="cabecalho-denuncia">
+
+                    <div>
+
+                        <div class="breadcrumb">
+                            Denúncias / Detalhes
+                        </div>
+
+                        <h1>Denúncia #001</h1>
+
+                        <p class="subtitulo">
+                            Registro de ocorrência de iluminação pública
+                        </p>
+
+                    </div>
+
+
+                    <div class="cabecalho-meta">
+
+                        <span class="status status-analise">
+                            Em análise
+                        </span>
+
+                        <span class="prioridade prioridade-alta">
+                            Alta prioridade
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CORPO DA PÁGINA -->
+
+                <div class="layout-conteudo">
+
+
+                    <!-- COLUNA PRINCIPAL -->
+
+                    <section class="conteudo-principal">
+
+
+                        <!-- INFORMAÇÕES -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <div>
+                                    <h2>Informações da denúncia</h2>
+                                    <p>Dados registrados pelo cidadão</p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="grid-informacoes">
+
+
+                                <div class="informacao">
+
+                                    <span>Título</span>
+
+                                    <strong>
+                                        Poste sem iluminação
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="informacao">
+
+                                    <span>Tipo de denúncia</span>
+
+                                    <strong>
+                                        Iluminação pública
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="informacao">
+
+                                    <span>Denunciante</span>
+
+                                    <strong>
+                                        João Pedro Silva
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="informacao">
+
+                                    <span>Data de registro</span>
+
+                                    <strong>
+                                        10/09/2026
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="informacao informacao-local">
+
+                                    <span>Localização</span>
+
+                                    <strong>
+                                        Rua das Flores, 120
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- DESCRIÇÃO -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <div>
+
+                                    <h2>Descrição</h2>
+
+                                    <p>
+                                        Relato apresentado pelo denunciante
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="descricao">
+
+                                Poste localizado na rua está sem iluminação
+                                durante a noite, deixando o local escuro e
+                                dificultando a circulação dos moradores.
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- EVIDÊNCIAS -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <div>
+
+                                    <h2>Evidências</h2>
+
+                                    <p>
+                                        Arquivos enviados junto à denúncia
+                                    </p>
+
+                                </div>
+
+                                <span class="quantidade">
+                                    4 arquivos
+                                </span>
+
+                            </div>
+
+
+                            <div class="evidencias">
+
+
+                                <div class="evidencia">
+                                    <div class="imagem-placeholder">
+                                        IMG
+                                    </div>
+                                    <span>Imagem 01</span>
+                                </div>
+
+
+                                <div class="evidencia">
+                                    <div class="imagem-placeholder">
+                                        IMG
+                                    </div>
+                                    <span>Imagem 02</span>
+                                </div>
+
+
+                                <div class="evidencia">
+                                    <div class="imagem-placeholder">
+                                        IMG
+                                    </div>
+                                    <span>Imagem 03</span>
+                                </div>
+
+
+                                <div class="evidencia">
+                                    <div class="imagem-placeholder">
+                                        IMG
+                                    </div>
+                                    <span>Imagem 04</span>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- HISTÓRICO -->
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <div>
+
+                                    <h2>Histórico</h2>
+
+                                    <p>
+                                        Acompanhamento da denúncia
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="historico">
+
+
+                                <div class="evento ativo">
+
+                                    <div class="evento-ponto"></div>
+
+                                    <div class="evento-conteudo">
+
+                                        <strong>
+                                            Denúncia recebida
+                                        </strong>
+
+                                        <span>
+                                            10/09/2026 às 08:42
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="evento ativo">
+
+                                    <div class="evento-ponto"></div>
+
+                                    <div class="evento-conteudo">
+
+                                        <strong>
+                                            Denúncia encaminhada para análise
+                                        </strong>
+
+                                        <span>
+                                            10/09/2026 às 09:15
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="evento">
+
+                                    <div class="evento-ponto"></div>
+
+                                    <div class="evento-conteudo">
+
+                                        <strong>
+                                            Aguardando providências
+                                        </strong>
+
+                                        <span>
+                                            Status atual
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <!-- PAINEL LATERAL -->
+
+                    <aside class="painel-acoes">
+
+                        <!-- RESUMO -->
+
+                        <div class="card resumo">
+
+                            <h2>Resumo</h2>
+
+
+                            <div class="resumo-item">
+
+                                <span>ID</span>
+
+                                <strong>#001</strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <span>Status</span>
+
+                                <strong>Em análise</strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <span>Prioridade</span>
+
+                                <strong>Alta</strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <span>Responsável</span>
+
+                                <strong>A definir</strong>
+
+                            </div>
+
+                        </div>
+
+
+                    </aside>
+
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+

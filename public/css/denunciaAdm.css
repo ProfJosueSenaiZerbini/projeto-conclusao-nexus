@@ -28,7 +28,6 @@ body {
 .conteudo {
     display: flex;
     min-height: calc(100vh - 64px);
-    
 }
 
 
@@ -224,7 +223,7 @@ body {
     border: 1px solid #d0d5dd;
     border-radius: 8px;
 
-    overflow: hidden;
+    overflow: visible;
 
     transition: 0.2s;
 }
@@ -334,4 +333,212 @@ body {
 .acoes button:hover {
     background: #f2f4f7;
     color: #1d2939;
+}
+
+
+/* =========================
+   FILTROS
+========================= */
+
+.filtros {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(130px, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 28px;
+}
+
+
+/* =========================
+   FILTRO DE STATUS + EDITAR
+========================= */
+
+.filtro-status {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.filtro-status .filtro {
+    position: relative;
+}
+
+.filtro-status select {
+    display: none;
+}
+
+.btn-editar {
+    border: none;
+    background: transparent;
+    color: #667085;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+    width: 24px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-editar:hover {
+    color: #1d2939;
+}
+
+
+/* =========================
+   RESTO DOS FILTROS
+========================= */
+
+.filtro {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+/* =========================
+   MENU DO LÁPIS
+========================= */
+
+.menu-editar {
+    position: relative;
+}
+
+
+/* Remove a seta padrão do details */
+
+.menu-editar summary {
+    list-style: none;
+}
+
+.menu-editar summary::-webkit-details-marker {
+    display: none;
+}
+
+
+/* =========================
+   OPÇÕES
+========================= */
+
+.opcoes-editar {
+    position: absolute;
+
+    right: 0;
+    top: 34px;
+
+    width: 190px;
+
+    padding: 8px;
+
+    background: #ffffff;
+
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+
+/* Formulário dentro do menu */
+
+.opcoes-editar form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+/* =========================
+   BOTÕES DO MENU
+========================= */
+
+.opcoes-editar .btn {
+    width: 100%;
+
+    min-height: 36px;
+
+    border: 1px solid #d8dde1;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #39444c;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 10px;
+
+    padding: 0 10px;
+
+    transition: 0.2s;
+}
+
+
+.opcoes-editar .btn span {
+    font-size: 15px;
+
+    width: 20px;
+
+    text-align: center;
+}
+
+
+.opcoes-editar .btn:hover {
+    background: #f4f6f7;
+
+    border-color: #c6cdd2;
+}
+
+
+/* =========================
+   BOTÃO APROVAR
+========================= */
+
+.opcoes-editar .btn-aprovar {
+    background: #1C4532;
+
+    border-color: #275d44;
+
+    color: #ffffff;
+}
+
+.opcoes-editar .btn-aprovar:hover {
+    background: #275d44;
+
+    border-color: #327b59;
+}
+
+
+/* =========================
+   BOTÃO ARQUIVAR
+========================= */
+
+.opcoes-editar .btn-arquivar {
+    color: #9b3f3f;
+}
+
+.opcoes-editar .btn-arquivar:hover {
+    background: #fff5f5;
+
+    border-color: #e6caca;
 }
