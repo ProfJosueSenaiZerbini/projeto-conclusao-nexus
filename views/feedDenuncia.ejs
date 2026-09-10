@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Denúncias</title>
+
+    <link rel="stylesheet" href="/css/feed.css" />
+
+    <link rel="stylesheet" href="/css/menu.css" />
+
+    <link rel="stylesheet" href="/css/header.css" />
+</head>
+
+<body>
+    <%- include("partials/header") %>
+
+        <div class="pagina">
+            <div class="container">
+
+                <%- include("partials/menu") %>
+
+                    <main class="area-feed">
+
+                        <section class="cabecalho-feed">
+                            <h1>Feed de Denúncias</h1>
+                            <p>Veja denúncias públicas registradas na cidade.</p>
+
+                            <div class="filtros-feed">
+                                <button>Pichação</button>
+                                <button>Vandalismo</button>
+                                <button>Iluminação pública</button>
+                                <button>Descarte irregular de lixo</button>
+                                <button>Problemas em vias públicas</button>
+                                <button>Perturbação</button>
+                                <button>Outros</button>
+                            </div>
+                        </section>
+
+                        <!-- CARD -->
+                        <article class="feed-card">
+                            <div class="feed-topo">
+
+                                <div class="feed-usuario">
+                                    <div class="icone-local">📍</div>
+
+                                    <div>
+                                        <h2>Pichação em muro residencial</h2>
+                                        <span>Maria Oliveira • Hoje às 11:08</span>
+                                    </div>
+                                </div>
+
+                                <a href="/denunciaDetalhe" class="ver-detalhes">
+                                    Ver detalhes →
+                                </a>
+
+                            </div>
+
+                            <div class="feed-tags">
+                                <span class="tag pichacao">Pichação</span>
+                                <span class="tag bairro">Centro</span>
+                                <span class="tag status">Em análise</span>
+                            </div>
+
+                            <p class="descricao">
+                                Foi registrada uma pichação no muro da residência localizada na Rua Baixa da Égua, nº
+                                234.
+                            </p>
+
+                        </article>
+
+                    </main>
+            </div>
+        </div>
+</body>

@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #f7f8fa;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 230px;
+    padding-top: 64px;
+
+}
+
+.area-feed{
+    flex: 1;
+    padding: 32px 48px;
+    background: #f7f8fa;
+}
+
+.cabecalho-feed h1{
+    font-size: 30px;
+    color: #163f2e;
+    margin-bottom: 8px;
+}
+
+.cabecalho-feed p{
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.filtros-feed{
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.filtros-feed button{
+    padding: 8px 12px;
+    border: none;
+    border-radius: 999px;
+    background: #e8eef7;
+    color: #274c77;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: 400;
+}
+
+.filtros-feed button:hover,
+.filtros-feed .ativo{
+    background:#14532D;
+    color:white;
+}
+
+.feed-card{
+    background: white;
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+    border: 1px solid #e5e7eb;
+}
+
+.feed-topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.feed-usuario{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.icone-local{
+    width:52px;
+    height:52px;
+    background:#D9E8FF;
+    color:#2563EB;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:22px;
+}
+
+.feed-usuario h2{
+    margin:0;
+    font-size:20px;
+    color:#111827;
+}
+
+.feed-usuario span{
+    color:#6B7280;
+    font-size:14px;
+}
+
+.feed-card img{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+    border-radius:18px;
+    margin-bottom:18px;
+}
+
+.ver-detalhes {
+    display: inline-block;
+    margin-right: 20px;
+    margin-top: -25px;
+    font-size: 14px;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.feed-tags{
+    display:flex;
+    gap: 10px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+}
+
+.tag{
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.pichacao{
+    background:#FEF3C7;
+    color:#B45309;
+}
+
+.bairro{
+    background:#DBEAFE;
+    color:#1D4ED8;
+}
+
+.status{
+    background:#DCFCE7;
+    color:#166534;
+}
+
+.descricao{
+    color:#374151;
+    line-height:1.7;
+    margin-bottom:18px;
+}
