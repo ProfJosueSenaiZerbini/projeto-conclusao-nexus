@@ -9,8 +9,8 @@ router.get('/denuncias', (req, res) => {
     res.render('denuncias');
 });
 
-router.get('/denuncias/nova', (req, res) => {
-    res.render('nova_denuncia');
+router.get('/denunciaUsuario', (req, res) => {
+    res.render('DenunciaUsuario');
 });
 
 router.get('/notificacoes', (req, res) => {
