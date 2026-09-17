@@ -1,407 +1,231 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Detalhes da denúncia</title>
 
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/denunciaDetalhe.css">
-
 </head>
-
 
 <body>
 
     <!-- HEADER -->
     <%- include("partials/header") %>
 
-
     <div class="pagina">
-
         <div class="container">
 
             <!-- MENU LATERAL -->
             <%- include("partials/menu") %>
 
-
             <!-- CONTEÚDO PRINCIPAL -->
             <main class="area-detalhes">
 
-
                 <!-- CABEÇALHO DA DENÚNCIA -->
-
                 <div class="cabecalho-denuncia">
-
                     <div>
-
                         <div class="breadcrumb">
                             Denúncias / Detalhes
                         </div>
-
-                        <h1>Denúncia #001</h1>
-
+                        <h1>Denúncia #<%= denuncia.id %></h1>
                         <p class="subtitulo">
-                            Registro de ocorrência de iluminação pública
+                            Registro de ocorrência de <%= denuncia.tipo %>
                         </p>
-
                     </div>
-
 
                     <div class="cabecalho-meta">
-
                         <span class="status status-analise">
-                            Em análise
+                            <%= denuncia.status %>
                         </span>
-
                         <span class="prioridade prioridade-alta">
-                            Alta prioridade
+                            <%= denuncia.prioridade %> Prioridade
                         </span>
-
                     </div>
-
                 </div>
 
-
-
                 <!-- CORPO DA PÁGINA -->
-
                 <div class="layout-conteudo">
 
-
                     <!-- COLUNA PRINCIPAL -->
-
                     <section class="conteudo-principal">
 
-
                         <!-- INFORMAÇÕES -->
-
                         <div class="card">
-
                             <div class="card-header">
-
                                 <div>
                                     <h2>Informações da denúncia</h2>
                                     <p>Dados registrados pelo cidadão</p>
                                 </div>
-
                             </div>
-
 
                             <div class="grid-informacoes">
-
-
                                 <div class="informacao">
-
                                     <span>Título</span>
-
-                                    <strong>
-                                        Poste sem iluminação
-                                    </strong>
-
+                                    <strong><%= denuncia.titulo %></strong>
                                 </div>
 
-
                                 <div class="informacao">
-
                                     <span>Tipo de denúncia</span>
-
-                                    <strong>
-                                        Iluminação pública
-                                    </strong>
-
+                                    <strong><%= denuncia.tipo %></strong>
                                 </div>
 
-
                                 <div class="informacao">
-
                                     <span>Denunciante</span>
-
-                                    <strong>
-                                        João Pedro Silva
-                                    </strong>
-
+                                    <strong><%= denuncia.denunciante %></strong>
                                 </div>
-
 
                                 <div class="informacao">
-
                                     <span>Data de registro</span>
-
-                                    <strong>
-                                        10/09/2026
-                                    </strong>
-
+                                    <strong><%= denuncia.dataRegistro %></strong>
                                 </div>
-
 
                                 <div class="informacao informacao-local">
-
                                     <span>Localização</span>
-
-                                    <strong>
-                                        Rua das Flores, 120
-                                    </strong>
-
+                                    <strong><%= denuncia.localizacao %></strong>
                                 </div>
-
-
                             </div>
-
                         </div>
-
-
 
                         <!-- DESCRIÇÃO -->
-
                         <div class="card">
-
                             <div class="card-header">
-
                                 <div>
-
                                     <h2>Descrição</h2>
-
-                                    <p>
-                                        Relato apresentado pelo denunciante
-                                    </p>
-
+                                    <p>Relato apresentado pelo denunciante</p>
                                 </div>
-
                             </div>
-
 
                             <div class="descricao">
-
-                                Poste localizado na rua está sem iluminação
-                                durante a noite, deixando o local escuro e
-                                dificultando a circulação dos moradores.
-
+                                <%= denuncia.descricao %>
                             </div>
-
                         </div>
-
-
 
                         <!-- EVIDÊNCIAS -->
-
                         <div class="card">
-
                             <div class="card-header">
-
                                 <div>
-
                                     <h2>Evidências</h2>
-
-                                    <p>
-                                        Arquivos enviados junto à denúncia
-                                    </p>
-
+                                    <p>Arquivos enviados junto à denúncia</p>
                                 </div>
-
                                 <span class="quantidade">
-                                    4 arquivos
+                                    <%= denuncia.evidencias ? denuncia.evidencias.length : 0 %> arquivos
                                 </span>
-
                             </div>
-
 
                             <div class="evidencias">
-
-
-                                <div class="evidencia">
-                                    <div class="imagem-placeholder">
-                                        IMG
-                                    </div>
-                                    <span>Imagem 01</span>
-                                </div>
-
-
-                                <div class="evidencia">
-                                    <div class="imagem-placeholder">
-                                        IMG
-                                    </div>
-                                    <span>Imagem 02</span>
-                                </div>
-
-
-                                <div class="evidencia">
-                                    <div class="imagem-placeholder">
-                                        IMG
-                                    </div>
-                                    <span>Imagem 03</span>
-                                </div>
-
-
-                                <div class="evidencia">
-                                    <div class="imagem-placeholder">
-                                        IMG
-                                    </div>
-                                    <span>Imagem 04</span>
-                                </div>
-
-
+                                <% if (denuncia.evidencias && denuncia.evidencias.length > 0) { %>
+                                    <% denuncia.evidencias.forEach((img, index) => { %>
+                                        <div class="evidencia">
+                                            <div class="imagem-placeholder">
+                                                <img src="<%= img %>" alt="Evidência <%= index + 1 %>">
+                                            </div>
+                                            <span>Imagem 0<%= index + 1 %></span>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p>Nenhuma evidência anexada.</p>
+                                <% } %>
                             </div>
-
                         </div>
 
-
-
-                        <!-- HISTÓRICO -->
-
+                        <!-- HISTÓRICO DE STATUS -->
                         <div class="card">
-
                             <div class="card-header">
-
                                 <div>
-
-                                    <h2>Histórico</h2>
-
-                                    <p>
-                                        Acompanhamento da denúncia
-                                    </p>
-
+                                    <h2>Histórico de Status</h2>
+                                    <p>Linha do tempo de alterações da denúncia</p>
                                 </div>
-
                             </div>
-
 
                             <div class="historico">
-
-
-                                <div class="evento ativo">
-
-                                    <div class="evento-ponto"></div>
-
-                                    <div class="evento-conteudo">
-
-                                        <strong>
-                                            Denúncia recebida
-                                        </strong>
-
-                                        <span>
-                                            10/09/2026 às 08:42
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div class="evento ativo">
-
-                                    <div class="evento-ponto"></div>
-
-                                    <div class="evento-conteudo">
-
-                                        <strong>
-                                            Denúncia encaminhada para análise
-                                        </strong>
-
-                                        <span>
-                                            10/09/2026 às 09:15
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div class="evento">
-
-                                    <div class="evento-ponto"></div>
-
-                                    <div class="evento-conteudo">
-
-                                        <strong>
-                                            Aguardando providências
-                                        </strong>
-
-                                        <span>
-                                            Status atual
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
+                                <% if (historico && historico.length > 0) { %>
+                                    <% historico.forEach(item => { %>
+                                        <div class="evento <%= item.ativo ? 'ativo' : '' %>">
+                                            <div class="evento-ponto"></div>
+                                            <div class="evento-conteudo">
+                                                <strong><%= item.titulo %></strong>
+                                                <span><%= item.dataHora %></span>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } %>
                             </div>
-
                         </div>
 
+                        <!-- NOVO BLOCO: MURAL DE DIÁLOGO PÚBLICO (SUGESTÃO DO PROFESSOR) -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2>Atualizações e Diálogo Público</h2>
+                                    <p>Troca de mensagens entre a fiscalização e o cidadão</p>
+                                </div>
+                            </div>
+
+                            <!-- Lista de Mensagens -->
+                            <div class="lista-comentarios" style="margin-bottom: 20px;">
+                                <% if (mensagens && mensagens.length > 0) { %>
+                                    <% mensagens.forEach(msg => { %>
+                                        <div class="comentario-item <%= msg.tipoAutor %>" style="padding: 12px; margin-bottom: 10px; border-radius: 6px; background-color: #f5f5f5;">
+                                            <div class="comentario-header" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <strong><%= msg.autor %> (<%= msg.cargo %>)</strong>
+                                                <span style="font-size: 0.85em; color: #666;"><%= msg.dataHora %></span>
+                                            </div>
+                                            <p style="margin: 0;"><%= msg.texto %></p>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p>Nenhuma mensagem registrada nesta denúncia até o momento.</p>
+                                <% } %>
+                            </div>
+
+                            <!-- Formulário para Enviar Nova Mensagem -->
+                            <form action="/denuncia/<%= denuncia.id %>/mensagem" method="POST" class="form-mensagem">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <textarea name="texto" rows="3" placeholder="Escreva uma atualização ou dúvida pública sobre este chamado..." required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;"></textarea>
+                                    <button type="submit" style="align-self: flex-end; padding: 10px 20px; cursor: pointer;">
+                                        Enviar Mensagem
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
                     </section>
 
-
-
                     <!-- PAINEL LATERAL -->
-
                     <aside class="painel-acoes">
-
-                        <!-- RESUMO -->
-
                         <div class="card resumo">
-
                             <h2>Resumo</h2>
 
-
                             <div class="resumo-item">
-
                                 <span>ID</span>
-
-                                <strong>#001</strong>
-
+                                <strong>#<%= denuncia.id %></strong>
                             </div>
 
-
                             <div class="resumo-item">
-
                                 <span>Status</span>
-
-                                <strong>Em análise</strong>
-
+                                <strong><%= denuncia.status %></strong>
                             </div>
 
-
                             <div class="resumo-item">
-
                                 <span>Prioridade</span>
-
-                                <strong>Alta</strong>
-
+                                <strong><%= denuncia.prioridade %></strong>
                             </div>
-
 
                             <div class="resumo-item">
-
                                 <span>Responsável</span>
-
-                                <strong>A definir</strong>
-
+                                <strong><%= denuncia.responsavel || 'A definir' %></strong>
                             </div>
-
                         </div>
-
-
                     </aside>
 
-
                 </div>
-
             </main>
-
         </div>
-
     </div>
 
 </body>
-
 </html>
-

@@ -5,156 +5,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard</title>
+    <title>SafeZone | Dashboard</title>
 
+    <script src="/public/js/dashboardUsuario.js"></script>
+
+    <!-- CSS compartilhado -->
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/menu.css">
+
+    <!-- CSS da dashboard -->
     <link rel="stylesheet" href="/css/dashUsuario.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Fonte -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-    <link rel="stylesheet" href="/css/header.css">
-
-    <link rel="stylesheet" href="/css/menu.css">
+    <!-- Ícones -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
 
+    <!-- HEADER -->
     <%- include("partials/header") %>
 
-        <div class="pagina">
+    <!-- MENU LATERAL -->
+    <%- include("partials/menu") %>
 
-            <main class="conteudo">
-                
-                <%- include("partials/menu") %>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="dashboard-main">
 
-                    <div class="content-container">
+        <div class="dashboard-container">
+
+            <!-- TÍTULO -->
+            <section class="page-title">
+
+                <h1>Visão Geral</h1>
+
+                <p>
+                    Acompanhe o status das suas solicitações.
+                </p>
+
+            </section>
 
 
-                        <div class="page-title">
+            <!-- BANNER -->
+            <section class="report-banner">
 
-                            <h2>
-                                Visão Geral
-                            </h2>
+                <img
+                    src="/img/UserDashBanner-FINAL.png"
+                    alt="Banner SafeZone"
+                    class="banner-image"
+                >
 
-                            <p>
-                                Acompanhe o status das suas solicitações.
-                            </p>
+                <div class="banner-overlay"></div>
+
+                <div class="banner-content">
+
+
+
+                    <a
+                        href="/denunciaUsuario"
+                        class="report-button"
+                    >
+
+                        <i class="ph ph-plus-circle"></i>
+
+                        <span>
+                            Realizar denúncia
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- STATUS DA DENÚNCIA -->
+            <section class="status-section">
+
+                <div class="status-title">
+
+                    <i class="ph ph-chart-line-up"></i>
+
+                    <h2>
+                        Andamento da denúncia atual
+                    </h2>
+
+                </div>
+
+
+                <div class="progress-box">
+
+                    <div class="progress">
+
+                        <!-- linha de fundo -->
+                        <div class="progress-line"></div>
+
+                        <!-- progresso atual -->
+                        <div class="progress-line-active"></div>
+
+
+                        <!-- ETAPA 1 -->
+                        <div class="progress-step completed">
+
+                            <div class="step-icon">
+                                <i class="ph-bold ph-check"></i>
+                            </div>
+
+                            <span>
+                                Recebida
+                            </span>
 
                         </div>
 
 
-                        <section class="report-banner">
+                        <!-- ETAPA 2 -->
+                        <div class="progress-step current">
 
-                            <img src="/img/banner-cidade-segura.png" alt="" class="banner-image">
-
-                            <div class="banner-overlay"></div>
-
-
-                            <div class="banner-content">
-
-                                <div>
-
-                                    <h2>
-                                        Faça a diferença
-                                    </h2>
-
-                                    <p>
-                                        Ajude a manter um ambiente seguro
-                                        relatando incidentes importantes
-                                        com total sigilo.
-                                    </p>
-
-                                </div>
-
-
-                                <a href="/denunciaUsuario" class="report-button">
-                                    <i class="ph ph-plus-circle"></i>
-
-                                    Realizar denúncia
-                                </a>
-
+                            <div class="step-icon">
+                                <i class="ph-bold ph-magnifying-glass"></i>
                             </div>
 
-                        </section>
+                            <span>
+                                Em Análise
+                            </span>
+
+                        </div>
 
 
-                        <section class="status-section">
+                        <!-- ETAPA 3 -->
+                        <div class="progress-step">
 
-                            <div class="status-title">
-
-                                <i class="ph ph-chart-line-up"></i>
-
-                                <h2>
-                                    Andamento da denúncia atual
-                                </h2>
-
+                            <div class="step-icon">
+                                <i class="ph-bold ph-flag-checkered"></i>
                             </div>
 
+                            <span>
+                                Concluída
+                            </span>
 
-                            <div class="progress-box">
-
-                                <div class="progress">
-
-                                    <div class="progress-line"></div>
-
-                                    <div class="progress-line-active"></div>
-
-
-                                    <div class="progress-step completed">
-
-                                        <div class="step-icon">
-
-                                            <i class="ph-bold ph-check"></i>
-
-                                        </div>
-
-                                        <span>
-                                            Recebida
-                                        </span>
-
-                                    </div>
-
-
-                                    <div class="progress-step current">
-
-                                        <div class="step-icon">
-
-                                            <i class="ph-bold ph-magnifying-glass"></i>
-
-                                        </div>
-
-                                        <span>
-                                            Em Análise
-                                        </span>
-
-                                    </div>
-
-
-                                    <div class="progress-step">
-
-                                        <div class="step-icon">
-
-                                            <i class="ph-bold ph-flag-checkered"></i>
-
-                                        </div>
-
-                                        <span>
-                                            Concluída
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </section>
-
+                        </div>
 
                     </div>
 
-            </main>
+                </div>
+
+            </section>
 
         </div>
+
+    </main>
 
 </body>
 

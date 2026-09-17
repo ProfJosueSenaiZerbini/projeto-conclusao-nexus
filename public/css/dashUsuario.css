@@ -1,4 +1,4 @@
-/* ===== CONFIGURAÇÕES GERAIS ===== */
+/* reset */
 
 * {
     margin: 0;
@@ -6,301 +6,532 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f8f9fb;
-    color: #1f2937;
-}
-
-
-/* ===== ESTRUTURA PRINCIPAL ===== */
-
-.pagina {
-    min-height: 100vh;
-    background: #f8f9fb;
-}
-
-
-/* ===== CONTEÚDO ===== */
-
-.content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px;
-}
-
-.content-container {
     width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding-top: 30px;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+    background: #f3f7f4;
+    color: #24352c;
 }
 
 
-/* ===== TÍTULO ===== */
+/* conteúdo principal */
+
+/*
+    O menu da esquerda ocupa aproximadamente 246px.
+
+    O header fica no topo.
+
+    Por isso o dashboard precisa começar DEPOIS
+    do menu e DEPOIS do header.
+*/
+
+.dashboard-main {
+    min-height: 100vh;
+
+    margin-left: 246px;
+
+    padding:
+        32px
+        40px
+        50px
+        40px;
+
+    background: #f3f7f4;
+}
+
+
+/* largura máxima do conteúdo */
+
+.dashboard-container {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+}
+
+
+/* título */
 
 .page-title {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
 }
 
-.page-title h2 {
-    margin: 0;
-    color: #111827;
-    font-size: 24px;
-    font-weight: 600;
+.page-title h1 {
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #20352a;
+
+    margin-bottom: 10px;
 }
 
 .page-title p {
-    margin: 5px 0 0;
-    color: #64748b;
     font-size: 14px;
+    font-weight: 400;
+
+    color: #748079;
 }
 
 
-/* ===== BANNER ===== */
+/* banner */
 
 .report-banner {
-    width: 100%;
-    height: 250px;
     position: relative;
+
+    width: 100%;
+    height: 270px;
+
     overflow: hidden;
-    display: flex;
-    align-items: flex-end;
+
+    border-radius: 24px;
+
     margin-bottom: 28px;
-    padding: 24px;
-    background: #1d4ed8;
-    border-radius: 8px;
+
+    box-shadow:
+        0 8px 24px
+        rgba(40, 80, 55, 0.08);
 }
+
+
+/* imagem */
 
 .banner-image {
     position: absolute;
-    inset: 0;
+
+    top: 0;
+    left: 0;
+
     width: 100%;
     height: 100%;
+
     object-fit: cover;
+
+    z-index: 0;
 }
+
+
+/* camada escura */
 
 .banner-overlay {
     position: absolute;
+
     inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.5),
-        rgba(0, 0, 0, 0.05)
-    );
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(15, 52, 36, 0.55) 0%,
+            rgba(15, 52, 36, 0.20) 55%,
+            rgba(15, 52, 36, 0.05) 100%
+        );
+
+    z-index: 1;
 }
+
+
+/* conteúdo do banner */
 
 .banner-content {
-    width: 100%;
     position: relative;
+
     z-index: 2;
+
+    height: 100%;
+    width: 100%;
+
     display: flex;
+
     align-items: flex-end;
     justify-content: space-between;
+
     gap: 30px;
+
+    padding: 32px;
 }
 
-.banner-content h2 {
-    margin: 0 0 6px;
+
+/* texto */
+
+.banner-text {
+    max-width: 550px;
+}
+
+.banner-text h2 {
+    margin-bottom: 8px;
+
     color: #ffffff;
-    font-size: 23px;
-    font-weight: 600;
+
+    font-size: 28px;
+    font-weight: 700;
 }
 
-.banner-content p {
-    max-width: 450px;
-    margin: 0;
-    color: #f1f5f9;
+.banner-text p {
+    color: rgba(255, 255, 255, 0.92);
+
     font-size: 14px;
-    line-height: 1.5;
+
+    line-height: 1.6;
+
+    max-width: 480px;
 }
 
 
-/* ===== BOTÃO DE DENÚNCIA ===== */
+/* botão */
 
 .report-button {
-    border: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 18px;
-    background: #2563eb;
-    color: #ffffff;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-}
+    flex-shrink: 0;
 
-.report-button:hover {
-    background: #1d4ed8;
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    background: #ffffff;
+
+    color: #279153;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    padding: 13px 20px;
+
+    border-radius: 14px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .report-button i {
     font-size: 19px;
 }
 
+.report-button:hover {
+    background: #effaf2;
 
-/* ===== STATUS ===== */
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 16px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* card do status */
 
 .status-section {
+    width: 100%;
+
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 24px;
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 8px 24px
+        rgba(40, 70, 50, 0.06);
 }
+
+
+/* título */
 
 .status-title {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
-    margin-bottom: 24px;
+
+    margin-bottom: 26px;
 }
 
 .status-title i {
-    color: #2563eb;
-    font-size: 21px;
+    font-size: 22px;
+
+    color: #43a766;
 }
 
 .status-title h2 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 17px;
+    font-size: 18px;
+
     font-weight: 600;
+
+    color: #26372e;
 }
 
 
-/* ===== PROGRESSO ===== */
+/* progresso */
 
 .progress-box {
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 32px 40px 44px;
+    width: 100%;
+
+    background: #f5f9f6;
+
+    border-radius: 18px;
+
+    padding:
+        34px
+        50px
+        48px;
 }
 
+
 .progress {
-    width: 100%;
-    max-width: 700px;
     position: relative;
+
+    width: 100%;
+    max-width: 780px;
+
+    margin: 0 auto;
+
     display: flex;
-    align-items: center;
+
+    align-items: flex-start;
     justify-content: space-between;
-    margin: auto;
 }
+
+
+/* linhas */
 
 .progress-line,
 .progress-line-active {
     position: absolute;
-    left: 0;
+
     top: 20px;
-    height: 1px;
+
+    left: 20px;
+
+    height: 4px;
+
+    border-radius: 10px;
 }
+
+
+/* linha inteira */
 
 .progress-line {
-    width: 100%;
-    background: #cbd5e1;
+    width: calc(100% - 40px);
+
+    background: #dce8df;
+
+    z-index: 0;
 }
 
+
+/* linha concluída */
+
 .progress-line-active {
-    width: 50%;
-    background: #22c55e;
+    width: calc(50% - 20px);
+
+    background: #5bc87c;
+
+    z-index: 1;
 }
+
+
+/* etapas */
 
 .progress-step {
     position: relative;
-    z-index: 2;
+
+    z-index: 3;
+
+    width: 90px;
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
 }
 
+
+/* bolinha */
+
 .step-icon {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
+
     display: flex;
-    align-items: center;
+
     justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
     background: #ffffff;
-    color: #94a3b8;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
+
+    border: 2px solid #d5e2d8;
+
+    color: #98a69d;
+
     font-size: 18px;
 }
 
-.progress-step.completed .step-icon,
-.progress-step.current .step-icon {
-    background: #22c55e;
+
+/* recebida */
+
+.progress-step.completed .step-icon {
+    background: #5bc87c;
+
+    border-color: #5bc87c;
+
     color: #ffffff;
-    border-color: #22c55e;
 }
+
+
+/* em análise */
+
+.progress-step.current .step-icon {
+    background: #5bc87c;
+
+    border-color: #5bc87c;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 5px
+        #ddf4e4;
+}
+
+
+/* texto das etapas */
 
 .progress-step span {
-    position: absolute;
-    top: 50px;
-    white-space: nowrap;
-    color: #64748b;
+    margin-top: 8px;
+
     font-size: 12px;
-    font-weight: 500;
+
+    color: #7e8a83;
+
+    white-space: nowrap;
 }
+
+
+/* etapa atual */
 
 .progress-step.current span {
-    color: #16a34a;
-    font-weight: 600;
+    color: #299450;
+
+    font-weight: 700;
 }
 
 
-/* ===== RESPONSIVO ===== */
+/* responsivo */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
 
-    .content {
-        padding: 20px 15px;
+    /*
+        em telas menores, assumimos
+        que o menu lateral desaparece
+        ou vira menu hamburguer, sla.
+    */
+
+    .dashboard-main {
+        margin-left: 0;
+
+        padding:
+            24px
+            20px
+            40px;
+    }
+
+    .dashboard-container {
+        max-width: 100%;
     }
 
     .report-banner {
-        height: 220px;
-        padding: 20px;
+        height: 300px;
     }
 
     .banner-content {
         flex-direction: column;
+
+        justify-content: flex-end;
         align-items: flex-start;
+
         gap: 18px;
+
+        padding: 25px;
+    }
+
+    .report-button {
+        width: 100%;
     }
 
     .progress-box {
-        padding: 28px 20px 42px;
+        padding:
+            30px
+            20px
+            45px;
     }
-
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 550px) {
+
+    .dashboard-main {
+        padding:
+            20px
+            14px
+            30px;
+    }
+
+    .page-title h1 {
+        font-size: 24px;
+    }
+
+    .report-banner {
+        height: 330px;
+
+        border-radius: 18px;
+    }
+
+    .banner-text h2 {
+        font-size: 23px;
+    }
 
     .status-section {
-        padding: 18px;
+        padding: 20px;
+    }
+
+    .status-title h2 {
+        font-size: 16px;
     }
 
     .progress-box {
-        padding-left: 12px;
-        padding-right: 12px;
+        padding:
+            28px
+            8px
+            42px;
+    }
+
+    .progress-step {
+        width: 70px;
+    }
+
+    .progress-step span {
+        font-size: 10px;
     }
 
     .step-icon {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
     }
 
     .progress-line,
     .progress-line-active {
         top: 18px;
     }
-
-    .progress-step span {
-        top: 46px;
-        font-size: 10px;
-    }
-
 }
