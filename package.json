@@ -1,7 +1,15 @@
 {
   "name": "tcc",
   "version": "1.0.0",
-  "description": "",
+  "description": "* **Scrum Master:** Yuri Cristhian R. dos Anjos\r * **Desenvolvedor:** Felipe Costa Nogueira\r * **Desenvolvedor:** Rafael Gentil Veiga\r * **Desenvolvedora:** Jullya de Freitas Carvalho",
+  "homepage": "https://github.com/ProfJosueSenaiZerbini/projeto-conclusao-nexus#readme",
+  "bugs": {
+    "url": "https://github.com/ProfJosueSenaiZerbini/projeto-conclusao-nexus/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProfJosueSenaiZerbini/projeto-conclusao-nexus.git"
+  },
   "license": "ISC",
   "author": "",
   "type": "commonjs",
