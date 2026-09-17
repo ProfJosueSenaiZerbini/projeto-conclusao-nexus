@@ -2,45 +2,37 @@
 <html>
 
 <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <title>Cadastro</title>
     <link rel="stylesheet" href="/css/cadastro.css">
 </head>
 
 <body>
+
     <div class="container">
-
         <div class="cadastro-box">
-
             <div class="logo">
                 <img src="/img/logo.png" alt="Logo">
             </div>
-
             <h1 class="titulo">Cadastre-se</h1>
-
             <div class="input-box">
-                <form action="">
-                    <input class="input-cadastro" type="text" name="nome" placeholder="Nome">
-                    <input class="input-cadastro" type="email" name="email" placeholder="E-mail">
-                    <div class="linha-inputs">
-                        <input class="input-cadastro" type="text" name="cep" placeholder="CEP">
-                        <input class="input-cadastro" type="text" name="cpf" placeholder="CPF">
-                    </div>
-                    <input class="senha" type="password" name="senha" placeholder="Senha">
-
+                <form action="/cadastro" method="POST">
+                    <input class="input-cadastro" type="text" name="nome" placeholder="Nome" required>
+                    <input class="input-cadastro" type="email" name="email" placeholder="E-mail" required>
+                    <input class="input-cadastro" type="text" name="cpf" placeholder="CPF" required>
+                    <input class="senha" type="password" name="senha" placeholder="Senha" required>
                     <button type="submit" class="btn-cadastro">Cadastrar</button>
                 </form>
             </div>
 
             <p class="login-link" style="margin: 0 auto;">
-                Já tem uma conta? 
+                Já tem uma conta?
                 <a href="/login">Faça login</a>
             </p>
 
         </div>
 
     </div>
-
 
 </body>
 
