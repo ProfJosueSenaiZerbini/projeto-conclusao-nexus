@@ -1,22 +1,47 @@
 const express = require('express');
 const router = express.Router();
 
-/* Rota para exibir a tel de cadastro */
+const { executarQuery } = require('../db/dbConnect')
+
+/* Rota para exibir a tela de cadastro */
 router.get("/", (req, res) => {
     res.render('cadastro', {mensagemErro: null});
 });
 
 /* POST para processar o formulário enviado */
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     const { nome, email, cep, cpf, senha } = req.body;
 
-    console.log("Nome:", nome);
-    console.log("E-mail:", email);
-    console.log("CEP:", cep);
-    console.log("CPF:", cpf);
-    console.log("Senha:", senha);
+    try {
+        //Verifica se o e-mail já está cadastrado
+        const usuarioExistente = await executarQuery(
+            "SELECT * FROM USUARIO WHERE email = ?",
+            [email]
+        );
 
-    res.send("Cadastro realizado com sucesso!");
+        if (usuarioExistente.length > 0){
+            return res.render('cadastro', {
+                mensagemErro: "Este e-mail já está cadastrado."
+            });
+        }
+
+        // Cadastra o novo usuário
+        await executarQuery(
+            "INSERT INTO USUARIO (nome, email, senha) VALUES (?, ?, ?)",
+            [nome,email,senha]
+        );
+
+        //Depois do cadastro, volta para o login
+        res.redirect('/login');
+
+    } catch (erro) {
+
+        console.error("Erro ao cadastrar usuário:", erro);
+
+        res.render('cadastro', {
+            mensagemErro: "Erro ao realizar o cadastro."
+        });
+    }
 });
 
 module.exports = router;
