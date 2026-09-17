@@ -41,6 +41,7 @@
     font-weight: 600;
 
     transition: 0.2s;
+    position: relative !important;
 }
 
 .item-menu:hover {
@@ -97,6 +98,34 @@
     background: rgba(15, 23, 42, 0.35);
 }
 
+.wa-badge {
+  /* Cores oficiais */
+  background-color: #1C4532;
+  color: white;
+
+  /* Tipografia oficial */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+
+  /* Dimensões e Arredondamento */
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px; /* Garante cantos perfeitamente arredondados em qualquer largura */
+
+  /* Centralização perfeita dos números */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Espaçamento interno para quando houver 2 ou mais dígitos */
+  padding: 0 6px;
+  box-sizing: border-box;
+
+  /* Evita seleção de texto involuntária */
+  user-select: none;
+}
 
 /* =========================
    RESPONSIVO

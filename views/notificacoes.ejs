@@ -17,135 +17,75 @@
 
     <%- include("partials/header") %>
 
-    <div class="pagina">
+        <div class="pagina">
 
-      <div class="conteudo">
+            <div class="conteudo">
 
                 <%- include("partials/menu") %>
 
                     <main class="area-notificacoes">
-
-                        <!-- Cabeçalho da área de notificações -->
                         <div class="cabecalho-notificacoes">
-
                             <div>
-                                <p>
-                                    Acompanhe as atualizações das suas denúncias.
-                                </p>
-
-                                <button class="marcar-lidas" type="button">
-                                    Marcar todas como lidas
-                                </button>
+                                <h1>Notificações</h1>
+                                <p>Acompanhe as atualizações das suas denúncias.</p>
                             </div>
-
+                            <form action="/notificacoes/marcar-todas-lidas" method="POST">
+                                <button class="marcar-lidas" type="submit">Marcar todas como lidas</button>
+                            </form>
                         </div>
 
-
-                        <!-- Lista de notificações -->
-                        <article class="notificacao-item nao-lida">
-
-                            <div class="notificacao-indicador"></div>
-                            <div class="notificacao-icone">
-                                🔔
-                            </div>
-
-                            <div class="notificacao-conteudo">
-                                <div class="notificacao-cabecalho">
-                                    <h2>
-                                        Denúncia encaminhada
-                                    </h2>
-
-                                    <span class="notificacao-horario">
-                                        11:08
-                                    </span>
-                                </div>
-
-                                <p>
-                                    Sua denúncia foi encaminhada para o órgão responsável pela análise.
-                                </p>
-
-                                <span class="notificacao-data">
-                                    Hoje
-                                </span>
-                            </div>
-                        </article>
-
-                        <!-- NOTIFICAÇÃO LIDA -->
-                        <article class="notificacao-item">
-
-                            <div class="notificacao-indicador"></div>
-
-                            <div class="notificacao-icone">
-                                ✓
-                            </div>
-
-                            <div class="notificacao-conteudo">
-
-                                <div class="notificacao-cabecalho">
-
-                                    <h2>
-                                        Denúncia recebida
-                                    </h2>
-
-                                    <span class="notificacao-horario">
-                                        16:45
-                                    </span>
-
-                                </div>
-
-                                <p>
-                                    Sua denúncia foi registrada e está aguardando análise.
-                                </p>
-
-                                <span class="notificacao-data">
-                                    Ontem
-                                </span>
-
-                            </div>
-
-                        </article>
-
-
-                        <!-- NOTIFICAÇÃO LIDA -->
-                        <article class="notificacao-item">
-
-                            <div class="notificacao-indicador"></div>
-
-                            <div class="notificacao-icone">
-                                ✓
-                            </div>
-
-                            <div class="notificacao-conteudo">
-
-                                <div class="notificacao-cabecalho">
-
-                                    <h2>
-                                        Atualização da denúncia
-                                    </h2>
-
-                                    <span class="notificacao-horario">
-                                        10:21
-                                    </span>
-
-                                </div>
-
-                                <p>
-                                    Houve uma atualização no andamento da sua denúncia.
-                                </p>
-
-                                <span class="notificacao-data">
-                                    18/08/2026
-                                </span>
-
-                            </div>
-                        </article>
-                        </section>
-
+                        <!-- LISTA DE NOTIFICAÇÕES -->
+                        <div class="lista-notificacoes">
+                            <% if (notificacoes && notificacoes.length> 0) { %>
+                                <% notificacoes.forEach(n=> { %>
+                                    <!-- O LINK ENVOLVE O CARD INTEIRO -->
+                                    <a href="/denuncia/<%= n.denuncia_id %>" class="link-notificacao"
+                                        style="text-decoration: none; color: inherit;">
+                                        <article class="notificacao-item <%= n.lida ? '' : 'nao-lida' %>">
+                                            <div class="notificacao-indicador"></div>
+                                            <div class="notificacao-icone">
+                                                <%= n.lida ? '✓' : '🔔' %>
+                                            </div>
+                                            <div class="notificacao-conteudo">
+                                                <div class="notificacao-cabecalho">
+                                                    <h2>
+                                                        <%= n.titulo %>
+                                                    </h2>
+                                                    <span class="notificacao-horario">
+                                                        <%= n.horario %>
+                                                    </span>
+                                                </div>
+                                                <p>
+                                                    <%= n.mensagem %>
+                                                </p>
+                                                <span class="notificacao-data">
+                                                    <%= n.data %>
+                                                </span>
+                                            </div>
+                                        </article>
+                                    </a>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p class="sem-notificacoes">Nenhuma notificação no momento.</p>
+                                            <% } %>
+                        </div>
                     </main>
+                    <!-- MODAL DE CONFIRMAÇÃO ESTILIZADO -->
+                    <div id="modal-confirmacao" class="modal-overlay hidden">
+                        <div class="modal-card">
+                            <h3>Marcar como lidas</h3>
+                            <p>Deseja realmente marcar todas as notificações como lidas?</p>
+                            <div class="modal-acoes">
+                                <button id="btn-cancelar" class="btn-secundario">Cancelar</button>
+                                <button id="btn-confirmar" class="btn-principal">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
-    </div>
 
 </body>
+
+<script src="/js/notificacoes.js"></script>
 
 </html>

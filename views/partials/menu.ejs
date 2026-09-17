@@ -14,7 +14,11 @@
     </a>
 
     <a href="/notificacoes" class="item-menu">
-        Notificações
+        <span>Notificações</span>
+        <!-- Renderiza a bolinha APENAS se houver notificações não lidas (maior que 0) -->
+    <% if (typeof totalNaoLidas !== 'undefined' && totalNaoLidas > 0) { %>
+        <span class="wa-badge"><%= totalNaoLidas %></span>
+    <% } %>
     </a>
 
     <a href="/feedDenuncia" class="item-menu">
