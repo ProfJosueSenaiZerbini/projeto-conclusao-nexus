@@ -6,7 +6,6 @@ require('dotenv').config(); /* Puxa os dados escritos no arquivo .env */
 /* Importa as rotas */
 const loginRoutes = require('./routes/loginRoutes');
 const cadastroRoutes = require('./routes/cadastroRoutes');
-const cadastroAdminRoutes = require('./routes/cadastroAdminRoutes');
 const dashboardUsuarioRoutes = require('./routes/dashboardUsuarioRoutes');
 const denunciaUsuarioRoutes = require('./routes/denunciaUsuarioRoutes');
 const notificacoesRoutes = require('./routes/notificacoesRoutes');
@@ -40,7 +39,6 @@ app.get("/denuncias", (req, res) => {
 
 app.use('/login', loginRoutes);
 app.use('/cadastro', cadastroRoutes);
-app.use('/cadastroAdmin', cadastroAdminRoutes);
 app.use('/dashboardUsuario', dashboardUsuarioRoutes);
 app.use('/denunciaUsuario', denunciaUsuarioRoutes);
 app.use('/notificacoes', notificacoesRoutes);
