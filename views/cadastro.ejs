@@ -17,6 +17,19 @@
             <h1 class="titulo">Cadastre-se</h1>
             <div class="input-box">
                 <form action="/cadastro" method="POST">
+
+                    <div class="tipo">
+                        <label>
+                            <input type="radio" name="tipo" value="admin">
+                            Administrador
+                        </label>
+
+                        <label>
+                            <input type="radio" name="tipo" value="usuario" checked>
+                            Usuário
+                        </label>
+                    </div>
+
                     <input class="input-cadastro" type="text" name="nome" placeholder="Nome" required>
                     <input class="input-cadastro" type="email" name="email" placeholder="E-mail" required>
                     <input class="input-cadastro" type="text" name="cpf" placeholder="CPF" required>
