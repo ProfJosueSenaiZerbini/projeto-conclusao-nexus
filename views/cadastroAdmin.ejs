@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro do Administrador</title>
+</head>
+
+<body>
+
+    <form action="/cadastroAdmin" method="POST">
+
+        <input
+            class="input-cadastro"
+            type="text"
+            name="nome"
+            placeholder="Nome"
+            required
+        >
+
+        <input
+            class="input-cadastro"
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            required
+        >
+
+        <input
+            class="input-cadastro"
+            type="text"
+            name="cpf"
+            placeholder="CPF"
+            required
+        >
+
+        <input
+            class="senha"
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            required
+        >
+
+        <button type="submit" class="btn-cadastro">
+            Cadastrar administrador
+        </button>
+
+    </form>
+
+</body>
+
+</html>
+
