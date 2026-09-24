@@ -1,67 +1,119 @@
+
 const express = require('express');
 const router = express.Router();
 
-/* Rota para exibir os detalhes da denúncia */
-router.get("/", (req, res) => {
+const { executarQuery } = require('../db/dbConnect');
 
-    // Passando os dados que o template EJS precisa para renderizar a tela
-    res.render("denunciaDetalhe", {
-        denuncia: {
-            id: '001',
-            titulo: 'Poste sem iluminação',
-            tipo: 'Iluminação pública',
-            denunciante: 'João Pedro Silva',
-            dataRegistro: '10/09/2026',
-            localizacao: 'Rua das Flores, 120',
-            descricao: 'Poste localizado na rua está sem iluminação durante a noite, deixando o local escuro e dificultando a circulação dos moradores.',
-            status: 'Em análise',
-            prioridade: 'Alta',
-            responsavel: 'Fiscal Carlos Santos',
-            evidencias: ['/img/exemplo1.jpg', '/img/exemplo2.jpg']
-        },
-        historico: [
-            { titulo: 'Denúncia recebida', dataHora: '10/09/2026 às 08:42', ativo: true },
-            { titulo: 'Denúncia encaminhada para análise', dataHora: '10/09/2026 às 09:15', ativo: true },
-            { titulo: 'Aguardando providências', dataHora: 'Status atual', ativo: false }
-        ],
-        mensagens: [
-            {
-                autor: 'Fiscal Carlos Santos',
-                cargo: 'Órgão Responsável',
-                tipoAutor: 'fiscal',
-                dataHora: '11/09/2026 às 14:30',
-                texto: 'Vistoria agendada para o local no dia 12/09 no período da manhã.'
-            },
-            {
-                autor: 'João Pedro Silva',
-                cargo: 'Denunciante',
-                tipoAutor: 'cidadao',
-                dataHora: '11/09/2026 às 15:10',
-                texto: 'Obrigado pelo retorno! O poste fica bem em frente ao número 120.'
-            }
-        ]
-    });
+
+// ========================================
+// MOSTRAR DETALHES DE UMA DENÚNCIA
+// ========================================
+router.get("/:id", async (req, res) => {
+
+    const idDenuncia = req.params.id;
+
+
+    try {
+
+        const resultado = await executarQuery(
+            `SELECT
+                d.idDenuncia,
+                d.tipo,
+                d.descricao,
+                d.status,
+                d.prioridade,
+                d.dataAbertura,
+                l.endereco,
+                u.nome AS nomeUsuario
+
+            FROM DENUNCIA d
+
+            INNER JOIN LOCALIZACAO l
+                ON d.idLocalizacao = l.idLocalizacao
+
+            INNER JOIN USUARIO u
+                ON d.idUsuario = u.id
+
+            WHERE d.idDenuncia = ?`,
+            [idDenuncia]
+        );
+
+
+        // Verifica se encontrou a denúncia
+        if (resultado.length === 0) {
+
+            return res.status(404).send("Denúncia não encontrada.");
+
+        }
+
+
+        const dados = resultado[0];
+
+
+        // Monta o objeto que será enviado para o EJS
+        const denuncia = {
+
+            id: dados.idDenuncia,
+
+            titulo: dados.tipo,
+
+            tipo: dados.tipo,
+
+            denunciante: dados.nomeUsuario,
+
+            dataRegistro: dados.dataAbertura,
+
+            localizacao: dados.endereco,
+
+            descricao: dados.descricao,
+
+            status: dados.status,
+
+            prioridade: dados.prioridade,
+
+            responsavel: "Aguardando fiscal",
+
+            evidencias: []
+
+        };
+
+
+        res.render("denunciaDetalhe", {
+
+            denuncia: denuncia,
+
+            historico: [],
+
+            mensagens: []
+
+        });
+
+
+    } catch (erro) {
+
+        console.error("Erro ao buscar denúncia:", erro);
+
+        res.status(500).send("Erro ao buscar denúncia.");
+
+    }
+
 });
 
-/* Rota para processar as ações dos botões */
-router.post("/", (req, res) => {
+
+// ========================================
+// AÇÕES DOS BOTÕES
+// ========================================
+router.post("/:id", (req, res) => {
+
     const { acao } = req.body;
+    const idDenuncia = req.params.id;
 
     console.log("Ação realizada:", acao);
 
-    if (acao === "aprovar") {
-        console.log("Denúncia aprovada.");
-    } else if (acao === "encaminhar") {
-        console.log("Denúncia encaminhada.");
-    } else if (acao === "alterar_status") {
-        console.log("Status da denúncia será alterado.");
-    } else if (acao === "arquivar") {
-        console.log("Denúncia arquivada.");
-    } else {
-        console.log("Ação desconhecida.");
-    }
+    res.redirect(`/denunciaDetalhe/${idDenuncia}`);
 
-    res.redirect("/denunciaDetalhe");
 });
 
+
 module.exports = router;
+
