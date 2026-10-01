@@ -4,7 +4,7 @@
 
 * **Scrum Master:** Yuri Cristhian R. dos Anjos
 * **Desenvolvedor:** Felipe Costa Nogueira
-* **Desenvolvedor:** Rafael Gentil Veiga
+* **Desenvolvedor:** Rafael Enrique Gentil Veiga
 * **Desenvolvedora:** Jullya de Freitas Carvalho
 
 ## Sobre o projeto
