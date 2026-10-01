@@ -21,9 +21,6 @@
         <%- include("partials/menu") %>
 
 
-            <%- include("partials/menu") %>
-
-
             <!-- =========================
                  ÁREA PRINCIPAL
             ========================== -->
@@ -40,7 +37,10 @@
             <span class="campo-obrigatorio"> * Campos obrigatórios </span>
           </div>
 
-          <form class="formulario">
+          <form class="formulario"
+          action="/denunciaUsuario"
+          method="POST"
+          enctype="multipart/form-data">
             <!-- =========================
                          IDENTIFICAÇÃO
                     ========================== -->

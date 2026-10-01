@@ -31,7 +31,7 @@
                         <div class="breadcrumb">
                             Denúncias / Detalhes
                         </div>
-                        <h1>Denúncia #<%= denuncia.id %></h1>
+                        <h1>Denúncia #<%= denuncia.idDenuncia %></h1>
                         <p class="subtitulo">
                             Registro de ocorrência de <%= denuncia.tipo %>
                         </p>
@@ -75,17 +75,17 @@
 
                                 <div class="informacao">
                                     <span>Denunciante</span>
-                                    <strong><%= denuncia.denunciante %></strong>
+                                    <strong><%= denuncia.nomeUsuario %></strong>
                                 </div>
 
                                 <div class="informacao">
                                     <span>Data de registro</span>
-                                    <strong><%= denuncia.dataRegistro %></strong>
+                                    <strong><%= denuncia.dataAbertura %></strong>
                                 </div>
 
                                 <div class="informacao informacao-local">
                                     <span>Localização</span>
-                                    <strong><%= denuncia.localizacao %></strong>
+                                    <strong><%= denuncia.endereco %></strong>
                                 </div>
                             </div>
                         </div>
@@ -117,13 +117,17 @@
                             </div>
 
                             <div class="evidencias">
-                                <% if (denuncia.evidencias && denuncia.evidencias.length > 0) { %>
-                                    <% denuncia.evidencias.forEach((img, index) => { %>
+                                <% if (evidencias && evidencias.length > 0) { %>
+                                    <% evidencias.forEach((evidencia, index) => { %>
                                         <div class="evidencia">
                                             <div class="imagem-placeholder">
-                                                <img src="<%= img %>" alt="Evidência <%= index + 1 %>">
+                                                <img
+                                                 src="<%= evidencia.dadosEvidencia %>" 
+                                                 alt="Evidência <%= index + 1 %>">
                                             </div>
-                                            <span>Imagem 0<%= index + 1 %></span>
+                                            <span>
+                                                Evidência<%= index + 1 %>
+                                            </span>
                                         </div>
                                     <% }) %>
                                 <% } else { %>
@@ -144,7 +148,7 @@
                             <div class="historico">
                                 <% if (historico && historico.length > 0) { %>
                                     <% historico.forEach(item => { %>
-                                        <div class="evento <%= item.ativo ? 'ativo' : '' %>">
+                                        <div class="evento">
                                             <div class="evento-ponto"></div>
                                             <div class="evento-conteudo">
                                                 <strong><%= item.titulo %></strong>
@@ -183,7 +187,7 @@
                             </div>
 
                             <!-- Formulário para Enviar Nova Mensagem -->
-                            <form action="/denuncia/<%= denuncia.id %>/mensagem" method="POST" class="form-mensagem">
+                            <form action="/denunciaDetalhe/<%= denuncia.idDenuncia %>/mensagem" method="POST" class="form-mensagem">
                                 <div style="display: flex; flex-direction: column; gap: 10px;">
                                     <textarea name="texto" rows="3" placeholder="Escreva uma atualização ou dúvida pública sobre este chamado..." required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;"></textarea>
                                     <button type="submit" style="align-self: flex-end; padding: 10px 20px; cursor: pointer;">
@@ -202,7 +206,7 @@
 
                             <div class="resumo-item">
                                 <span>ID</span>
-                                <strong>#<%= denuncia.id %></strong>
+                                <strong>#<%= denuncia.idDenuncia %></strong>
                             </div>
 
                             <div class="resumo-item">
@@ -217,7 +221,7 @@
 
                             <div class="resumo-item">
                                 <span>Responsável</span>
-                                <strong><%= denuncia.responsavel || 'A definir' %></strong>
+                                <strong><%= denuncia.nomeFiscal || 'A definir' %></strong>
                             </div>
                         </div>
                     </aside>

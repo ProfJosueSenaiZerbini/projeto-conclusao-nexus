@@ -79,302 +79,246 @@
           </div> 
  
           <!-- TABELA --> 
-          <div class="tabela"> 
+           
+          <div class="tabela">
 
-            <div class="cabecalho"> 
-              <div>ID</div> 
-              <div>TIPO</div> 
-              <div>LOCAL</div> 
-              <div>DATA</div> 
-              <div>USUÁRIO</div> 
-              <div>STATUS</div> 
-              <div>PRIORIDADE</div> 
-              <div>AÇÕES</div> 
-            </div> 
- 
-            <!-- LINHA 001 --> 
-            <div class="linha"> 
+    <!-- CABEÇALHO -->
 
-              <div class="celula">001</div> 
-              <div class="celula">Buraco</div> 
-              <div class="celula">Centro</div> 
-              <div class="celula">20/08/2026</div> 
-              <div class="celula">João</div> 
- 
-              <div class="celula"> 
-                <span class="status em-analise"> 
-                  Em análise 
-                </span> 
-              </div> 
- 
-              <div class="celula"> 
-                <span class="prioridade alta"> 
-                  Alta 
-                </span> 
-              </div> 
- 
-              <div class="celula acoes"> 
+    <div class="cabecalho">
 
-                <button type="button" title="Visualizar">
-                  👁
-                </button> 
+        <div>ID</div>
+        <div>TIPO</div>
+        <div>LOCAL</div>
+        <div>DATA</div>
+        <div>USUÁRIO</div>
+        <div>STATUS</div>
+        <div>PRIORIDADE</div>
+        <div>AÇÕES</div>
+
+    </div>
 
 
-                <!-- LÁPIS / MENU -->
-                <details class="menu-editar">
+    <!-- DENÚNCIAS DO BANCO -->
 
-                  <summary class="btn-editar" title="Editar">
-                    ✎
-                  </summary>
+    <% if (denuncias && denuncias.length > 0) { %>
 
-                  <div class="opcoes-editar">
+        <% denuncias.forEach(denuncia => { %>
 
-                    <form action="/denunciaDetalhe" method="POST">
+            <div class="linha">
 
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="aprovar" 
-                        class="btn btn-aprovar"
-                      >
-                        <span>✓</span>
-                        Aprovar denúncia
-                      </button>
+                <!-- ID -->
 
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="encaminhar" 
-                        class="btn"
-                      >
-                        <span>→</span>
-                        Encaminhar
-                      </button>
+                <div class="celula">
 
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="alterar_status" 
-                        class="btn"
-                      >
-                        <span>↻</span>
-                        Alterar status
-                      </button>
+                    <%= denuncia.idDenuncia %>
 
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="arquivar" 
-                        class="btn btn-arquivar"
-                      >
-                        <span>□</span>
-                        Arquivar denúncia
-                      </button>
-
-                    </form>
-
-                  </div>
-
-                </details>
+                </div>
 
 
-                <button type="button" title="Mais opções">
-                  ⋮
-                </button> 
+                <!-- TIPO -->
 
-              </div> 
-            </div> 
+                <div class="celula">
 
+                    <%= denuncia.tipo %>
 
-            <!-- LINHA 002 --> 
-            <div class="linha"> 
-
-              <div class="celula">002</div> 
-              <div class="celula">Iluminação</div> 
-              <div class="celula">Vila Nova</div> 
-              <div class="celula">19/08/2026</div> 
-              <div class="celula">Maria</div> 
- 
-              <div class="celula"> 
-                <span class="status resolvida"> 
-                  Resolvida 
-                </span> 
-              </div> 
- 
-              <div class="celula"> 
-                <span class="prioridade media"> 
-                  Média 
-                </span> 
-              </div> 
- 
-              <div class="celula acoes"> 
-
-                <button type="button" title="Visualizar">
-                  👁
-                </button> 
+                </div>
 
 
-                <!-- LÁPIS / MENU -->
-                <details class="menu-editar">
+                <!-- LOCAL -->
 
-                  <summary class="btn-editar" title="Editar">
-                    ✎
-                  </summary>
+                <div class="celula">
 
-                  <div class="opcoes-editar">
+                    <%= denuncia.endereco %>
 
-                    <form action="/denunciaDetalhe" method="POST">
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="aprovar" 
-                        class="btn btn-aprovar"
-                      >
-                        <span>✓</span>
-                        Aprovar denúncia
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="encaminhar" 
-                        class="btn"
-                      >
-                        <span>→</span>
-                        Encaminhar
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="alterar_status" 
-                        class="btn"
-                      >
-                        <span>↻</span>
-                        Alterar status
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="arquivar" 
-                        class="btn btn-arquivar"
-                      >
-                        <span>□</span>
-                        Arquivar denúncia
-                      </button>
-
-                    </form>
-
-                  </div>
-
-                </details>
+                </div>
 
 
-                <button type="button" title="Mais opções">
-                  ⋮
-                </button> 
+                <!-- DATA -->
 
-              </div> 
-            </div> 
+                <div class="celula">
 
+                    <%= denuncia.dataOcorrencia
+                        ? new Date(denuncia.dataOcorrencia).toLocaleDateString("pt-BR")
+                        : "-"
+                    %>
 
-            <!-- LINHA 003 --> 
-            <div class="linha"> 
-
-              <div class="celula">003</div> 
-              <div class="celula">Lixo</div> 
-              <div class="celula">Centro</div> 
-              <div class="celula">18/08/2026</div> 
-              <div class="celula">Carlos</div> 
- 
-              <div class="celula"> 
-                <span class="status em-analise"> 
-                  Em análise 
-                </span> 
-              </div> 
- 
-              <div class="celula"> 
-                <span class="prioridade baixa"> 
-                  Baixa 
-                </span> 
-              </div> 
- 
-              <div class="celula acoes"> 
-
-                <button type="button" title="Visualizar">
-                  👁
-                </button> 
+                </div>
 
 
-                <!-- LÁPIS / MENU -->
-                <details class="menu-editar">
+                <!-- USUÁRIO -->
 
-                  <summary class="btn-editar" title="Editar">
-                    ✎
-                  </summary>
+                <div class="celula">
 
-                  <div class="opcoes-editar">
+                    <%= denuncia.nomeUsuario %>
 
-                    <form action="/denunciaDetalhe" method="POST">
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="aprovar" 
-                        class="btn btn-aprovar"
-                      >
-                        <span>✓</span>
-                        Aprovar denúncia
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="encaminhar" 
-                        class="btn"
-                      >
-                        <span>→</span>
-                        Encaminhar
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="alterar_status" 
-                        class="btn"
-                      >
-                        <span>↻</span>
-                        Alterar status
-                      </button>
-
-                      <button 
-                        type="submit" 
-                        name="acao" 
-                        value="arquivar" 
-                        class="btn btn-arquivar"
-                      >
-                        <span>□</span>
-                        Arquivar denúncia
-                      </button>
-
-                    </form>
-
-                  </div>
-
-                </details>
+                </div>
 
 
-                <button type="button" title="Mais opções">
-                  ⋮
-                </button> 
+                <!-- STATUS -->
 
-              </div> 
+                <div class="celula">
 
-            </div> 
+                    <span class="status
+                        <%= denuncia.status === 'Resolvida'
+                            ? 'resolvida'
+                            : 'em-analise'
+                        %>">
 
-          </div> 
+                        <%= denuncia.status %>
+
+                    </span>
+
+                </div>
+
+
+                <!-- PRIORIDADE -->
+
+                <div class="celula">
+
+                    <span class="prioridade
+                        <%= denuncia.prioridade === 'Alta'
+                            ? 'alta'
+                            : denuncia.prioridade === 'Baixa'
+                                ? 'baixa'
+                                : 'media'
+                        %>">
+
+                        <%= denuncia.prioridade %>
+
+                    </span>
+
+                </div>
+
+
+                <!-- AÇÕES -->
+
+                <div class="celula acoes">
+
+                    <!-- VISUALIZAR -->
+
+                    <button
+                        type="button"
+                        title="Visualizar"
+                        onclick="window.location.href='/denunciaDetalhe/<%= denuncia.idDenuncia %>'">
+
+                        👁
+
+                    </button>
+
+
+                    <!-- MENU EDITAR -->
+
+                    <details class="menu-editar">
+
+                        <summary
+                            class="btn-editar"
+                            title="Editar">
+
+                            ✎
+
+                        </summary>
+
+
+                        <div class="opcoes-editar">
+
+                            <!-- ALTERAR STATUS -->
+
+                            <form
+                                action="/denunciaAdm/<%= denuncia.idDenuncia %>/status"
+                                method="POST">
+
+                                <select
+                                    name="status"
+                                    required>
+
+                                    <option value="">
+                                        Alterar status
+                                    </option>
+
+                                    <option value="Pendente">
+                                        Pendente
+                                    </option>
+
+                                    <option value="Em análise">
+                                        Em análise
+                                    </option>
+
+                                    <option value="Resolvida">
+                                        Resolvida
+                                    </option>
+
+                                    <option value="Arquivada">
+                                        Arquivada
+                                    </option>
+
+                                </select>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-aprovar">
+
+                                    ✓ Alterar status
+
+                                </button>
+
+                            </form>
+
+
+                            <!-- ABRIR DETALHES -->
+
+                            <form
+                                action="/denunciaDetalhe/<%= denuncia.idDenuncia %>"
+                                method="GET">
+
+                                <button
+                                    type="submit"
+                                    class="btn">
+
+                                    👁 Ver detalhes
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </details>
+
+
+                    <!-- MAIS OPÇÕES -->
+
+                    <button
+                        type="button"
+                        title="Mais opções">
+
+                        ⋮
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } else { %>
+
+        <div class="linha">
+
+            <div
+                class="celula"
+                style="grid-column: 1 / -1;">
+
+                Nenhuma denúncia encontrada.
+
+            </div>
+
+        </div>
+
+    <% } %>
+
+</div>
 
         </main> 
 

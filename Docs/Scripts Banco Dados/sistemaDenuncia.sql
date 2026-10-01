@@ -80,3 +80,33 @@ CREATE TABLE NOTIFICACAO (
         FOREIGN KEY (idUsuario) REFERENCES USUARIO(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE HISTORICO_DENUNCIA (
+    idHistorico INT PRIMARY KEY AUTO_INCREMENT,
+    idDenuncia INT NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    dataHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_historico_denuncia
+        FOREIGN KEY (idDenuncia)
+        REFERENCES DENUNCIA(idDenuncia)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE MENSAGEM_DENUNCIA (
+    idMensagem INT PRIMARY KEY AUTO_INCREMENT,
+    idDenuncia INT NOT NULL,
+    idUsuario INT NOT NULL,
+    texto TEXT NOT NULL,
+    dataHora DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_mensagem_denuncia
+        FOREIGN KEY (idDenuncia)
+        REFERENCES DENUNCIA(idDenuncia)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_mensagem_usuario
+        FOREIGN KEY (idUsuario)
+        REFERENCES USUARIO(id)
+        ON DELETE CASCADE
+);
