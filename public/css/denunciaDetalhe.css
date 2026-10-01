@@ -45,10 +45,90 @@ body {
     border-radius: 10px;
     padding: 22px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    margin-bottom: 40px;
 }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .card-header h2 { font-size: 16px; font-weight: 600; color: #263238; margin-bottom: 4px; }
 .card-header p { font-size: 12px; color: #7a858f; }
+
+/* =========================================
+   ABAS DA DENÚNCIA
+   ========================================= */
+
+.abas {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #e1e5e8;
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 20px;
+}
+
+/* Botão de cada aba */
+.aba {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #6f7a83;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Quando passar o mouse */
+.aba:hover {
+    background: #f3f6f4;
+    color: #1C4532;
+}
+
+/* Aba selecionada */
+.aba.ativa {
+    background: #1C4532;
+    color: #ffffff;
+}
+
+/* Conteúdo das abas */
+.conteudo-aba {
+    display: none;
+}
+
+/* Conteúdo da aba atualmente selecionada */
+.conteudo-aba.ativa {
+    display: block;
+}
+
+.imagem-placeholder {
+    height: 220px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #dfe3e6;
+    background: #eef1f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagem-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.abas {
+    overflow-x: auto;
+}
+
+.aba {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 11px 14px;
+}
 
 /* INFORMAÇÕES & DESCRIÇÃO */
 .grid-informacoes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }

@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require("morgan");
 require('dotenv').config(); /* Puxa os dados escritos no arquivo .env */
-
+const session = require('express-session');
 /* Importa as rotas */
 const loginRoutes = require('./routes/loginRoutes');
 const cadastroRoutes = require('./routes/cadastroRoutes');
@@ -12,6 +12,7 @@ const notificacoesRoutes = require('./routes/notificacoesRoutes');
 const denunciaAdmRoutes = require('./routes/denunciaAdm.routes');
 const feedRoutes = require('./routes/feedDenunciaRoutes');
 const denunciaDetalheRoutes = require('./routes/denunciaDetalheRoutes');
+const dashboardAdminRoutes = require('./routes/dashboardAdminRoutes');
 
 const app = express();
 const PORTA = Number(process.env.PORTA);
@@ -27,6 +28,11 @@ app.use(express.static(path.join(__dirname, 'public'))); /* Puxa os dados atribu
 app.use(express.urlencoded({ extended: true })); /* Permite ler dados enviados por formulários em html */
 app.use(express.json()); /* Transforma os dados em JSON em um objeto JavaScript permitindo que o express entenda */
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
 
 /* Registra a rota */
 app.get("/", (req, res) => {
@@ -45,6 +51,7 @@ app.use('/notificacoes', notificacoesRoutes);
 app.use('/denunciaAdm', denunciaAdmRoutes);
 app.use('/feedDenuncia', feedRoutes);
 app.use('/denunciaDetalhe', denunciaDetalheRoutes);
+app.use('/dashboardAdmin', dashboardAdminRoutes);
 
 app.listen(PORTA, () => {
   console.log(`Servidor rodando em http://localhost:${PORTA}/login`);

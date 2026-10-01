@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
+const {
+    verificarUsuario
+} = require('../middlewares/autenticacao');
+
+router.get('/', verificarUsuario, (req, res) => {
     res.render('dashboardUsuario');
 });
 
