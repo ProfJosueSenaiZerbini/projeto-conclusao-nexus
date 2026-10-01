@@ -1,117 +1,43 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-
-<<<<<<< HEAD
 const path = require("path");
+const fs = require("fs");
+const { executarQuery } = require("../db/dbConnect");
+const { verificarUsuario } = require("../middlewares/autenticacao");
 
-const {executarQuery} = require("../db/dbConnect");
-
-//================================
-// CONFIGURAÇÃO DO MULTER
-//================================
+const pastaUploads = path.join(__dirname, "..", "public", "uploads");
+fs.mkdirSync(pastaUploads, { recursive: true });
 
 const storage = multer.diskStorage({
-
-    destination: function (req, file, cb) {
-        cb(null, "public/uploads");
-
-    },
-
-    filename: function (req, file, cb) {
-        const nomeArquivo =
-        Date.now() + "-" + file.originalname;
-
-        cb(null, nomeArquivo);
+    destination: (_req, _file, cb) => cb(null, pastaUploads),
+    filename: (_req, file, cb) => {
+        const extensao = path.extname(file.originalname);
+        const nomeSeguro = path
+            .basename(file.originalname, extensao)
+            .replace(/[^a-zA-Z0-9_-]/g, "_");
+        cb(null, `${Date.now()}-${nomeSeguro}${extensao}`);
     }
 });
 
 const upload = multer({
-    storage: storage
+    storage,
+    limits: { files: 10, fileSize: 20 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => {
+        if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+            return cb(null, true);
+        }
+        cb(new Error("Apenas imagens e vídeos são permitidos."));
+    }
 });
 
-//=================================
-//TELA DE NOVA DENÚNCIA
-//=================================
-
-router.get("/", (req, res) => {
+router.get("/", verificarUsuario, (req, res) => {
     res.render("denunciaUsuario");
 });
 
-//=========================
-//RECEBER NOVA DENÚNCIA
-//=========================
-
-router.post("/", upload.array("arquivo"), async (req, res) => {
-
-    try {
-
-        console.log("=================================");
-        console.log("NOVA DENÚNCIA");
-        console.log(req.body);
-        console.log("=================================");
-
-
-        // ================================
-        // DADOS DO FORMULÁRIO
-        // ================================
-
-        const {
-            visibilidade,
-            categoria,
-            titulo,
-            descricao,
-            local,
-            data
-        } = req.body;
-
-
-        // ================================
-        // USUÁRIO
-        // ================================
-
-        // Temporariamente estamos usando
-        // o usuário de ID 1.
-
-        const idUsuario = 1;
-
-
-        // ================================
-        // LOCALIZAÇÃO
-        // ================================
-
-        const resultadoLocalizacao = await executarQuery(
-
-            `INSERT INTO LOCALIZACAO
-            (tipo, endereco)
-            VALUES (?, ?)`,
-
-=======
-const { executarQuery } = require('../db/dbConnect');
-
-// =================================
-// TELA DE NOVA DENÚNCIA
-// =================================
-router.get("/", (req, res) => {
-
-    res.render("denunciaUsuario");
-
-});
-
-
-// =================================
-// RECEBER NOVA DENÚNCIA
-// =================================
-router.post("/", async (req, res) => {
-
-    console.log("=================================");
-    console.log("NOVA DENÚNCIA RECEBIDA");
-    console.log("=================================");
-
-    console.log("Dados recebidos:", req.body);
-
-
+router.post("/", verificarUsuario, upload.array("arquivo"), async (req, res) => {
     const {
+        visibilidade,
         categoria,
         titulo,
         descricao,
@@ -119,224 +45,76 @@ router.post("/", async (req, res) => {
         data
     } = req.body;
 
+    const idUsuario = req.session.usuario.id;
+
+    if (!categoria || !titulo || !descricao || !local) {
+        return res.status(400).send("Preencha todos os campos obrigatórios da denúncia.");
+    }
 
     try {
-
-        // =================================
-        // 1. CADASTRAR LOCALIZAÇÃO
-        // =================================
-
         const resultadoLocalizacao = await executarQuery(
-            `
-            INSERT INTO LOCALIZACAO
-            (tipo, endereco)
-            VALUES (?, ?)
-            `,
->>>>>>> a285639def4cc197bc03539761926819b8452411
-            [
-                "Manual",
-                local
-            ]
-<<<<<<< HEAD
-
+            `INSERT INTO LOCALIZACAO (tipo, endereco) VALUES (?, ?)`,
+            ["Manual", local.trim()]
         );
 
+        const idLocalizacao = Number(resultadoLocalizacao.insertId);
 
-        const idLocalizacao =
-            Number(resultadoLocalizacao.insertId);
-
-
-        // ================================
-        // DENÚNCIA
-        // ================================
+        // O banco atual não possui colunas separadas para título, data de ocorrência
+        // e visibilidade. Mantemos essas informações no histórico/descrição sem
+        // alterar a estrutura existente do banco.
+        const descricaoCompleta = [
+            `Título: ${titulo.trim()}`,
+            `Visibilidade: ${visibilidade === "anonimo" ? "Anônima" : "Identificada"}`,
+            data ? `Data da ocorrência: ${data}` : null,
+            "",
+            descricao.trim()
+        ].filter(Boolean).join("\n");
 
         const resultadoDenuncia = await executarQuery(
-
             `INSERT INTO DENUNCIA
-            (
-                idUsuario,
-                titulo,
-                tipo,
-                descricao,
-                dataOcorrencia,
-                visibilidade,
-=======
-        );
-
-
-        const idLocalizacao = resultadoLocalizacao.insertId;
-
-        console.log(
-            "Localização criada:",
-            idLocalizacao
-        );
-
-
-        // =================================
-        // 2. CADASTRAR DENÚNCIA
-        // =================================
-
-        const resultadoDenuncia = await executarQuery(
-            `
-            INSERT INTO DENUNCIA
-            (
-                idUsuario,
-                tipo,
-                descricao,
->>>>>>> a285639def4cc197bc03539761926819b8452411
-                status,
-                prioridade,
-                idLocalizacao
-            )
-<<<<<<< HEAD
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-
+                (idUsuario, tipo, descricao, status, prioridade, idLocalizacao)
+             VALUES (?, ?, ?, ?, ?, ?)`,
             [
                 idUsuario,
-                titulo,
                 categoria,
-                descricao,
-                data || null,
-                visibilidade,
+                descricaoCompleta,
                 "Pendente",
                 "Média",
                 idLocalizacao
             ]
-
         );
 
+        const idDenuncia = Number(resultadoDenuncia.insertId);
 
-        const idDenuncia =
-            Number(resultadoDenuncia.insertId);
+        await executarQuery(
+            `INSERT INTO HISTORICO_DENUNCIA (idDenuncia, titulo)
+             VALUES (?, ?)`,
+            [idDenuncia, "Denúncia registrada"]
+        );
 
-            // ================================
-// CRIAR PRIMEIRO REGISTRO DO HISTÓRICO
-// ================================
+        for (const arquivo of req.files || []) {
+            const tipoEvidencia = arquivo.mimetype.startsWith("image/")
+                ? "imagem"
+                : "video";
 
-await executarQuery(
-
-    `INSERT INTO HISTORICO_DENUNCIA
-    (
-        idDenuncia,
-        titulo
-    )
-    VALUES (?, ?)`,
-
-    [
-        idDenuncia,
-        "Denúncia registrada"
-    ]
-
-);
-
-        // ================================
-        // EVIDÊNCIAS
-        // ================================
-
-        if (req.files && req.files.length > 0) {
-
-            for (const arquivo of req.files) {
-
-                let tipoEvidencia = "arquivo";
-
-                if (arquivo.mimetype.startsWith("image/")) {
-
-                    tipoEvidencia = "imagem";
-
-                } else if (arquivo.mimetype.startsWith("video/")) {
-
-                    tipoEvidencia = "video";
-
-                }
-
-
-                await executarQuery(
-
-                    `INSERT INTO EVIDENCIA
-                    (
-                        idDenuncia,
-                        tipoEvidencia,
-                        fotoVideoAudio,
-                        dadosEvidencia
-                    )
-                    VALUES (?, ?, ?, ?)`,
-
-                    [
-                        idDenuncia,
-                        tipoEvidencia,
-                        null,
-                        `/uploads/${arquivo.filename}`
-                    ]
-
-                );
-
-            }
-
+            await executarQuery(
+                `INSERT INTO EVIDENCIA
+                    (idDenuncia, tipoEvidencia, fotoVideoAudio, dadosEvidencia)
+                 VALUES (?, ?, ?, ?)`,
+                [
+                    idDenuncia,
+                    tipoEvidencia,
+                    null,
+                    `/uploads/${arquivo.filename}`
+                ]
+            );
         }
 
-
-        // ================================
-        // REDIRECIONAR
-        // ================================
-
-        res.redirect(`/denunciaDetalhe/${idDenuncia}`);
-=======
-            VALUES (?, ?, ?, ?, ?, ?)
-            `,
-            [
-                1,
-                categoria,
-                `Título: ${titulo}\n\n${descricao}`,
-                "Em análise",
-                "Média",
-                idLocalizacao
-            ]
-        );
-
-
-        // =================================
-        // 3. PEGAR ID DA DENÚNCIA
-        // =================================
-
-        const idDenuncia = resultadoDenuncia.insertId;
-
-        console.log(
-            "Denúncia criada:",
-            idDenuncia
-        );
-
-
-        // =================================
-        // 4. MANDAR PARA DENUNCIA DETALHE
-        // =================================
-
-        res.redirect(
-            `/denunciaDetalhe/${idDenuncia}`
-        );
-
->>>>>>> a285639def4cc197bc03539761926819b8452411
-
+        return res.redirect(`/denunciaDetalhe/${idDenuncia}`);
     } catch (erro) {
-
-        console.error(
-            "Erro ao cadastrar denúncia:",
-            erro
-        );
-
-        res.status(500).send(
-            "Erro ao cadastrar denúncia."
-        );
-
+        console.error("Erro ao cadastrar denúncia:", erro);
+        return res.status(500).send("Erro ao cadastrar denúncia.");
     }
-
 });
-
-
-router.get("/notificacoes", (req, res) => {
-
-    res.render("notificacoes");
-
-});
-
 
 module.exports = router;
