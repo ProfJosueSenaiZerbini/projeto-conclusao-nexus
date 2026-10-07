@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ativação</title>
+</head>
+
+<body>
+
+    <h1>Ativação do sistema</h1>
+
+    <p>Digite o código de ativação fornecido pela organização.</p>
+
+    <% if (mensagemErro) { %>
+        <p style="color: red;">
+            <%= mensagemErro %>
+        </p>
+    <% } %>
+
+    <form action="/ativacao" method="POST">
+
+        <input
+            type="text"
+            name="codigo"
+            placeholder="Código de ativação"
+            required
+        >
+
+        <button type="submit">
+            Validar código
+        </button>
+
+    </form>
+
+</body>
+</html>
