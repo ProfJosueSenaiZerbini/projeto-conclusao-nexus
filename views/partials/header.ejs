@@ -4,12 +4,7 @@
 
     <div class="header-left">
 
-        <button
-            id="menu-toggle"
-            class="icon-button"
-            type="button"
-            aria-label="Abrir menu"
-        >
+        <button id="menu-toggle" class="icon-button" type="button" aria-label="Abrir menu">
             <i class="ph ph-list"></i>
         </button>
 
@@ -21,23 +16,52 @@
 
         <div class="header-divider"></div>
 
-        <button class="profile-button" type="button">
+        <div class="profile-wrapper">
+            <button class="profile-button" id="profile-button" type="button" aria-expanded="false"
+                aria-controls="profile-dropdown">
 
-            <div class="profile-icon">
-                <i class="ph ph-user"></i>
-            </div>
+                <div class="profile-icon">
+                    <i class="ph ph-user"></i>
+                </div>
 
-            <div class="profile-info">
+                <div class="profile-info">
+                    <strong>
+                        <%= usuario ? usuario.nome : 'Visitante' %>
+                    </strong>
+                    <span>
+                        <%= usuario ? (usuario.tipo==='admin' ? 'Administrador' : 'Usuário' ) : 'Não autenticado' %>
+                    </span>
+                </div>
 
-                <strong>Nome do Usuário</strong>
-                <span>Usuário Padrão</span>
+                <i class="ph ph-caret-down profile-arrow"></i>
 
-            </div>
+            </button>
 
-            <i class="ph ph-caret-down profile-arrow"></i>
+            <% if (usuario) { %>
+                <div class="profile-dropdown" id="profile-dropdown" hidden>
+                    <div class="profile-dropdown-user">
+                        <strong>
+                            <%= usuario.nome %>
+                        </strong>
+                        <span>
+                            <%= usuario.email %>
+                        </span>
+                    </div>
 
-        </button>
+                    <div class="dropdown-divider"></div>
+
+                    <form action="/login/logout" method="POST">
+                        <button class="logout-button" type="submit">
+                            <i class="ph ph-sign-out"></i>
+                            <span>Sair</span>
+                        </button>
+                    </form>
+                </div>
+                <% } %>
+        </div>
 
     </div>
 
 </header>
+
+<script src="/js/header.js"></script>

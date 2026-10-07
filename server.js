@@ -37,6 +37,12 @@ app.use(session({
     saveUninitialized: false
 }));
 
+// Disponibiliza os dados do usuário logado para todas as views EJS.
+app.use((req, res, next) => {
+  res.locals.usuario = req.session.usuario || null;
+  next();
+});
+
 /* Registra a rota */
 app.get("/", (req, res) => {
   res.render("index", { erro: null })
