@@ -62,23 +62,10 @@ body {
     padding: 0;
 }
 
-.tipo {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin-bottom: 5px;
-}
-
-.tipo label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.tipo input[type="radio"] {
-    cursor: pointer;
+.mensagem-erro {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .input-cadastro {

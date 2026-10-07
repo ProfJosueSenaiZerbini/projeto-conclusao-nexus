@@ -16,19 +16,12 @@
             </div>
             <h1 class="titulo">Cadastre-se</h1>
             <div class="input-box">
+
                 <form action="/cadastro" method="POST">
 
-                    <div class="tipo">
-                        <label>
-                            <input type="radio" name="tipo" value="admin">
-                            Administrador
-                        </label>
-
-                        <label>
-                            <input type="radio" name="tipo" value="usuario" checked>
-                            Usuário
-                        </label>
-                    </div>
+                    <% if (mensagemErro) { %>
+                        <p class="mensagem-erro"><%= mensagemErro %></p>
+                    <% } %>
 
                     <input class="input-cadastro" type="text" name="nome" placeholder="Nome" required>
                     <input class="input-cadastro" type="email" name="email" placeholder="E-mail" required>

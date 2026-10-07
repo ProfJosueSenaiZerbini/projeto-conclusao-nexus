@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
 const morgan = require("morgan");
-require('dotenv').config(); /* Puxa os dados escritos no arquivo .env */
+/* Puxa os dados escritos no arquivo .env */
+require('dotenv').config();
 const session = require('express-session');
+
 /* Importa as rotas */
 const loginRoutes = require('./routes/loginRoutes');
 const cadastroRoutes = require('./routes/cadastroRoutes');
@@ -13,6 +15,7 @@ const denunciaAdmRoutes = require('./routes/denunciaAdm.routes');
 const feedRoutes = require('./routes/feedDenunciaRoutes');
 const denunciaDetalheRoutes = require('./routes/denunciaDetalheRoutes');
 const dashboardAdminRoutes = require('./routes/dashboardAdminRoutes');
+const codigoAtivacaoRoutes = require('./routes/codigoAtivacaoRoutes');
 
 const app = express();
 const PORTA = Number(process.env.PORTA);
@@ -52,6 +55,7 @@ app.use('/denunciaAdm', denunciaAdmRoutes);
 app.use('/feedDenuncia', feedRoutes);
 app.use('/denunciaDetalhe', denunciaDetalheRoutes);
 app.use('/dashboardAdmin', dashboardAdminRoutes);
+app.use('/ativacao', codigoAtivacaoRoutes);
 
 app.listen(PORTA, () => {
   console.log(`Servidor rodando em http://localhost:${PORTA}/login`);
