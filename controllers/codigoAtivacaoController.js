@@ -40,8 +40,9 @@ async function validarCodigo(req, res) {
 
         // Código válido
         return res.render('cadastroFiscal', {
-            codigo: codigo
-        });
+            codigo: codigo,
+            mensagemErro: null
+});
 
     } catch (erro) {
 

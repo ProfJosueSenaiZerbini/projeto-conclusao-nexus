@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Fiscal</title>
+</head>
+
+<body>
+
+    <h1>Cadastro do primeiro fiscal</h1>
+
+    <p>Preencha os dados do administrador do sistema.</p>
+
+    <% if (mensagemErro) { %>
+        <p style="color: red;">
+            <%= mensagemErro %>
+        </p>
+    <% } %>
+
+    <form action="/ativacao/cadastro" method="POST">
+
+        <input
+            type="text"
+            name="nome"
+            placeholder="Nome"
+            required
+        >
+
+        <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            required
+        >
+
+        <input
+            type="text"
+            name="cpf"
+            placeholder="CPF"
+            required
+        >
+
+        <input
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            required
+        >
+
+        <input
+            type="hidden"
+            name="codigo"
+            value="<%= codigo %>"
+        >
+
+        <button type="submit">
+            Criar Fiscal
+        </button>
+
+    </form>
+
+</body>
+</html>
