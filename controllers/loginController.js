@@ -34,6 +34,8 @@ async function login(req, res) {
 
             req.session.usuario = {
                 id: usuario[0].id,
+                nome: usuario[0].nome,
+                email: usuario[0].email,
                 tipo: 'usuario'
             };
 
@@ -58,10 +60,12 @@ async function login(req, res) {
 
             req.session.usuario = {
                 id: fiscal[0].id,
+                nome: fiscal[0].nome,
+                email: fiscal[0].email,
                 tipo: 'admin'
             };
 
-            return res.redirect('/dashboardAdm');
+            return res.redirect('/dashboardAdmin');
         }
 
 

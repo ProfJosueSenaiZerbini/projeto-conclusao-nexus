@@ -160,6 +160,80 @@ button {
 }
 
 
+/* ===== DROPDOWN DO PERFIL ===== */
+
+.profile-wrapper {
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 230px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    padding: 8px;
+    z-index: 1100;
+}
+
+.profile-dropdown[hidden] {
+    display: none;
+}
+
+.profile-dropdown-user {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 9px 10px;
+}
+
+.profile-dropdown-user strong {
+    color: #1f2937;
+    font-size: 13px;
+}
+
+.profile-dropdown-user span {
+    color: #64748b;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 4px 0;
+}
+
+.profile-dropdown form {
+    margin: 0;
+}
+
+.logout-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 0;
+    background: transparent;
+    color: #dc2626;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+}
+
+.logout-button:hover {
+    background: #fef2f2;
+}
+
+
 /* ===== RESPONSIVO DO HEADER ===== */
 
 @media (max-width: 768px) {

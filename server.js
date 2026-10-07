@@ -3,6 +3,7 @@ const path = require('path');
 const morgan = require("morgan");
 require('dotenv').config(); /* Puxa os dados escritos no arquivo .env */
 const session = require('express-session');
+
 /* Importa as rotas */
 const loginRoutes = require('./routes/loginRoutes');
 const cadastroRoutes = require('./routes/cadastroRoutes');
@@ -33,6 +34,12 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+// Disponibiliza os dados do usuário logado para todas as views EJS.
+app.use((req, res, next) => {
+  res.locals.usuario = req.session.usuario || null;
+  next();
+});
 
 /* Registra a rota */
 app.get("/", (req, res) => {
