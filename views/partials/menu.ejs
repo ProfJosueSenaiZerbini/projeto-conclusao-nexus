@@ -9,10 +9,6 @@
         Denúncia
     </a>
 
-    <a href="/denunciaDetalhe" class="item-menu">
-        Denúncia / Detalhes
-    </a>
-
     <a href="/notificacoes" class="item-menu">
         <span>Notificações</span>
         <!-- Renderiza a bolinha APENAS se houver notificações não lidas (maior que 0) -->
@@ -26,10 +22,12 @@
     </a>
 
     <div class="sidebar-footer">
-        <a href="/login" class="logout">
-            <i class="ph ph-sign-out"></i>
-            <span>Sair da conta</span>
-        </a>
+        <form action="/login/logout" method="POST">
+            <button type="submit" class="logout">
+                <i class="ph ph-sign-out"></i>
+                <span>Sair da conta</span>
+            </button>
+        </form>
     </div>
 
 </aside>

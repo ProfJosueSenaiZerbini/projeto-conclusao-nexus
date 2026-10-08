@@ -19,7 +19,7 @@
         <div class="pagina">
             <div class="container">
 
-                <%- include("partials/menu") %>
+                <%- include(usuario && usuario.tipo === 'admin' ? "partials/menuAdm" : "partials/menu") %>
 
                     <main class="area-feed">
 
