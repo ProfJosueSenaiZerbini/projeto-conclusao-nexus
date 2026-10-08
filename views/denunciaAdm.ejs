@@ -1,5 +1,80 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html> 
+<html lang="en"> 
+  <head> 
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>Denúncias</title> 
+ 
+    <link rel="stylesheet" href="/css/denunciaAdm.css" /> 
+ 
+    <link rel="stylesheet" href="/css/menu.css" /> 
+ 
+    <link rel="stylesheet" href="/css/header.css" /> 
+  </head> 
+ 
+  <body> 
+    <%- include('partials/header') %> 
+ 
+    <div class="pagina"> 
+      <div class="conteudo"> 
+        <%- include("partials/menuAdm") %> 
+ 
+        <!-- ÁREA PRINCIPAL --> 
+        <main class="area-principal"> 
+          
+          <!-- BUSCA --> 
+          <div class="area-busca"> 
+            <div class="campo-busca"> 
+              <input 
+                type="text" 
+                placeholder="Buscar por denúncia" 
+                aria-label="Buscar por denúncia" 
+              /> 
+ 
+              <button type="button" aria-label="Pesquisar">🔍</button> 
+            </div> 
+          </div> 
+ 
+          <!-- FILTROS --> 
+          <div class="filtros"> 
+            
+            <div class="filtro"> 
+              <label for="categoria">Categoria</label> 
+ 
+              <select id="categoria"> 
+                <option>Todos</option> 
+                <option>Criação de Sites</option> 
+                <option>Design</option> 
+                <option>Consultoria</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="bairro">Bairro</label> 
+ 
+              <select id="bairro"> 
+                <option>Todos</option> 
+                <option>Centro</option> 
+                <option>Jardim América</option> 
+                <option>Vila Nova</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="status">Status</label> 
+ 
+              <select id="status"> 
+                <option>Todos</option> 
+                <option>Em análise</option> 
+                <option>Resolvida</option> 
+              </select> 
+            </div> 
+ 
+            <div class="filtro"> 
+              <label for="data">Data</label> 
+ 
+              <input type="date" id="data" name="data" /> 
+            </div> 
 
 <head>
 

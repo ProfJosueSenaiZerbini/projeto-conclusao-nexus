@@ -24,8 +24,19 @@ async function marcarCodigoComoUsado(codigo) {
     );
 }
 
+async function cadastrarFiscal(nome, email, cpf, senha) {
+    return await executarQuery(
+        `INSERT INTO FISCAL
+        (nome, email, cpf, senha)
+        VALUES (?, ?, ?, ?)`,
+        [nome, email, cpf, senha]
+    );
+}
+
+
 module.exports = {
     buscarCodigo,
     verificarFiscalExistente,
-    marcarCodigoComoUsado
+    marcarCodigoComoUsado, 
+    cadastrarFiscal
 };
