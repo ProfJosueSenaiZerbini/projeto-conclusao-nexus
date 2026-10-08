@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Administrador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeZone | Dashboard do Administrador</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/dashUsuario.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
+
 <body>
+    <%- include("partials/header") %>
+        <%- include("partials/menuAdm") %>
+            <main class="dashboard-main">
+                <div class="dashboard-container">
+                    <section class="page-title">
+                        <h1>Dashboard do Administrador</h1>
+                        <p>Se você está vendo essa página, o login de administrador funcionou!</p>
+                    </section>
 
-    <h1>Dashboard do Administrador</h1>
-
-    <p>Se você está vendo essa página, o login de administrador funcionou!</p>
-
+                </div>
+            </main>
 </body>
+
 </html>
