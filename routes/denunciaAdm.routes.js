@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { executarQuery } = require("../db/dbConnect");
 
+
 // ========================================
 // PÁGINA DE DENÚNCIAS DO ADMINISTRADOR
 // ========================================
@@ -15,10 +16,8 @@ router.get("/", async (req, res) => {
         const denuncias = await executarQuery(
             `SELECT
                 d.idDenuncia,
-                d.titulo,
                 d.tipo,
                 d.descricao,
-                d.dataOcorrencia,
                 d.dataAbertura,
                 d.status,
                 d.prioridade,
@@ -70,6 +69,7 @@ router.post("/:id/status", async (req, res) => {
 
         const novoStatus = req.body.status;
 
+
         // --------------------------------
         // VALIDAR ID
         // --------------------------------
@@ -82,6 +82,7 @@ router.post("/:id/status", async (req, res) => {
 
         }
 
+
         // --------------------------------
         // STATUS PERMITIDOS
         // --------------------------------
@@ -89,9 +90,10 @@ router.post("/:id/status", async (req, res) => {
         const statusPermitidos = [
             "Pendente",
             "Em análise",
-            "Resolvida",
-            "Arquivada"
+            "Em desenvolvimento",
+            "Resolvida"
         ];
+
 
         if (!statusPermitidos.includes(novoStatus)) {
 
@@ -100,6 +102,7 @@ router.post("/:id/status", async (req, res) => {
             );
 
         }
+
 
         // --------------------------------
         // BUSCAR STATUS ATUAL
@@ -112,6 +115,7 @@ router.post("/:id/status", async (req, res) => {
             [idDenuncia]
         );
 
+
         if (resultadoAtual.length === 0) {
 
             return res.status(404).send(
@@ -120,7 +124,9 @@ router.post("/:id/status", async (req, res) => {
 
         }
 
+
         const statusAtual = resultadoAtual[0].status;
+
 
         // --------------------------------
         // VERIFICAR SE REALMENTE MUDOU
@@ -131,6 +137,7 @@ router.post("/:id/status", async (req, res) => {
             return res.redirect("/denunciaAdm");
 
         }
+
 
         // --------------------------------
         // ALTERAR STATUS
@@ -145,6 +152,7 @@ router.post("/:id/status", async (req, res) => {
                 idDenuncia
             ]
         );
+
 
         // --------------------------------
         // REGISTRAR NO HISTÓRICO
@@ -163,15 +171,18 @@ router.post("/:id/status", async (req, res) => {
             ]
         );
 
+
         console.log(
             `Denúncia ${idDenuncia}: ${statusAtual} → ${novoStatus}`
         );
+
 
         // --------------------------------
         // VOLTAR PARA A LISTA
         // --------------------------------
 
         res.redirect("/denunciaAdm");
+
 
     } catch (erro) {
 
@@ -182,6 +193,148 @@ router.post("/:id/status", async (req, res) => {
 
         res.status(500).send(
             "Erro ao alterar o status da denúncia."
+        );
+
+    }
+
+});
+
+
+// ========================================
+// ALTERAR PRIORIDADE DA DENÚNCIA
+// ========================================
+
+router.post("/:id/prioridade", async (req, res) => {
+
+    try {
+
+        const idDenuncia = Number(req.params.id);
+
+        const novaPrioridade = req.body.prioridade;
+
+
+        // --------------------------------
+        // VALIDAR ID
+        // --------------------------------
+
+        if (!idDenuncia) {
+
+            return res.status(400).send(
+                "ID da denúncia inválido."
+            );
+
+        }
+
+
+        // --------------------------------
+        // PRIORIDADES PERMITIDAS
+        // --------------------------------
+
+        const prioridadesPermitidas = [
+            "Baixa",
+            "Média",
+            "Alta"
+        ];
+
+
+        if (!prioridadesPermitidas.includes(novaPrioridade)) {
+
+            return res.status(400).send(
+                "Prioridade inválida."
+            );
+
+        }
+
+
+        // --------------------------------
+        // BUSCAR PRIORIDADE ATUAL
+        // --------------------------------
+
+        const resultadoAtual = await executarQuery(
+            `SELECT prioridade
+             FROM DENUNCIA
+             WHERE idDenuncia = ?`,
+            [idDenuncia]
+        );
+
+
+        if (resultadoAtual.length === 0) {
+
+            return res.status(404).send(
+                "Denúncia não encontrada."
+            );
+
+        }
+
+
+        const prioridadeAtual = resultadoAtual[0].prioridade;
+
+
+        // --------------------------------
+        // VERIFICAR SE REALMENTE MUDOU
+        // --------------------------------
+
+        if (prioridadeAtual === novaPrioridade) {
+
+            return res.redirect("/denunciaAdm");
+
+        }
+
+
+        // --------------------------------
+        // ALTERAR PRIORIDADE
+        // --------------------------------
+
+        await executarQuery(
+            `UPDATE DENUNCIA
+             SET prioridade = ?
+             WHERE idDenuncia = ?`,
+            [
+                novaPrioridade,
+                idDenuncia
+            ]
+        );
+
+
+        // --------------------------------
+        // REGISTRAR NO HISTÓRICO
+        // --------------------------------
+
+        await executarQuery(
+            `INSERT INTO HISTORICO_DENUNCIA
+            (
+                idDenuncia,
+                titulo
+            )
+            VALUES (?, ?)`,
+            [
+                idDenuncia,
+                `Prioridade alterada para: ${novaPrioridade}`
+            ]
+        );
+
+
+        console.log(
+            `Denúncia ${idDenuncia}: prioridade ${prioridadeAtual} → ${novaPrioridade}`
+        );
+
+
+        // --------------------------------
+        // VOLTAR PARA A LISTA
+        // --------------------------------
+
+        res.redirect("/denunciaAdm");
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao alterar prioridade:",
+            erro
+        );
+
+        res.status(500).send(
+            "Erro ao alterar a prioridade da denúncia."
         );
 
     }

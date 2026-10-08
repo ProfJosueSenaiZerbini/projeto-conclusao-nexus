@@ -1,329 +1,500 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-  <head> 
-    <meta charset="UTF-8" /> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
-    <title>Denúncias</title> 
- 
-    <link rel="stylesheet" href="/css/denunciaAdm.css" /> 
- 
-    <link rel="stylesheet" href="/css/menu.css" /> 
- 
-    <link rel="stylesheet" href="/css/header.css" /> 
-  </head> 
- 
-  <body> 
-    <%- include('partials/header') %> 
- 
-    <div class="pagina"> 
-      <div class="conteudo"> 
-        <%- include('partials/menu') %> 
- 
-        <!-- ÁREA PRINCIPAL --> 
-        <main class="area-principal"> 
-          
-          <!-- BUSCA --> 
-          <div class="area-busca"> 
-            <div class="campo-busca"> 
-              <input 
-                type="text" 
-                placeholder="Buscar por denúncia" 
-                aria-label="Buscar por denúncia" 
-              /> 
- 
-              <button type="button" aria-label="Pesquisar">🔍</button> 
-            </div> 
-          </div> 
- 
-          <!-- FILTROS --> 
-          <div class="filtros"> 
-            
-            <div class="filtro"> 
-              <label for="categoria">Categoria</label> 
- 
-              <select id="categoria"> 
-                <option>Todos</option> 
-                <option>Criação de Sites</option> 
-                <option>Design</option> 
-                <option>Consultoria</option> 
-              </select> 
-            </div> 
- 
-            <div class="filtro"> 
-              <label for="bairro">Bairro</label> 
- 
-              <select id="bairro"> 
-                <option>Todos</option> 
-                <option>Centro</option> 
-                <option>Jardim América</option> 
-                <option>Vila Nova</option> 
-              </select> 
-            </div> 
- 
-            <div class="filtro"> 
-              <label for="status">Status</label> 
- 
-              <select id="status"> 
-                <option>Todos</option> 
-                <option>Em análise</option> 
-                <option>Resolvida</option> 
-              </select> 
-            </div> 
- 
-            <div class="filtro"> 
-              <label for="data">Data</label> 
- 
-              <input type="date" id="data" name="data" /> 
-            </div> 
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-          </div> 
- 
-          <!-- TABELA --> 
-           
-          <div class="tabela">
+<head>
 
-    <!-- CABEÇALHO -->
+    <meta charset="UTF-8" />
 
-    <div class="cabecalho">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <div>ID</div>
-        <div>TIPO</div>
-        <div>LOCAL</div>
-        <div>DATA</div>
-        <div>USUÁRIO</div>
-        <div>STATUS</div>
-        <div>PRIORIDADE</div>
-        <div>AÇÕES</div>
+    <title>Denúncias</title>
+
+    <link rel="stylesheet" href="/css/denunciaAdm.css" />
+
+    <link rel="stylesheet" href="/css/menu.css" />
+
+    <link rel="stylesheet" href="/css/header.css" />
+
+</head>
+
+
+<body>
+
+    <%- include('partials/header') %>
+
+
+    <div class="pagina">
+
+        <div class="conteudo">
+
+            <%- include('partials/menu') %>
+
+
+            <!-- ÁREA PRINCIPAL -->
+
+            <main class="area-principal">
+
+
+                <!-- BUSCA -->
+
+                <div class="area-busca">
+
+                    <div class="campo-busca">
+
+                        <input
+                            type="text"
+                            placeholder="Buscar por denúncia"
+                            aria-label="Buscar por denúncia"
+                        />
+
+                        <button
+                            type="button"
+                            aria-label="Pesquisar">
+
+                            🔍
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FILTROS -->
+
+                <div class="filtros">
+
+
+                    <!-- CATEGORIA -->
+
+                    <div class="filtro">
+
+                        <label for="categoria">
+                            Categoria
+                        </label>
+
+                        <select id="categoria">
+
+                            <option>Todos</option>
+
+                            <option>
+                                Criação de Sites
+                            </option>
+
+                            <option>
+                                Design
+                            </option>
+
+                            <option>
+                                Consultoria
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BAIRRO -->
+
+                    <div class="filtro">
+
+                        <label for="bairro">
+                            Bairro
+                        </label>
+
+                        <select id="bairro">
+
+                            <option>Todos</option>
+
+                            <option>
+                                Centro
+                            </option>
+
+                            <option>
+                                Jardim América
+                            </option>
+
+                            <option>
+                                Vila Nova
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="filtro">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select id="status">
+
+                            <option>Todos</option>
+
+                            <option>
+                                Pendente
+                            </option>
+
+                            <option>
+                                Em análise
+                            </option>
+
+                            <option>
+                                Em desenvolvimento
+                            </option>
+
+                            <option>
+                                Resolvida
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATA -->
+
+                    <div class="filtro">
+
+                        <label for="data">
+                            Data
+                        </label>
+
+                        <input
+                            type="date"
+                            id="data"
+                            name="data"
+                        />
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TABELA -->
+
+                <div class="tabela">
+
+
+                    <!-- CABEÇALHO -->
+
+                    <div class="cabecalho">
+
+                        <div>ID</div>
+
+                        <div>TIPO</div>
+
+                        <div>LOCAL</div>
+
+                        <div>DATA</div>
+
+                        <div>USUÁRIO</div>
+
+                        <div>STATUS</div>
+
+                        <div>PRIORIDADE</div>
+
+                        <div>AÇÕES</div>
+
+                    </div>
+
+
+
+                    <!-- DENÚNCIAS DO BANCO -->
+
+                    <% if (denuncias && denuncias.length > 0) { %>
+
+
+                        <% denuncias.forEach(denuncia => { %>
+
+
+                            <div class="linha">
+
+
+                                <!-- ID -->
+
+                                <div class="celula">
+
+                                    <%= denuncia.idDenuncia %>
+
+                                </div>
+
+
+
+                                <!-- TIPO -->
+
+                                <div class="celula">
+
+                                    <%= denuncia.tipo %>
+
+                                </div>
+
+
+
+                                <!-- LOCAL -->
+
+                                <div class="celula">
+
+                                    <%= denuncia.endereco %>
+
+                                </div>
+
+
+
+                                <!-- DATA -->
+
+                                <div class="celula">
+
+                                    <%= denuncia.dataAbertura
+                                        ? new Date(
+                                            denuncia.dataAbertura
+                                        ).toLocaleDateString("pt-BR")
+                                        : "-"
+                                    %>
+
+                                </div>
+
+
+
+                                <!-- USUÁRIO -->
+
+                                <div class="celula">
+
+                                    <%= denuncia.nomeUsuario %>
+
+                                </div>
+
+
+
+                                <!-- STATUS -->
+
+                                <div class="celula">
+
+                                    <span class="status
+                                        <%= denuncia.status === 'Resolvida'
+                                            ? 'resolvida'
+                                            : denuncia.status === 'Em desenvolvimento'
+                                                ? 'em-desenvolvimento'
+                                                : denuncia.status === 'Pendente'
+                                                    ? 'pendente'
+                                                    : 'em-analise'
+                                        %>">
+
+                                        <%= denuncia.status %>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- PRIORIDADE -->
+
+                                <div class="celula">
+
+                                    <span class="prioridade
+                                        <%= denuncia.prioridade === 'Alta'
+                                            ? 'alta'
+                                            : denuncia.prioridade === 'Baixa'
+                                                ? 'baixa'
+                                                : 'media'
+                                        %>">
+
+                                        <%= denuncia.prioridade %>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- AÇÕES -->
+
+                                <div class="celula acoes">
+
+
+                                    <!-- VISUALIZAR -->
+
+                                    <button
+                                        type="button"
+                                        title="Visualizar"
+                                        onclick="window.location.href='/denunciaDetalhe/<%= denuncia.idDenuncia %>'">
+
+                                        👁
+
+                                    </button>
+
+
+
+                                    <!-- MENU EDITAR -->
+
+                                    <details class="menu-editar">
+
+
+                                        <summary
+                                            class="btn-editar"
+                                            title="Editar">
+
+                                            ✎
+
+                                        </summary>
+
+
+
+                                        <div class="opcoes-editar">
+
+
+                                            <!-- ALTERAR STATUS -->
+
+                                            <form
+                                                action="/denunciaAdm/<%= denuncia.idDenuncia %>/status"
+                                                method="POST">
+
+
+                                                <select
+                                                    name="status"
+                                                    required>
+
+                                                    <option value="">
+                                                        Alterar status
+                                                    </option>
+
+                                                    <option value="Pendente">
+                                                        Pendente
+                                                    </option>
+
+                                                    <option value="Em análise">
+                                                        Em análise
+                                                    </option>
+
+                                                    <option value="Em desenvolvimento">
+                                                        Em desenvolvimento
+                                                    </option>
+
+                                                    <option value="Resolvida">
+                                                        Resolvida
+                                                    </option>
+
+                                                </select>
+
+
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-aprovar">
+
+                                                    ✓ Alterar status
+
+                                                </button>
+
+                                            </form>
+
+
+
+                                            <!-- ALTERAR PRIORIDADE -->
+
+                                            <form
+                                                action="/denunciaAdm/<%= denuncia.idDenuncia %>/prioridade"
+                                                method="POST">
+
+
+                                                <select
+                                                    name="prioridade"
+                                                    required>
+
+                                                    <option value="">
+                                                        Alterar prioridade
+                                                    </option>
+
+                                                    <option
+                                                        value="Baixa">
+                                                         Baixa
+                                                    </option>
+                                                        
+                                                    <option
+                                                        value="Média">
+                                                         Média
+                                                    </option>
+
+
+                                                    <option
+                                                        value="Alta">
+                                                        Alta
+                                                    </option>
+                                                </select>
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn-alterar-prioridade">
+
+                                                    ✓ Alterar prioridade
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </details>
+
+
+
+                                    <!-- MAIS OPÇÕES -->
+
+                                    <button
+                                        type="button"
+                                        title="Mais opções">
+
+                                        ⋮
+
+                                    </button>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        <% }) %>
+
+
+                    <% } else { %>
+
+
+                        <!-- NENHUMA DENÚNCIA -->
+
+                        <div class="linha">
+
+                            <div
+                                class="celula"
+                                style="grid-column: 1 / -1;">
+
+                                Nenhuma denúncia encontrada.
+
+                            </div>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </div>
+
+
+            </main>
+
+        </div>
 
     </div>
 
 
-    <!-- DENÚNCIAS DO BANCO -->
+</body>
 
-    <% if (denuncias && denuncias.length > 0) { %>
-
-        <% denuncias.forEach(denuncia => { %>
-
-            <div class="linha">
-
-                <!-- ID -->
-
-                <div class="celula">
-
-                    <%= denuncia.idDenuncia %>
-
-                </div>
-
-
-                <!-- TIPO -->
-
-                <div class="celula">
-
-                    <%= denuncia.tipo %>
-
-                </div>
-
-
-                <!-- LOCAL -->
-
-                <div class="celula">
-
-                    <%= denuncia.endereco %>
-
-                </div>
-
-
-                <!-- DATA -->
-
-                <div class="celula">
-
-                    <%= denuncia.dataOcorrencia
-                        ? new Date(denuncia.dataOcorrencia).toLocaleDateString("pt-BR")
-                        : "-"
-                    %>
-
-                </div>
-
-
-                <!-- USUÁRIO -->
-
-                <div class="celula">
-
-                    <%= denuncia.nomeUsuario %>
-
-                </div>
-
-
-                <!-- STATUS -->
-
-                <div class="celula">
-
-                    <span class="status
-                        <%= denuncia.status === 'Resolvida'
-                            ? 'resolvida'
-                            : 'em-analise'
-                        %>">
-
-                        <%= denuncia.status %>
-
-                    </span>
-
-                </div>
-
-
-                <!-- PRIORIDADE -->
-
-                <div class="celula">
-
-                    <span class="prioridade
-                        <%= denuncia.prioridade === 'Alta'
-                            ? 'alta'
-                            : denuncia.prioridade === 'Baixa'
-                                ? 'baixa'
-                                : 'media'
-                        %>">
-
-                        <%= denuncia.prioridade %>
-
-                    </span>
-
-                </div>
-
-
-                <!-- AÇÕES -->
-
-                <div class="celula acoes">
-
-                    <!-- VISUALIZAR -->
-
-                    <button
-                        type="button"
-                        title="Visualizar"
-                        onclick="window.location.href='/denunciaDetalhe/<%= denuncia.idDenuncia %>'">
-
-                        👁
-
-                    </button>
-
-
-                    <!-- MENU EDITAR -->
-
-                    <details class="menu-editar">
-
-                        <summary
-                            class="btn-editar"
-                            title="Editar">
-
-                            ✎
-
-                        </summary>
-
-
-                        <div class="opcoes-editar">
-
-                            <!-- ALTERAR STATUS -->
-
-                            <form
-                                action="/denunciaAdm/<%= denuncia.idDenuncia %>/status"
-                                method="POST">
-
-                                <select
-                                    name="status"
-                                    required>
-
-                                    <option value="">
-                                        Alterar status
-                                    </option>
-
-                                    <option value="Pendente">
-                                        Pendente
-                                    </option>
-
-                                    <option value="Em análise">
-                                        Em análise
-                                    </option>
-
-                                    <option value="Resolvida">
-                                        Resolvida
-                                    </option>
-
-                                    <option value="Arquivada">
-                                        Arquivada
-                                    </option>
-
-                                </select>
-
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-aprovar">
-
-                                    ✓ Alterar status
-
-                                </button>
-
-                            </form>
-
-
-                            <!-- ABRIR DETALHES -->
-
-                            <form
-                                action="/denunciaDetalhe/<%= denuncia.idDenuncia %>"
-                                method="GET">
-
-                                <button
-                                    type="submit"
-                                    class="btn">
-
-                                    👁 Ver detalhes
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </details>
-
-
-                    <!-- MAIS OPÇÕES -->
-
-                    <button
-                        type="button"
-                        title="Mais opções">
-
-                        ⋮
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        <% }) %>
-
-    <% } else { %>
-
-        <div class="linha">
-
-            <div
-                class="celula"
-                style="grid-column: 1 / -1;">
-
-                Nenhuma denúncia encontrada.
-
-            </div>
-
-        </div>
-
-    <% } %>
-
-</div>
-
-        </main> 
-
-      </div> 
-    </div> 
-
-  </body> 
 </html>
