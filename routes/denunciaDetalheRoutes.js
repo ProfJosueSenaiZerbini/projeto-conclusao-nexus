@@ -61,11 +61,11 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         );
 
         const mensagens = await executarQuery(
-            `SELECT m.idMensagem, m.texto, m.dataHora, u.nome AS autor
+            `SELECT m.idMensagem, m.texto, m.dataRegistro, u.nome AS autor
              FROM MENSAGEM_DENUNCIA m
              INNER JOIN USUARIO u ON m.idUsuario = u.id
              WHERE m.idDenuncia = ?
-             ORDER BY m.dataHora ASC`,
+             ORDER BY m.dataRegistro ASC`,
             [idDenuncia]
         );
 

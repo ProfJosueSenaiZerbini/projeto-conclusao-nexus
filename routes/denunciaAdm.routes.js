@@ -3,211 +3,23 @@ const express = require("express");
 
 const router = express.Router();
 
-const { executarQuery } = require("../db/dbConnect");
+const denunciaAdmController = require(
+    "../controllers/denunciaAdmController"
+);
 
-// ========================================
-// PÁGINA DE DENÚNCIAS DO ADMINISTRADOR
-// ========================================
+// Página administrativa
+router.get("/", denunciaAdmController.listar);
 
-router.get("/", async (req, res) => {
-    try {
-        const denuncias = await executarQuery(
-            `SELECT
-                d.idDenuncia,
-                d.tipo,
-                d.descricao,
-                d.dataAbertura,
-                d.status,
-                d.prioridade,
-                l.endereco,
-                u.nome AS nomeUsuario
-            FROM DENUNCIA d
-            INNER JOIN LOCALIZACAO l
-                ON d.idLocalizacao = l.idLocalizacao
-            INNER JOIN USUARIO u
-                ON d.idUsuario = u.id
-            ORDER BY d.dataAbertura DESC`
-        );
+// Alterar status de uma denúncia
+router.post(
+    "/:id/status",
+    denunciaAdmController.alterarStatus
+);
 
-        res.render("denunciaAdm", {
-            denuncias
-        });
-
-    } catch (erro) {
-        console.error("Erro ao buscar denúncias:", erro);
-
-        res.status(500).send(
-            "Erro ao carregar as denúncias."
-        );
-    }
-});
-
-// ========================================
-// ALTERAR STATUS DA DENÚNCIA
-// ========================================
-
-router.post("/:id/status", async (req, res) => {
-    try {
-        const idDenuncia = Number(req.params.id);
-        const novoStatus = req.body.status;
-
-        if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
-            return res.status(400).send(
-                "ID da denúncia inválido."
-            );
-        }
-
-        const statusPermitidos = [
-            "Pendente",
-            "Em análise",
-            "Em desenvolvimento",
-            "Resolvida"
-        ];
-
-        if (!statusPermitidos.includes(novoStatus)) {
-            return res.status(400).send(
-                "Status inválido."
-            );
-        }
-
-        // Buscar status atual
-        const resultadoAtual = await executarQuery(
-            `SELECT status
-             FROM DENUNCIA
-             WHERE idDenuncia = ?`,
-            [idDenuncia]
-        );
-
-        if (resultadoAtual.length === 0) {
-            return res.status(404).send(
-                "Denúncia não encontrada."
-            );
-        }
-
-        const statusAtual = resultadoAtual[0].status;
-
-        // Não registrar se nada mudou
-        if (statusAtual === novoStatus) {
-            return res.redirect("/denunciaAdm");
-        }
-
-        // Atualizar status
-        await executarQuery(
-            `UPDATE DENUNCIA
-             SET status = ?
-             WHERE idDenuncia = ?`,
-            [novoStatus, idDenuncia]
-        );
-
-        // Registrar histórico
-        await executarQuery(
-            `INSERT INTO HISTORICO_DENUNCIA
-                (idDenuncia, titulo)
-             VALUES (?, ?)`,
-            [
-                idDenuncia,
-                `Status alterado para: ${novoStatus}`
-            ]
-        );
-
-        console.log(
-            `Denúncia ${idDenuncia}: ${statusAtual} → ${novoStatus}`
-        );
-
-        return res.redirect("/denunciaAdm");
-
-    } catch (erro) {
-        console.error("Erro ao alterar status:", erro);
-
-        return res.status(500).send(
-            "Erro ao alterar o status da denúncia."
-        );
-    }
-});
-
-// ========================================
-// ALTERAR PRIORIDADE DA DENÚNCIA
-// ========================================
-
-router.post("/:id/prioridade", async (req, res) => {
-    try {
-        const idDenuncia = Number(req.params.id);
-        const novaPrioridade = req.body.prioridade;
-
-        // Validar ID
-        if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
-            return res.status(400).send(
-                "ID da denúncia inválido."
-            );
-        }
-
-        // Prioridades permitidas
-        const prioridadesValidas = [
-            "Baixa",
-            "Média",
-            "Alta"
-        ];
-
-        if (!prioridadesValidas.includes(novaPrioridade)) {
-            return res.status(400).send(
-                "Prioridade inválida."
-            );
-        }
-
-        // Buscar prioridade atual
-        const resultadoAtual = await executarQuery(
-            `SELECT prioridade
-             FROM DENUNCIA
-             WHERE idDenuncia = ?`,
-            [idDenuncia]
-        );
-
-        if (resultadoAtual.length === 0) {
-            return res.status(404).send(
-                "Denúncia não encontrada."
-            );
-        }
-
-        const prioridadeAtual = resultadoAtual[0].prioridade;
-
-        // Não registrar se nada mudou
-        if (prioridadeAtual === novaPrioridade) {
-            return res.redirect("/denunciaAdm");
-        }
-
-        // Atualizar prioridade no banco
-        await executarQuery(
-            `UPDATE DENUNCIA
-             SET prioridade = ?
-             WHERE idDenuncia = ?`,
-            [novaPrioridade, idDenuncia]
-        );
-
-        // Registrar histórico
-        await executarQuery(
-            `INSERT INTO HISTORICO_DENUNCIA
-                (idDenuncia, titulo)
-             VALUES (?, ?)`,
-            [
-                idDenuncia,
-                `Prioridade alterada para: ${novaPrioridade}`
-            ]
-        );
-
-        console.log(
-            `Denúncia ${idDenuncia}: prioridade ${prioridadeAtual} → ${novaPrioridade}`
-        );
-
-        // Voltar à lista atualizada
-        return res.redirect("/denunciaAdm");
-
-    } catch (erro) {
-        console.error("Erro ao alterar prioridade:", erro);
-
-        return res.status(500).send(
-            "Erro ao alterar a prioridade da denúncia. Confira o terminal."
-        );
-    }
-});
+// Alterar prioridade de uma denúncia
+router.post(
+    "/:id/prioridade",
+    denunciaAdmController.alterarPrioridade
+);
 
 module.exports = router;
