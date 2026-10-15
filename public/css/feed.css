@@ -229,3 +229,34 @@ body {
         text-align: center; 
     }
 }
+
+/* Elementos do feed dinâmico */
+.filtros-feed { margin-bottom: 0; }
+.filtros-feed button { font-family: inherit; }
+.tag.categoria { background: #fff4d6; color: #805d00; }
+.tag.prioridade { background: #f3edff; color: #62429a; }
+.feed-card { overflow-wrap: anywhere; }
+.evidencia-feed {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: contain;
+    background: #f8f9fa;
+    border-radius: 7px;
+    border: 1px solid #dfe3e6;
+    margin: 0 0 18px;
+}
+.feed-card video.evidencia-feed { height: auto; }
+.feed-vazio {
+    padding: 32px;
+    background: #fff;
+    border: 1px solid #e1e5e8;
+    border-radius: 10px;
+    text-align: center;
+}
+.feed-vazio h2 { font-size: 18px; margin-bottom: 8px; }
+.feed-vazio p { color: #707b86; margin-bottom: 14px; }
+.feed-vazio a { color: #1C4532; font-weight: 600; }
+@media (max-width: 480px) {
+    .filtros-feed button { width: auto; }
+}

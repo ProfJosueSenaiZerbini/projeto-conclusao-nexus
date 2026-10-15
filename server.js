@@ -16,6 +16,7 @@ const feedRoutes = require('./routes/feedDenunciaRoutes');
 const denunciaDetalheRoutes = require('./routes/denunciaDetalheRoutes');
 const dashboardAdminRoutes = require('./routes/dashboardAdminRoutes');
 const codigoAtivacaoRoutes = require('./routes/codigoAtivacaoRoutes');
+const gerenciarFiscaisRoutes = require('./routes/gerenciarFiscaisRoutes');
 
 const app = express();
 const PORTA = Number(process.env.PORTA);
@@ -62,6 +63,7 @@ app.use('/feedDenuncia', feedRoutes);
 app.use('/denunciaDetalhe', denunciaDetalheRoutes);
 app.use('/dashboardAdmin', dashboardAdminRoutes);
 app.use('/ativacao', codigoAtivacaoRoutes);
+app.use('/gerenciarFiscais', gerenciarFiscaisRoutes);
 
 app.listen(PORTA, () => {
   console.log(`Servidor rodando em http://localhost:${PORTA}/login`);
