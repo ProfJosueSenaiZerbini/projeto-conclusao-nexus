@@ -64,7 +64,7 @@ async function validarCodigo(req, res) {
 async function cadastrarFiscal(req, res) {
     const nome = req.body.nome?.trim();
     const email = req.body.email?.trim();
-    const cpf = req.body.cpf?.trim();
+    const cpf = req.body.cpf?.replace(/\D/g, '');
     const senha = req.body.senha;
     const codigo = req.body.codigo?.trim();
 

@@ -8,12 +8,13 @@ async function exibirCadastro(req, res) {
 
 async function cadastrar(req, res) {
 
-    const {
-        nome,
-        email,
-        cpf,
-        senha
-    } = req.body;
+   const nome = req.body.nome?.trim();
+    const email = req.body.email?.trim();
+
+    // Remove pontos, hífen e qualquer caractere que não seja número.
+    const cpf = req.body.cpf?.replace(/\D/g, '');
+
+    const senha = req.body.senha;
 
     if (!nome || !email || !cpf || !senha) {
         return res.render('cadastro', {
