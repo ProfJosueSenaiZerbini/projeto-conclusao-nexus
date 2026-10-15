@@ -1,0 +1,233 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #e2e0e0;
+    color: #222;
+}
+
+/* Estrutura da página */
+.container {
+    width: calc(100% - 230px);
+    max-width: 1100px;
+    min-height: calc(100vh - 64px);
+    margin: 64px 0 0 230px;
+    padding: 35px;
+    background: #f8f9fb;
+}
+
+h1 {
+    margin-bottom: 7px;
+    color: #1C4532;
+    font-size: 27px;
+}
+
+h2 {
+    margin-bottom: 25px;
+    font-size: 18px;
+}
+
+.descricao {
+    margin-bottom: 25px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Cards */
+.card {
+    margin-bottom: 20px;
+    padding: 25px 28px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 6px #0000000d;
+}
+
+/* Formulário em duas colunas */
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.campos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.coluna-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.campo {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.campo label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.campo input {
+    width: 100%;
+    height: 43px;
+    padding: 0 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 6px;
+    background: #fff;
+    color: #222;
+    font-size: 14px;
+}
+
+.campo input:focus {
+    border-color: #1C4532;
+    outline: 2px solid #1C4532;
+    outline-offset: 1px;
+}
+
+/* Botão */
+.campo-botao {
+    align-items: center;
+}
+
+.botao {
+    min-width: 200px;
+    min-height: 44px;
+    padding: 0 25px;
+    border: 1px solid #10271c;
+    border-radius: 6px;
+    background: #1C4532;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.botao:hover {
+    background: #275d44;
+}
+
+.botao:focus-visible {
+    outline: 2px solid #1C4532;
+    outline-offset: 3px;
+}
+
+/* Mensagens de retorno */
+.mensagem {
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.erro {
+    border-color: #f1caca;
+    background: #fef3f2;
+    color: #b42318;
+}
+
+.sucesso {
+    border-color: #b7e4c7;
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+/* Tabela */
+.tabela-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e4e7ec;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+th {
+    background: #f8f9fb;
+    color: #667085;
+    font-size: 12px;
+}
+
+td {
+    color: #344054;
+    font-size: 13px;
+}
+
+tbody tr:hover {
+    background: #f8fbf9;
+}
+
+.vazio {
+    color: #777;
+    text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 1000px) {
+    .container {
+        padding: 30px 24px;
+    }
+
+    .card {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        margin: 64px 0 0;
+        padding: 25px 18px 40px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+
+    .card {
+        padding: 20px 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .campos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .campo-botao .botao {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        padding: 20px 12px 30px;
+    }
+
+    .card {
+        padding: 18px 14px;
+    }
+}
