@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Denúncias</title>
+    <title>Feed de Denúncias</title>
 
     <link rel="stylesheet" href="/css/feed.css" />
 
@@ -16,61 +16,69 @@
 <body>
     <%- include("partials/header") %>
 
-        <div class="pagina">
-            <div class="container">
+    <div class="pagina">
+        <div class="container">
 
-                <%- include(usuario && usuario.tipo === 'admin' ? "partials/menuAdm" : "partials/menu") %>
+            <%- include(usuario && usuario.tipo === 'admin' ? "partials/menuAdm" : "partials/menu") %>
 
-                    <main class="area-feed">
+            <main class="area-feed">
 
-                        <section class="cabecalho-feed">
-                            <h1>Feed de Denúncias</h1>
-                            <p>Veja denúncias públicas registradas na cidade.</p>
+                <section class="cabecalho-feed">
+                    <h1>Feed de Denúncias</h1>
+                    <p>Veja as denúncias públicas registradas e filtre pela categoria informada no cadastro.</p>
+                    
+                    <form class="filtros-feed" action="/feedDenuncia" method="GET" aria-label="Filtrar denúncias por categoria">
+                        <button type="submit" name="categoria" value="" class="<%= !categoriaSelecionada ? 'ativo' : '' %>">Todas</button>
+                        <% categorias.forEach(categoria => { %>
+                            <button type="submit" name="categoria" value="<%= categoria.valor %>" class="<%= categoriaSelecionada === categoria.valor ? 'ativo' : '' %>"><%= categoria.nome %></button>
+                        <% }) %>
+                    </form>
+                </section>
 
-                            <div class="filtros-feed">
-                                <button>Pichação</button>
-                                <button>Vandalismo</button>
-                                <button>Iluminação pública</button>
-                                <button>Descarte irregular de lixo</button>
-                                <button>Problemas em vias públicas</button>
-                                <button>Perturbação</button>
-                                <button>Outros</button>
-                            </div>
-                        </section>
+                <% if (!denuncias.length) { %>
+                    <section class="feed-vazio">
+                        <h2>Nenhuma denúncia encontrada</h2>
+                        <p>Não há denúncias nesta categoria no momento.</p>
+                        <a href="/feedDenuncia">Ver todas as denúncias</a>
+                    </section>
+                <% } %>
 
-                        <!-- CARD -->
-                        <article class="feed-card">
-                            <div class="feed-topo">
-
-                                <div class="feed-usuario">
-                                    <div class="icone-local">📍</div>
-
-                                    <div>
-                                        <h2>Pichação em muro residencial</h2>
-                                        <span>Maria Oliveira • Hoje às 11:08</span>
-                                    </div>
+                <% denuncias.forEach(denuncia => { %>
+                    <article class="feed-card">
+                        <div class="feed-topo">
+                            <div class="feed-usuario">
+                                <div class="icone-local" aria-hidden="true">📍</div>
+                                <div>
+                                    <h2><%= denuncia.titulo %></h2>
+                                    <span><%= denuncia.anonima ? 'Denúncia anônima' : denuncia.nomeUsuario %> • <%= denuncia.dataFormatada %></span>
                                 </div>
-
-                                <a href="/denunciaDetalhe" class="ver-detalhes">
-                                    Ver detalhes →
-                                </a>
-
                             </div>
+                            <a href="/denunciaDetalhe/<%= denuncia.idDenuncia %>" class="ver-detalhes">Ver detalhes →</a>
+                        </div>
 
-                            <div class="feed-tags">
-                                <span class="tag pichacao">Pichação</span>
-                                <span class="tag bairro">Centro</span>
-                                <span class="tag status">Em análise</span>
-                            </div>
+                        <div class="feed-tags">
+                            <span class="tag categoria"><%= denuncia.categoriaNome %></span>
+                            <span class="tag bairro"><%= denuncia.endereco %></span>
+                            <span class="tag status"><%= denuncia.status %></span>
+                            <span class="tag prioridade">Prioridade: <%= denuncia.prioridade %></span>
+                        </div>
 
-                            <p class="descricao">
-                                Foi registrada uma pichação no muro da residência localizada na Rua Baixa da Égua, nº
-                                234.
-                            </p>
+                        <% denuncia.evidencias.forEach(evidencia => { %>
+                            <% if (evidencia.dadosEvidencia && evidencia.tipoEvidencia === 'imagem') { %>
+                                <img class="evidencia-feed" src="<%= evidencia.dadosEvidencia %>" alt="Imagem anexada à denúncia" loading="lazy" />
+                            <% } else if (evidencia.dadosEvidencia && evidencia.tipoEvidencia === 'video') { %>
+                                <video class="evidencia-feed" controls preload="metadata" aria-label="Vídeo anexado à denúncia">
+                                    <source src="<%= evidencia.dadosEvidencia %>" />
+                                    Seu navegador não suporta a reprodução de vídeo.
+                                </video>
+                            <% } %>
+                        <% }) %>
 
-                        </article>
-
-                    </main>
-            </div>
+                        <p class="descricao"><%= denuncia.descricao %></p>
+                    </article>
+                <% }) %>
+            </main>
         </div>
+    </div>
 </body>
+</html>
