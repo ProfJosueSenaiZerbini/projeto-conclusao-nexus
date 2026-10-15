@@ -1,5 +1,5 @@
 require('dotenv').config();
-const mariadb = require("mariadb");
+const mariadb = require('mariadb');
 
 const pool = mariadb.createPool({
     host: process.env.DBHOST,
@@ -10,26 +10,46 @@ const pool = mariadb.createPool({
 });
 
 async function executarQuery(query, params = []) {
-  console.log(
-    "=====================================================================",
-  );
-  console.log("dbConnect.js", "executarQuery()");
-  console.log(arguments);
+    let conn;
 
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    const rows = await conn.query(query, params);
-    console.log(
-      "=====================================================================",
-    );
-    return rows;
-  } catch (err) {
-    console.error("Erro ao executar query:", err);
-    throw err;
-  } finally {
-    if (conn) conn.release();
-  }
+    try {
+        conn = await pool.getConnection();
+        return await conn.query(query, params);
+    } catch (erro) {
+        console.error('Erro ao executar query:', erro);
+        throw erro;
+    } finally {
+        if (conn) conn.release();
+    }
 }
 
-module.exports = { executarQuery };
+async function executarTransacao(callback) {
+    let conn;
+
+    try {
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
+
+        const resultado = await callback(conn);
+
+        await conn.commit();
+        return resultado;
+    } catch (erro) {
+        if (conn) {
+            try {
+                await conn.rollback();
+            } catch (erroRollback) {
+                console.error('Erro no rollback:', erroRollback);
+            }
+        }
+
+        throw erro;
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
+module.exports = {
+    executarQuery,
+    executarTransacao
+};
