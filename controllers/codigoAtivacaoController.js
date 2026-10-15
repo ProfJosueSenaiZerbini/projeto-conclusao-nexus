@@ -1,11 +1,29 @@
 const codigoAtivacaoModel = require('../models/codigoAtivacaoModel');
 const { executarQuery } = require('../db/dbConnect');
 
+
 async function exibirAtivacao(req, res) {
-    res.render('ativacao', {
-        mensagemErro: null
-    });
+    try {
+        const ativacaoConcluida =
+            await codigoAtivacaoModel.verificarAtivacaoConcluida();
+
+        if (ativacaoConcluida) {
+            return res.redirect('/login');
+        }
+
+        return res.render('ativacao', {
+            mensagemErro: null
+        });
+
+    } catch (erro) {
+        console.error('Erro ao verificar ativação:', erro);
+
+        return res.status(500).send(
+            'Não foi possível verificar a ativação do sistema.'
+        );
+    }
 }
+
 
 async function validarCodigo(req, res) {
     const { codigo } = req.body;
@@ -17,13 +35,11 @@ async function validarCodigo(req, res) {
     }
 
     try {
-        const fiscalExistente =
-            await codigoAtivacaoModel.verificarFiscalExistente();
+        const ativacaoConcluida =
+            await codigoAtivacaoModel.verificarAtivacaoConcluida();
 
-        if (fiscalExistente.length > 0) {
-            return res.render('ativacao', {
-                mensagemErro: 'A ativação inicial já foi realizada.'
-            });
+        if (ativacaoConcluida) {
+            return res.redirect('/login');
         }
 
         const codigoValido =
@@ -60,14 +76,12 @@ async function cadastrarFiscal(req, res) {
     }
 
     try {
-        const fiscalExistente =
-            await codigoAtivacaoModel.verificarFiscalExistente();
+        const ativacaoConcluida =
+            await codigoAtivacaoModel.verificarAtivacaoConcluida();
 
-        if (fiscalExistente.length > 0) {
-            return res.render('ativacao', {
-                mensagemErro: 'A ativação inicial já foi realizada.'
-            });
-        }
+        if (ativacaoConcluida) {
+            return res.redirect('/login');
+        }  
 
         const codigoValido =
             await codigoAtivacaoModel.buscarCodigo(codigo);
@@ -103,6 +117,13 @@ async function cadastrarFiscal(req, res) {
         );
 
         await codigoAtivacaoModel.marcarCodigoComoUsado(codigo);
+
+        await executarQuery(
+            `UPDATE CONFIGURACAO_SISTEMA
+            SET ativacao_concluida = TRUE,
+            concluida_em = CURRENT_TIMESTAMP
+            WHERE id = 1`
+        );
 
         return res.redirect('/login');
 

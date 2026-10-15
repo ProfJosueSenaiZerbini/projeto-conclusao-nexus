@@ -1,14 +1,28 @@
 <!-- MENU LATERAL DO ADMINISTRADOR -->
 <aside class="menu-lateral">
-    <a href="/dashboardAdmin" class="item-menu">Dashboard</a>
-    <a href="/denunciaAdm" class="item-menu">Denúncias</a>
+    <a href="/dashboardAdmin" class="item-menu">
+        Dashboard
+    </a>
+
+    <a href="/denunciaAdm" class="item-menu">
+        Denúncias
+    </a>
+
     <a href="/notificacoes" class="item-menu">
         <span>Notificações</span>
         <% if (typeof totalNaoLidas !== 'undefined' && totalNaoLidas > 0) { %>
             <span class="wa-badge"><%= totalNaoLidas %></span>
         <% } %>
     </a>
-    <a href="/feedDenuncia" class="item-menu">Feed</a>
+
+    <a href="/gerenciarFiscais" class="item-menu">
+    Gerenciar fiscais
+    </a>
+
+    <a href="/feedDenuncia" class="item-menu">
+        Feed
+    </a>
+
     <div class="sidebar-footer">
         <form action="/login/logout" method="POST">
             <button type="submit" class="logout">

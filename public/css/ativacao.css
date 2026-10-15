@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f2f5f3;
+    color: #26352d;
+}
+
+.pagina-ativacao {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.card-ativacao {
+    width: 100%;
+    max-width: 460px;
+    padding: 40px 32px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.logo {
+    display: block;
+    width: 100px;
+    max-height: 100px;
+    object-fit: contain;
+    margin: 0 auto 20px;
+    border-radius: 50%; /* transforma em círculo */
+    object-fit: cover;  /* evita distorção da imagem */
+}
+
+.card-ativacao h1 {
+    margin-bottom: 14px;
+    font-size: 26px;
+    color: #245c40;
+}
+
+.descricao {
+    margin-bottom: 26px;
+    color: #66736b;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.card-ativacao form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.card-ativacao label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-ativacao input {
+    width: 100%;
+    padding: 13px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #cbd5ce;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-ativacao input:focus {
+    border-color: #28784e;
+    box-shadow: 0 0 0 3px rgba(40, 120, 78, 0.12);
+}
+
+.card-ativacao button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background-color: #28784e;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.card-ativacao button:hover {
+    background-color: #1e603d;
+}
+
+.mensagem-erro {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #f0b8b8;
+    border-radius: 8px;
+    background-color: #fff0f0;
+    color: #a52828;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.aviso {
+    margin-top: 22px;
+    color: #7a857e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .pagina-ativacao {
+        padding: 16px;
+    }
+
+    .card-ativacao {
+        padding: 32px 22px;
+    }
+
+    .card-ativacao h1 {
+        font-size: 23px;
+    }
+}

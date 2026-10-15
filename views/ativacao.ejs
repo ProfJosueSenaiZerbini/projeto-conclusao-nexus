@@ -3,35 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ativação</title>
+
+    <title>Ativação do sistema | SafeZone </title>
+
+    <link rel="stylesheet" href="/css/ativacao.css">
 </head>
 
 <body>
+    <main class="pagina-ativacao">
+        <section class="card-ativacao">
 
-    <h1>Ativação do sistema</h1>
+            <img
+                src="/img/logo.png"
+                alt="Logo Nexus"
+                class="logo"
+            >
 
-    <p>Digite o código de ativação fornecido pela organização.</p>
+            <h1>Ativação do sistema</h1>
 
-    <% if (mensagemErro) { %>
-        <p style="color: red;">
-            <%= mensagemErro %>
-        </p>
-    <% } %>
+            <p class="descricao">
+                Digite o código de ativação fornecido
+                para liberar a configuração inicial do sistema.
+            </p>
 
-    <form action="/ativacao" method="POST">
+            <% if (mensagemErro) { %>
+                <div class="mensagem-erro" role="alert">
+                    <%= mensagemErro %>
+                </div>
+            <% } %>
 
-        <input
-            type="text"
-            name="codigo"
-            placeholder="Código de ativação"
-            required
-        >
+            <form action="/ativacao" method="POST">
+                <label for="codigo">
+                    Código de ativação
+                </label>
 
-        <button type="submit">
-            Validar código
-        </button>
+                <input
+                    type="text"
+                    id="codigo"
+                    name="codigo"
+                    placeholder="Ex.: NEXUS-2026-001"
+                    autocomplete="off"
+                    required
+                >
 
-    </form>
+                <button type="submit">
+                    Validar código
+                </button>
+            </form>
 
+            <p class="aviso">
+                O código de ativação é de uso único.
+            </p>
+
+        </section>
+    </main>
 </body>
 </html>

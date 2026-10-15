@@ -15,6 +15,17 @@ async function verificarFiscalExistente() {
     );
 }
 
+async function verificarAtivacaoConcluida() {
+    const resultado = await executarQuery(
+        `SELECT ativacao_concluida
+         FROM CONFIGURACAO_SISTEMA
+         WHERE id = 1`
+    );
+
+    return resultado.length > 0 &&
+           Boolean(resultado[0].ativacao_concluida);
+}
+
 async function marcarCodigoComoUsado(codigo) {
     return await executarQuery(
         `UPDATE CODIGO_ATIVACAO
@@ -37,6 +48,7 @@ async function cadastrarFiscal(nome, email, cpf, senha) {
 module.exports = {
     buscarCodigo,
     verificarFiscalExistente,
+    verificarAtivacaoConcluida,
     marcarCodigoComoUsado, 
     cadastrarFiscal
 };
