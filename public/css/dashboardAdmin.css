@@ -1,0 +1,712 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #146c43;
+  --primary-dark: #0b3d29;
+  --primary-light: #e7f5ec;
+  --accent: #5cc58a;
+
+  --background: #f3f6f4;
+  --surface: #ffffff;
+  --surface-soft: #f8faf9;
+
+  --text: #172b21;
+  --text-secondary: #63766b;
+  --border: #e3ebe6;
+
+  --danger: #dc4b52;
+  --warning: #e3a52b;
+  --success: #259b64;
+
+  --radius: 20px;
+  --shadow: 0 4px 24px rgba(16, 54, 35, 0.045);
+  --shadow-hover: 0 12px 32px rgba(16, 54, 35, 0.10);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      ellipse at top right,
+      rgba(38, 150, 91, 0.045),
+      transparent 45%
+    ),
+    var(--background);
+
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p {
+  margin-top: 0;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+/* ==============================
+   ESTRUTURA PRINCIPAL
+================================ */
+
+.painel {
+  width: min(100%, 1600px);
+  margin: 0 auto;
+  padding: 36px 40px 60px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ==============================
+   CABEÇALHO
+================================ */
+
+.painel > header {
+  grid-column: 1 / -1;
+  position: relative;
+  overflow: hidden;
+
+  min-height: 215px;
+  padding: 42px 46px;
+
+  border-radius: 26px;
+  background:
+    linear-gradient(
+      115deg,
+      #092e20 0%,
+      #105236 55%,
+      #1c8554 100%
+    );
+
+  box-shadow: 0 14px 35px rgba(8, 57, 35, 0.14);
+  color: white;
+}
+
+.painel > header::before {
+  content: "";
+  position: absolute;
+
+  width: 390px;
+  height: 390px;
+  right: -110px;
+  top: -160px;
+
+  border: 65px solid rgba(255, 255, 255, 0.035);
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.painel > header::after {
+  content: "";
+  position: absolute;
+
+  width: 220px;
+  height: 220px;
+  right: 100px;
+  bottom: -170px;
+
+  border: 35px solid rgba(255, 255, 255, 0.025);
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.marca {
+  position: relative;
+  z-index: 1;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 22px;
+  padding: 8px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 9px;
+
+  background: rgba(255, 255, 255, 0.09);
+  color: #c9f7d8;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.marca::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6de6a2;
+  box-shadow: 0 0 12px rgba(109, 230, 162, 0.65);
+}
+
+.painel > header h1 {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 12px;
+  font-size: clamp(27px, 3vw, 40px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.painel > header > p:last-child {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 0;
+  color: #c7e1d1;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ==============================
+   AVISO DE DEMONSTRAÇÃO
+================================ */
+
+.demonstracao {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 15px 20px;
+
+  border: 1px solid #d8e9ce;
+  border-left: 4px solid #79a64e;
+  border-radius: 12px;
+
+  background: #f0f8e9;
+  color: #4e7336;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ==============================
+   CARDS DE ESTATÍSTICAS
+================================ */
+
+.cards {
+  grid-column: 1 / -1;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--surface);
+  box-shadow: var(--shadow);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: #cbded1;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+
+  background: var(--primary);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+
+  width: 110px;
+  height: 110px;
+  right: -45px;
+  top: -45px;
+
+  border-radius: 50%;
+  background: rgba(30, 130, 76, 0.035);
+  pointer-events: none;
+}
+
+.card h2 {
+  margin-bottom: 22px;
+
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.card strong {
+  display: block;
+
+  color: var(--primary-dark);
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1.5px;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* Urgentes */
+
+.card:nth-child(2)::before {
+  background: var(--danger);
+}
+
+.card:nth-child(2) strong {
+  color: #c23f47;
+}
+
+.card:nth-child(2)::after {
+  background: rgba(220, 75, 82, 0.04);
+}
+
+/* Em análise */
+
+.card:nth-child(3)::before {
+  background: var(--warning);
+}
+
+.card:nth-child(3) strong {
+  color: #b9821b;
+}
+
+.card:nth-child(3)::after {
+  background: rgba(227, 165, 43, 0.05);
+}
+
+/* Resolvidas */
+
+.card:nth-child(4)::before {
+  background: var(--success);
+}
+
+.card:nth-child(4) strong {
+  color: #208653;
+}
+
+/* ==============================
+   BLOCOS DO DASHBOARD
+================================ */
+
+.bloco {
+  min-width: 0;
+  padding: 28px;
+
+  border: 1px solid var(--border);
+  border-radius: 22px;
+
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.bloco > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid #edf1ee;
+
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.4px;
+}
+
+.bloco > h2::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  flex-shrink: 0;
+
+  border-radius: 4px;
+  background: var(--primary);
+}
+
+.bloco > p {
+  margin: 14px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ==============================
+   MAPA LEAFLET
+================================ */
+
+#mapa {
+  position: relative;
+  display: block;
+
+  width: 100%;
+  height: 560px;
+  min-height: 400px;
+
+  overflow: hidden;
+  isolation: isolate;
+
+  border: 1px solid #dce8df;
+  border-radius: 16px;
+
+  background: #e5eee8;
+  z-index: 0;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+
+  background: #e5eee8;
+  font-family: "Inter", sans-serif;
+  z-index: 0;
+}
+
+.leaflet-control-container {
+  font-family: "Inter", sans-serif;
+}
+
+/* Zoom */
+
+.leaflet-bar {
+  overflow: hidden;
+
+  border: 1px solid #e2eae4 !important;
+  border-radius: 12px !important;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.09) !important;
+}
+
+.leaflet-bar a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+
+  border-color: #e9efeb !important;
+
+  background: #fff !important;
+  color: var(--primary-dark) !important;
+
+  transition: background 0.2s ease;
+}
+
+.leaflet-bar a:hover {
+  background: var(--primary-light) !important;
+}
+
+/* Popup das denúncias */
+
+.leaflet-popup-content-wrapper {
+  overflow: hidden;
+  padding: 4px;
+
+  border: 1px solid #e7eee9;
+  border-radius: 15px !important;
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12) !important;
+}
+
+.leaflet-popup-content {
+  margin: 14px 17px !important;
+
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.leaflet-popup-content strong {
+  color: var(--primary-dark);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.leaflet-popup-content p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.leaflet-popup-tip {
+  background: white;
+}
+
+.leaflet-popup-close-button {
+  color: #738679 !important;
+}
+
+/* Créditos do mapa */
+
+.leaflet-control-attribution {
+  padding: 4px 8px !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  font-size: 10px !important;
+}
+
+/* Aviso de erros */
+
+#aviso-mapa {
+  color: #c04d37;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+#aviso-mapa:empty {
+  display: none;
+}
+
+/* ==============================
+   LISTA DE DENÚNCIAS
+================================ */
+
+.denuncia {
+  position: relative;
+  overflow: hidden;
+
+  margin-top: 12px;
+  padding: 18px;
+
+  border: 1px solid #e7eee9;
+  border-radius: 14px;
+
+  background: var(--surface-soft);
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.denuncia:hover {
+  background: #f0f8f3;
+  border-color: #cfe5d5;
+  transform: translateX(2px);
+}
+
+.denuncia h3 {
+  margin-bottom: 8px;
+
+  color: #203d2d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.denuncia p {
+  margin-bottom: 14px;
+
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  max-width: 100%;
+  padding: 7px 12px;
+
+  border: 1px solid #d9e9df;
+  border-radius: 50px;
+
+  background: #edf7f0;
+  color: #28734b;
+
+  font-size: 11px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ==============================
+   BARRA DE ROLAGEM
+================================ */
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f4f1;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid #f0f4f1;
+  border-radius: 10px;
+  background: #bdcfc2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8bab96;
+}
+
+/* ==============================
+   TABLETS
+================================ */
+
+@media (max-width: 1100px) {
+  .painel {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 28px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #mapa {
+    height: 500px;
+  }
+}
+
+/* ==============================
+   CELULARES
+================================ */
+
+@media (max-width: 600px) {
+  .painel {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .painel > header {
+    min-height: auto;
+    padding: 30px 24px;
+    border-radius: 20px;
+  }
+
+  .painel > header h1 {
+    font-size: 27px;
+    letter-spacing: -1px;
+  }
+
+  .painel > header > p:last-child {
+    font-size: 13px;
+  }
+
+  .marca {
+    margin-bottom: 20px;
+    font-size: 11px;
+  }
+
+  .cards {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .card h2 {
+    min-height: 36px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .card strong {
+    font-size: 34px;
+  }
+
+  .bloco {
+    padding: 18px;
+    border-radius: 17px;
+  }
+
+  .bloco > h2 {
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    font-size: 15px;
+  }
+
+  #mapa {
+    height: 380px;
+    min-height: 380px;
+    border-radius: 12px;
+  }
+
+  .denuncia {
+    padding: 15px;
+  }
+
+  .leaflet-control-attribution {
+    font-size: 9px !important;
+  }
+}
+
+/* Telas muito pequenas */
+
+@media (max-width: 360px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card h2 {
+    min-height: 0;
+  }
+
+  #mapa {
+    height: 320px;
+    min-height: 320px;
+  }
+}
+
+/* Acessibilidade */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
