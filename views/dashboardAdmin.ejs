@@ -1,28 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeZone | Dashboard do Administrador</title>
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/menu.css">
-    <link rel="stylesheet" href="/css/dashUsuario.css">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeZone Admin</title>
+
+  <link rel="stylesheet" href="/css/dashboardAdmin.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
-
 <body>
-    <%- include("partials/header") %>
-        <%- include("partials/menuAdm") %>
-            <main class="dashboard-main">
-                <div class="dashboard-container">
-                    <section class="page-title">
-                        <h1>Dashboard do Administrador</h1>
-                        <p>Se você está vendo essa página, o login de administrador funcionou!</p>
-                    </section>
+  <main class="painel">
+    <header>
+      <p class="marca">SafeZone</p>
+      <h1>Dashboard administrativo</h1>
+      <p>Acompanhe as denúncias da cidade.</p>
+    </header>
 
-                </div>
-            </main>
+    <% if (modoDemonstracao) { %>
+      <p class="demonstracao">Demonstração com denúncias fictícias.</p>
+    <% } %>
+
+    <section class="cards" aria-label="Resumo das denúncias">
+      <article class="card">
+        <h2>Total de denúncias</h2>
+        <strong><%= resumo.total %></strong>
+      </article>
+
+      <article class="card">
+        <h2>Urgentes</h2>
+        <strong><%= resumo.urgentes %></strong>
+      </article>
+
+      <article class="card">
+        <h2>Em análise</h2>
+        <strong><%= resumo.emAnalise %></strong>
+      </article>
+
+      <article class="card">
+        <h2>Resolvidas</h2>
+        <strong><%= resumo.resolvidas %></strong>
+      </article>
+    </section>
+
+    <section class="bloco">
+      <h2>Mapa das denúncias</h2>
+      <div id="mapa" aria-label="Mapa com a localização das denúncias"></div>
+      <p id="aviso-mapa" role="status"></p>
+      <p>Denúncias sem localização aparecem apenas na lista.</p>
+    </section>
+
+    <section class="bloco">
+      <h2>Denúncias recebidas</h2>
+
+      <% if (denuncias.length === 0) { %>
+        <p>Nenhuma denúncia cadastrada.</p>
+      <% } %>
+
+      <% denuncias.forEach(denuncia => { %>
+        <article class="denuncia">
+          <div>
+            <h3><%= denuncia.titulo %></h3>
+            <p><%= denuncia.endereco %></p>
+          </div>
+
+          <span class="status"><%= denuncia.status %></span>
+        </article>
+      <% }); %>
+    </section>
+  </main>
+
+  <!-- Dados enviados pela rota para o JavaScript do mapa. -->
+  <script id="dados-mapa" type="application/json"><%- JSON.stringify(geojson).replace(/</g, '\\u003c') %></script>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Usa o mesmo prefixo /public do CSS. -->
+  <script src="/js/dashboardAdmin.js"></script>
 </body>
-
 </html>
