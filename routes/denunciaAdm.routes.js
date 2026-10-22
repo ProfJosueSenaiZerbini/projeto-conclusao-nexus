@@ -1,24 +1,27 @@
 
 const express = require("express");
-
 const router = express.Router();
 
 const denunciaAdmController = require(
     "../controllers/denunciaAdmController"
 );
 
-// Página administrativa
-router.get("/", denunciaAdmController.listar);
+const {
+    verificarAdmin
+} = require("../middlewares/autenticacao");
 
-// Alterar status de uma denúncia
+// Todas as rotas abaixo exigem acesso administrativo.
+router.get("/", verificarAdmin, denunciaAdmController.listar);
+
 router.post(
     "/:id/status",
+    verificarAdmin,
     denunciaAdmController.alterarStatus
 );
 
-// Alterar prioridade de uma denúncia
 router.post(
     "/:id/prioridade",
+    verificarAdmin,
     denunciaAdmController.alterarPrioridade
 );
 
