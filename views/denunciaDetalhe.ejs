@@ -174,10 +174,16 @@
                                 <% if (mensagens && mensagens.length > 0) { %>
                                     <% mensagens.forEach(msg => { %>
                                         <div class="comentario-item <%= msg.tipoAutor %>" style="padding: 12px; margin-bottom: 10px; border-radius: 6px; background-color: #f5f5f5;">
-                                            <div class="comentario-header" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                                <strong><%= msg.autor %> (<%= msg.cargo %>)</strong>
-                                                <span style="font-size: 0.85em; color: #666;"><%= msg.dataHora %></span>
-                                            </div>
+                                            
+<div class="comentario-header" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+    <strong><%= msg.autor %></strong>
+    <span style="font-size: 0.85em; color: #666;">
+        <%= msg.dataHora
+            ? new Date(msg.dataHora).toLocaleString("pt-BR")
+            : "" %>
+    </span>
+</div>
+
                                             <p style="margin: 0;"><%= msg.texto %></p>
                                         </div>
                                     <% }) %>

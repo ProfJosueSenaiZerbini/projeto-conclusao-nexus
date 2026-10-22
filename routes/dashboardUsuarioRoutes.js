@@ -1,28 +1,25 @@
-const express = require('express');
+
+const express = require("express");
 const router = express.Router();
 
 const {
     verificarUsuario
-} = require('../middlewares/autenticacao');
+} = require("../middlewares/autenticacao");
 
-router.get('/', verificarUsuario, (req, res) => {
-    res.render('dashboardUsuario');
+router.get("/", verificarUsuario, (req, res) => {
+    res.render("dashboardUsuario");
 });
 
-router.get('/denuncias', (req, res) => {
-    res.render('denuncias');
+router.get("/denunciaUsuario", verificarUsuario, (req, res) => {
+    res.render("denunciaUsuario");
 });
 
-router.get('/denunciaUsuario', (req, res) => {
-    res.render('DenunciaUsuario');
+router.get("/notificacoes", verificarUsuario, (req, res) => {
+    res.redirect("/notificacoes");
 });
 
-router.get('/notificacoes', (req, res) => {
-    res.render('notificacoes');
-});
-
-router.get('/login', (req, res) => {
-    res.render('/');
+router.get("/login", (req, res) => {
+    res.redirect("/login");
 });
 
 module.exports = router;
