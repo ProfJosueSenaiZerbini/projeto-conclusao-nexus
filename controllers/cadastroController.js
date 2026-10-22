@@ -14,6 +14,12 @@ async function cadastrar(req, res) {
     // Remove pontos, hífen e qualquer caractere que não seja número.
     const cpf = req.body.cpf?.replace(/\D/g, '');
 
+    if (cpf.length !== 11) {
+        return res.status(400).render('cadastro', {
+            mensagemErro: 'O CPF deve conter exatamente 11 números.'
+        });
+    }
+
     const senha = req.body.senha;
 
     if (!nome || !email || !cpf || !senha) {
