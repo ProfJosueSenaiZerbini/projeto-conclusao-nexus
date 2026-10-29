@@ -1,80 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafeZone Admin</title>
 
+  <!-- CSS compartilhado -->
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/menu.css">
+
   <link rel="stylesheet" href="/css/dashboardAdmin.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
+
 <body>
-  <main class="painel">
-    <header>
-      <p class="marca">SafeZone</p>
-      <h1>Dashboard administrativo</h1>
-      <p>Acompanhe as denúncias da cidade.</p>
-    </header>
+  <!-- HEADER -->
+  <%- include("partials/header") %>
+    <div class="pagina">
+      <div class="conteudo">
 
-    <% if (modoDemonstracao) { %>
-      <p class="demonstracao">Demonstração com denúncias fictícias.</p>
-    <% } %>
+        <!-- MENU LATERAL -->
+        <%- include("partials/menuAdm") %>
+          <main class="painel">
+            <header>
+              <p class="marca">SafeZone</p>
+              <h1>Dashboard administrativo</h1>
+              <p>Acompanhe as denúncias da cidade.</p>
+            </header>
 
-    <section class="cards" aria-label="Resumo das denúncias">
-      <article class="card">
-        <h2>Total de denúncias</h2>
-        <strong><%= resumo.total %></strong>
-      </article>
+            <% if (modoDemonstracao) { %>
+              <p class="demonstracao">Demonstração com denúncias fictícias.</p>
+              <% } %>
 
-      <article class="card">
-        <h2>Urgentes</h2>
-        <strong><%= resumo.urgentes %></strong>
-      </article>
+                <section class="cards" aria-label="Resumo das denúncias">
+                  <article class="card">
+                    <h2>Total de denúncias</h2>
+                    <strong>
+                      <%= resumo.total %>
+                    </strong>
+                  </article>
 
-      <article class="card">
-        <h2>Em análise</h2>
-        <strong><%= resumo.emAnalise %></strong>
-      </article>
+                  <article class="card">
+                    <h2>Urgentes</h2>
+                    <strong>
+                      <%= resumo.urgentes %>
+                    </strong>
+                  </article>
 
-      <article class="card">
-        <h2>Resolvidas</h2>
-        <strong><%= resumo.resolvidas %></strong>
-      </article>
-    </section>
+                  <article class="card">
+                    <h2>Em análise</h2>
+                    <strong>
+                      <%= resumo.emAnalise %>
+                    </strong>
+                  </article>
 
-    <section class="bloco">
-      <h2>Mapa das denúncias</h2>
-      <div id="mapa" aria-label="Mapa com a localização das denúncias"></div>
-      <p id="aviso-mapa" role="status"></p>
-      <p>Denúncias sem localização aparecem apenas na lista.</p>
-    </section>
+                  <article class="card">
+                    <h2>Resolvidas</h2>
+                    <strong>
+                      <%= resumo.resolvidas %>
+                    </strong>
+                  </article>
+                </section>
 
-    <section class="bloco">
-      <h2>Denúncias recebidas</h2>
+                <section class="bloco">
+                  <h2>Mapa das denúncias</h2>
+                  <div id="mapa" aria-label="Mapa com a localização das denúncias"></div>
+                  <p id="aviso-mapa" role="status"></p>
+                  <p>Denúncias sem localização aparecem apenas na lista.</p>
+                </section>
 
-      <% if (denuncias.length === 0) { %>
-        <p>Nenhuma denúncia cadastrada.</p>
-      <% } %>
+                <section class="bloco">
+                  <h2>Denúncias recebidas</h2>
 
-      <% denuncias.forEach(denuncia => { %>
-        <article class="denuncia">
-          <div>
-            <h3><%= denuncia.titulo %></h3>
-            <p><%= denuncia.endereco %></p>
-          </div>
+                  <% if (denuncias.length===0) { %>
+                    <p>Nenhuma denúncia cadastrada.</p>
+                    <% } %>
 
-          <span class="status"><%= denuncia.status %></span>
-        </article>
-      <% }); %>
-    </section>
-  </main>
+                      <% denuncias.forEach(denuncia=> { %>
+                        <article class="denuncia">
+                          <div>
+                            <h3>
+                              <%= denuncia.titulo %>
+                            </h3>
+                            <p>
+                              <%= denuncia.endereco %>
+                            </p>
+                          </div>
 
-  <!-- Dados enviados pela rota para o JavaScript do mapa. -->
-  <script id="dados-mapa" type="application/json"><%- JSON.stringify(geojson).replace(/</g, '\\u003c') %></script>
+                          <span class="status">
+                            <%= denuncia.status %>
+                          </span>
+                        </article>
+                        <% }); %>
+                </section>
+          </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+          <!-- Dados enviados pela rota para o JavaScript do mapa. -->
+          <script id="dados-mapa"
+            type="application/json"><%- JSON.stringify(geojson).replace(/</g, '\\u003c') %></script>
 
-  <!-- Usa o mesmo prefixo /public do CSS. -->
-  <script src="/js/dashboardAdmin.js"></script>
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+          <!-- Usa o mesmo prefixo /public do CSS. -->
+          <script src="/js/dashboardAdmin.js"></script>
+      </div>
+    </div>
 </body>
+
 </html>
