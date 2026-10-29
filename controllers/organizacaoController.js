@@ -284,39 +284,11 @@ async function reativarOrganizacao(req, res) {
     }
 }
 
-function exibirSimulacaoContratacao(req, res) {
-    if (process.env.NODE_ENV === 'production' || !process.env.CHAVE_TESTE_CONTRATACAO) {
-        return res.status(404).send('Página não encontrada.');
-    }
-    return res.render('simularContratacao', { mensagemErro: null });
-}
-
-function aprovarContratacaoTeste(req, res) {
-    const chaveConfigurada = process.env.CHAVE_TESTE_CONTRATACAO;
-    const chaveRecebida = String(req.body.chave || '');
-    if (process.env.NODE_ENV === 'production' || !chaveConfigurada) {
-        return res.status(404).send('Página não encontrada.');
-    }
-    const a = Buffer.from(chaveConfigurada);
-    const b = Buffer.from(chaveRecebida);
-    if (a.length !== b.length || !require('crypto').timingSafeEqual(a, b)) {
-        return res.status(403).render('simularContratacao', {
-            mensagemErro: 'Chave de teste inválida.'
-        });
-    }
-    // Simulação explícita apenas em ambiente local; remover quando o chatbot estiver integrado.
-    req.session.equipeSafeZone = true;
-    req.session.contratacaoAprovada = true;
-    return res.redirect('/organizacao/cadastro');
-}
-
 module.exports = {
     cadastrarOrganizacao,
     exibirCadastroSuperusuario,
     cadastrarSuperusuario,
     confirmarEmailSuperusuario,
-    exibirSimulacaoContratacao,
-    aprovarContratacaoTeste,
     gerarNovoConvite,
     cancelarContrato,
     reativarOrganizacao,
