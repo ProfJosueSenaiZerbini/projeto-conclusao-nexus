@@ -9,23 +9,47 @@ async function listarFiscais(idOrganizacao) {
     );
 }
 
+
 async function buscarEmailExistente(email) {
+    const usuario = await executarQuery(
+        'SELECT email FROM USUARIO WHERE LOWER(email) = ?',
+        [email]
+    );
+    if (usuario.length) return usuario;
+
+    const fiscal = await executarQuery(
+        'SELECT email FROM FISCAL WHERE LOWER(email) = ?',
+        [email]
+    );
+    if (fiscal.length) return fiscal;
+
     return executarQuery(
-        `SELECT email FROM USUARIO WHERE LOWER(email) = ?
-         UNION SELECT email FROM FISCAL WHERE LOWER(email) = ?
-         UNION SELECT email FROM SUPERUSUARIO WHERE LOWER(email) = ?`,
-        [email, email, email]
+        'SELECT email FROM SUPERUSUARIO WHERE LOWER(email) = ?',
+        [email]
     );
 }
 
+
+
 async function buscarCpfExistente(cpfNumeros) {
+    const usuario = await executarQuery(
+        "SELECT cpf FROM USUARIO WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?",
+        [cpfNumeros]
+    );
+    if (usuario.length) return usuario;
+
+    const fiscal = await executarQuery(
+        "SELECT cpf FROM FISCAL WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?",
+        [cpfNumeros]
+    );
+    if (fiscal.length) return fiscal;
+
     return executarQuery(
-        `SELECT cpf FROM USUARIO WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?
-         UNION SELECT cpf FROM FISCAL WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?
-         UNION SELECT cpf FROM SUPERUSUARIO WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?`,
-        [cpfNumeros, cpfNumeros, cpfNumeros]
+        "SELECT cpf FROM SUPERUSUARIO WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = ?",
+        [cpfNumeros]
     );
 }
+
 
 async function cadastrarFiscal({ idOrganizacao, nome, email, cpf, senha }) {
     const senhaHash = await bcrypt.hash(senha, 12);
