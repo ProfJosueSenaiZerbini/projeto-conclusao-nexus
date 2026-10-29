@@ -2,18 +2,18 @@
 const express = require('express');
 const router = express.Router();
 
-const { verificarAdmin } = require('../middlewares/autenticacao');
+const {verificarSuperusuario} = require('../middlewares/autenticacao');
 const fiscalController = require('../controllers/fiscalController');
 
 router.get(
     '/',
-    verificarAdmin,
+    verificarSuperusuario,
     fiscalController.exibirGerenciarFiscais
 );
 
 router.get(
     '/cadastro',
-    verificarAdmin,
+    verificarSuperusuario,
     (req, res) => {
         res.redirect('/gerenciarFiscais');
     }
@@ -21,7 +21,7 @@ router.get(
 
 router.post(
     '/cadastro',
-    verificarAdmin,
+    verificarSuperusuario,
     fiscalController.cadastrarFiscal
 );
 
