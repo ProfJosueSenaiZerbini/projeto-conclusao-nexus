@@ -241,3 +241,46 @@ body {
     .evidencias { grid-template-columns: 1fr 1fr; }
     .cabecalho-meta { flex-wrap: wrap; }
 }
+/* Ajustes da página de detalhes */
+.card { margin-bottom: 0; }
+.cabecalho-denuncia { align-items: flex-start; gap: 18px; }
+.cabecalho-meta { flex-wrap: wrap; justify-content: flex-end; }
+.status, .prioridade { display: inline-flex; align-items: center; text-transform: capitalize; }
+.status-pendente, .status-em-an-lise, .status-em-analise, .status-em-análise { background: #fff4d6; color: #805d00; }
+.status-resolvida, .status-resolvido, .status-conclu-da, .status-concluida { background: #e2f5e9; color: #17663a; }
+.status-rejeitada, .status-cancelada, .status-arquivada { background: #fce8e8; color: #a12626; }
+.status-em-andamento { background: #e6efff; color: #214f9b; }
+.prioridade-alta, .prioridade-urgente { background: #fde8e8; color: #b42318; }
+.prioridade-m-dia, .prioridade-media, .prioridade-média { background: #fff4d6; color: #805d00; }
+.prioridade-baixa { background: #e2f5e9; color: #17663a; }
+.grid-informacoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.informacao strong { overflow-wrap: anywhere; }
+.descricao { white-space: pre-wrap; overflow-wrap: anywhere; }
+.evidencia .imagem-placeholder { height: 150px; padding: 0; }
+.evidencia .imagem-placeholder img,
+.evidencia .imagem-placeholder video { width: 100%; height: 100%; object-fit: contain; display: block; }
+.evidencia .imagem-placeholder a { display: block; width: 100%; height: 100%; }
+.evidencia > span { overflow-wrap: anywhere; }
+.historico:empty::after { content: "Nenhum evento registrado."; color: #7a858f; font-size: 13px; }
+.form-mensagem { gap: 10px; }
+.form-mensagem label { color: #37434b; font-size: 12px; font-weight: 600; }
+.form-mensagem textarea { height: auto; min-height: 90px; resize: vertical; font: inherit; font-size: 13px; }
+.form-mensagem-rodape { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.form-mensagem-rodape small, .mensagem-permissao { color: #7a858f; font-size: 12px; line-height: 1.5; }
+.form-mensagem button { padding: 10px 16px; font-size: 12px; }
+
+@media (max-width: 750px) {
+    .container { margin-left: 0; }
+    .area-detalhes { padding: 18px; }
+    .cabecalho-denuncia { flex-direction: column; align-items: stretch; }
+    .cabecalho-meta { justify-content: flex-start; }
+    .grid-informacoes { grid-template-columns: 1fr; }
+    .informacao-local { grid-column: auto; }
+    .layout-conteudo { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+    .evidencias { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card { padding: 16px; }
+    .form-mensagem-rodape { align-items: flex-start; flex-direction: column; }
+    .form-mensagem button { align-self: stretch; }
+}
