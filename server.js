@@ -38,6 +38,7 @@ const denunciaDetalheRoutes = require("./routes/denunciaDetalheRoutes");
 const dashboardAdminRoutes = require("./routes/dashboardAdminRoutes");
 const codigoAtivacaoRoutes = require("./routes/codigoAtivacaoRoutes");
 const gerenciarFiscaisRoutes = require("./routes/gerenciarFiscaisRoutes");
+const organizacaoRoutes = require('./routes/organizacaoRoutes');
 
 const app = express();
 
@@ -94,6 +95,7 @@ app.use("/denunciaDetalhe", denunciaDetalheRoutes);
 app.use("/dashboardAdmin", dashboardAdminRoutes);
 app.use("/ativacao", codigoAtivacaoRoutes);
 app.use("/gerenciarFiscais", gerenciarFiscaisRoutes);
+app.use('/organizacao', organizacaoRoutes);
 
 // Tratamento de páginas não encontradas.
 app.use((req, res) => {

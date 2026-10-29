@@ -1,31 +1,19 @@
 const crypto = require('crypto');
-const { promisify } = require('util');
+const bcrypt = require('bcrypt');
 const {
     executarQuery,
     executarTransacao
 } = require('../db/dbConnect');
 
-const scryptAsync = promisify(crypto.scrypt);
-
-// Gera um token aleatório para o convite
 function gerarTokenConvite() {
     return crypto.randomBytes(32).toString('hex');
 }
 
-// Armazena somente o hash do token no banco
 function hashToken(token) {
     return crypto.createHash('sha256').update(token).digest('hex');
 }
 
-// Protege a senha com hash e salt
-async function gerarHashSenha(senha) {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const chave = await scryptAsync(senha, salt, 64);
-
-    return `${salt}:${chave.toString('hex')}`;
-}
-
-// Cria a organização e o convite do superusuário
+// Cria a organização e o convite após a contratação ser aprovada
 async function criarOrganizacaoEConvite({
     nome,
     cnpj,
@@ -38,9 +26,14 @@ async function criarOrganizacaoEConvite({
     const resultado = await executarTransacao(async (conn) => {
         const organizacao = await conn.query(
             `INSERT INTO ORGANIZACAO
-                (nome, cnpj, emailContato, status, statusContrato, inicioContrato)
+                (nome, cnpj, emailContato, status, statusContrato,
+                 inicioContrato)
              VALUES (?, ?, ?, 'ativa', 'ativo', CURRENT_TIMESTAMP)`,
-            [nome.trim(), cnpj.trim(), emailContato.trim()]
+            [
+                nome.trim(),
+                cnpj.trim(),
+                emailContato.trim().toLowerCase()
+            ]
         );
 
         const idOrganizacao = Number(organizacao.insertId);
@@ -59,11 +52,10 @@ async function criarOrganizacaoEConvite({
         return { idOrganizacao };
     });
 
-    // O token original será enviado por e-mail pelo controller
     return { ...resultado, token };
 }
 
-// Busca e valida um convite
+// Busca um convite ainda válido
 async function buscarConviteValido(token) {
     if (!token || !/^[a-f0-9]{64}$/i.test(token)) {
         return [];
@@ -83,12 +75,13 @@ async function buscarConviteValido(token) {
            AND c.usadoEm IS NULL
            AND c.revogado = FALSE
            AND c.expiraEm > CURRENT_TIMESTAMP
-           AND o.status IN ('ativa', 'pendente')`,
+           AND o.status = 'ativa'
+           AND o.statusContrato = 'ativo'`,
         [hashToken(token)]
     );
 }
 
-// Cadastra o superusuário utilizando o convite
+// Cadastra o superusuário usando um convite válido
 async function cadastrarSuperusuarioPorConvite({
     idConvite,
     idOrganizacao,
@@ -97,7 +90,14 @@ async function cadastrarSuperusuarioPorConvite({
     cpf,
     senha
 }) {
-    const senhaHash = await gerarHashSenha(senha);
+    const emailNormalizado = email.trim().toLowerCase();
+    const cpfNormalizado = cpf.replace(/\D/g, '');
+
+    if (cpfNormalizado.length !== 11) {
+        return { status: 'cpf_invalido' };
+    }
+
+    const senhaHash = await bcrypt.hash(senha, 12);
 
     return executarTransacao(async (conn) => {
         const convites = await conn.query(
@@ -116,11 +116,9 @@ async function cadastrarSuperusuarioPorConvite({
             return { status: 'convite_invalido' };
         }
 
-        const convite = convites[0];
-
         if (
-            convite.emailResponsavel.toLowerCase() !==
-            email.trim().toLowerCase()
+            convites[0].emailResponsavel.toLowerCase() !==
+            emailNormalizado
         ) {
             return { status: 'email_diferente' };
         }
@@ -131,11 +129,7 @@ async function cadastrarSuperusuarioPorConvite({
              WHERE idOrganizacao = ?
                 OR email = ?
                 OR cpf = ?`,
-            [
-                idOrganizacao,
-                email.trim().toLowerCase(),
-                cpf
-            ]
+            [idOrganizacao, emailNormalizado, cpfNormalizado]
         );
 
         if (existentes.length > 0) {
@@ -150,8 +144,8 @@ async function cadastrarSuperusuarioPorConvite({
             [
                 idOrganizacao,
                 nome.trim(),
-                email.trim().toLowerCase(),
-                cpf,
+                emailNormalizado,
+                cpfNormalizado,
                 senhaHash
             ]
         );
@@ -168,22 +162,7 @@ async function cadastrarSuperusuarioPorConvite({
     });
 }
 
-// Confirma o e-mail e ativa a conta
-async function confirmarEmailSuperusuario(idSuperusuario) {
-    const resultado = await executarQuery(
-        `UPDATE SUPERUSUARIO
-         SET emailConfirmado = TRUE,
-             status = 'ativo',
-             dataConfirmacaoEmail = CURRENT_TIMESTAMP
-         WHERE idSuperusuario = ?
-           AND status = 'pendente'`,
-        [idSuperusuario]
-    );
-
-    return resultado.affectedRows === 1;
-}
-
-// Revoga convites ainda não utilizados
+// Revoga convites pendentes de uma organização
 async function revogarConvitesPendentes(idOrganizacao) {
     return executarQuery(
         `UPDATE CONVITE_SUPERUSUARIO
@@ -199,6 +178,5 @@ module.exports = {
     criarOrganizacaoEConvite,
     buscarConviteValido,
     cadastrarSuperusuarioPorConvite,
-    confirmarEmailSuperusuario,
     revogarConvitesPendentes
 };
