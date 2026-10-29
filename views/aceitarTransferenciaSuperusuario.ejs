@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aceitar transferência | SafeZone</title></head>
+
+<body>
+    <main>
+
+        <h1>Aceitar responsabilidade de superusuário</h1>
+        <p>Organização: <strong><%= convite.nomeOrganizacao %></strong></p>
+        <p>Responsável: <strong><%= convite.nomeResponsavel %></strong> (<%= convite.emailResponsavel %>)</p>
+            <% if (mensagemErro) { %>
+                <p role="alert" style="color:#b00020">
+            <%= mensagemErro %></p><% } %>
+
+        <form method="POST" action="/organizacao/transferencia/<%= token %>">
+            <label for="senha">Crie sua senha (mínimo de 8 caracteres)</label>
+            <input id="senha" name="senha" type="password" minlength="8" required autocomplete="new-password">
+            <label for="confirmarSenha">Confirme a senha</label>
+            <input id="confirmarSenha" name="confirmarSenha" type="password" minlength="8" required autocomplete="new-password">
+            <button type="submit">Aceitar transferência</button>
+        </form>
+    </main>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Simulação local de contratação | SafeZone</title>
+    </head>
+
+<body>
+    <main>
+        <h1>Simulação local de contratação</h1>
+        <p>Ferramenta temporária de desenvolvimento. Não existe em produção e deve ser removida quando o chatbot for integrado.</p>
+            <% if (mensagemErro) { %>
+                <p role="alert" style="color:#b00020"><%= mensagemErro %></p>
+            <% } %>
+
+        <form method="POST" action="/organizacao/teste-contratacao">
+            <label for="chave">Chave local de teste</label>
+            <input id="chave" name="chave" type="password" required autocomplete="off">
+            <button type="submit">Simular aprovação</button>
+        </form>
+    </main>
+</body>
+</html>

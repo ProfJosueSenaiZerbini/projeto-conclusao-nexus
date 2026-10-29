@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Transferir superusuário | SafeZone</title>
+    </head>
+
+<body>
+    <main>
+        <h1>Transferir responsabilidade</h1>
+        <p>O superusuário atual continua ativo até o novo responsável aceitar o convite. O convite ainda não é enviado por e-mail nesta versão.</p>
+            <% if (mensagemErro) { %>
+                <p role="alert" style="color:#b00020"><%= mensagemErro %></p>
+            <% } %>
+
+        <form method="POST" action="/organizacao/transferir">
+            <label for="nome">Nome do novo responsável</label>
+            <input id="nome" name="nome" required maxlength="255">
+            <label for="email">E-mail do novo responsável</label>
+            <input id="email" name="email" type="email" required maxlength="255">
+            <label for="cpf">CPF</label>
+            <input id="cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00">
+            <button type="submit">Gerar convite de transferência</button>
+        </form>
+    </main>
+</body>
+</html>

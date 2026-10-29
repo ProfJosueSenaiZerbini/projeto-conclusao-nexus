@@ -15,7 +15,7 @@
 
     <%- include("partials/header") %>
 
-    <%- include(usuario && usuario.tipo === 'admin'
+    <%- include(usuario && ['admin', 'superusuario'].includes(usuario.tipo)
         ? "partials/menuAdm"
         : "partials/menu") %>
 
@@ -79,6 +79,9 @@
                                 type="text"
                                 id="cpf"
                                 name="cpf"
+                                maxlength="14"
+                                placeholder="000.000.000-00"
+                                inputmode="numeric"
                                 required
                             >
                         </div>
@@ -115,6 +118,8 @@
                             <th>Nome</th>
                             <th>E-mail</th>
                             <th>CPF</th>
+                            <th>Status</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
 
@@ -125,11 +130,19 @@
                                     <td><%= fiscal.nome %></td>
                                     <td><%= fiscal.email %></td>
                                     <td><%= fiscal.cpf %></td>
+                                    <td><%= fiscal.status === 'ativo' ? 'Ativo' : 'Desativado' %></td>
+                                    <td>
+                                        <% if (fiscal.status === 'ativo') { %>
+                                            <form action="/gerenciarFiscais/<%= fiscal.id %>/desativar" method="POST" onsubmit="return confirm('Deseja desativar este fiscal? O histórico será preservado.');">
+                                                <button type="submit">Desativar</button>
+                                            </form>
+                                        <% } else { %>—<% } %>
+                                    </td>
                                 </tr>
                             <% }); %>
                         <% } else { %>
                             <tr>
-                                <td colspan="3" class="vazio">
+                                <td colspan="5" class="vazio">
                                     Nenhum fiscal cadastrado.
                                 </td>
                             </tr>
@@ -140,5 +153,6 @@
         </section>
     </main>
 
+    <script src="/js/formatarCpf.js"></script>
 </body>
 </html>

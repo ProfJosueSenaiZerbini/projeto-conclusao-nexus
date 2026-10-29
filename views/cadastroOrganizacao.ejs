@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de organização | SafeZone</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Cadastro de organização</h1>
+        <p>Este cadastro só pode ser concluído depois da aprovação da contratação e por uma operação autorizada.</p>
+        <% if (mensagemErro) { %><p role="alert" style="color:#b00020"><%= mensagemErro %></p><% } %>
+        <% if (mensagemSucesso) { %><p role="status"><%= mensagemSucesso %></p><% } %>
+        <% if (linkConviteTeste) { %>
+            <p><strong>Teste local — link ainda não enviado por e-mail:</strong></p>
+            <p><a href="<%= linkConviteTeste %>">Abrir convite de teste do superusuário</a></p>
+        <% } %>
+        <form action="/organizacao/cadastro" method="POST">
+            <label for="nome">Nome da organização</label>
+            <input id="nome" name="nome" required maxlength="255">
+            <label for="cnpj">CNPJ</label>
+            <input id="cnpj" name="cnpj" required maxlength="18" placeholder="00.000.000/0000-00">
+            <label for="emailContato">E-mail de contato</label>
+            <input id="emailContato" type="email" name="emailContato" required maxlength="255">
+            <label for="emailResponsavel">E-mail do responsável pelo superusuário</label>
+            <input id="emailResponsavel" type="email" name="emailResponsavel" required maxlength="255">
+            <button type="submit">Cadastrar organização</button>
+        </form>
+    </main>
+</body>
+</html>

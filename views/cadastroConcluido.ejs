@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cadastro concluído | SafeZone</title>
+    </head>
+
+<body>
+    <main>
+        <h1>Cadastro concluído</h1>
+        <p><%= mensagemSucesso %></p>
+            <% if (linkConfirmacaoTeste) { %>
+                <p><strong>Teste local — este link não foi enviado por e-mail:</strong></p>
+                <p><a href="<%= linkConfirmacaoTeste %>"><%= typeof linkLabel !== 'undefined' && linkLabel ? linkLabel : 'Confirmar e-mail de teste' %></a></p><% } %>
+            <a href="/login">Ir para o login</a>       
+    </main>
+</body>
+
+</html>
