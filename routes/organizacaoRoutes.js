@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 
@@ -29,17 +30,6 @@ router.post(
 router.get(
     '/confirmar-email/:token',
     organizacaoController.confirmarEmailSuperusuario
-);
-
-// Simulação local de contratação para testes do TCC
-router.get(
-    '/contratacao-teste',
-    organizacaoController.exibirSimulacaoContratacao
-);
-
-router.post(
-    '/contratacao-teste',
-    organizacaoController.aprovarContratacaoTeste
 );
 
 module.exports = router;
