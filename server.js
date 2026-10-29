@@ -36,7 +36,6 @@ const denunciaAdmRoutes = require("./routes/denunciaAdm.routes");
 const feedRoutes = require("./routes/feedDenunciaRoutes");
 const denunciaDetalheRoutes = require("./routes/denunciaDetalheRoutes");
 const dashboardAdminRoutes = require("./routes/dashboardAdminRoutes");
-const codigoAtivacaoRoutes = require("./routes/codigoAtivacaoRoutes");
 const gerenciarFiscaisRoutes = require("./routes/gerenciarFiscaisRoutes");
 const organizacaoRoutes = require('./routes/organizacaoRoutes');
 
@@ -93,7 +92,6 @@ app.use("/denunciaAdm", denunciaAdmRoutes);
 app.use("/feedDenuncia", feedRoutes);
 app.use("/denunciaDetalhe", denunciaDetalheRoutes);
 app.use("/dashboardAdmin", dashboardAdminRoutes);
-app.use("/ativacao", codigoAtivacaoRoutes);
 app.use("/gerenciarFiscais", gerenciarFiscaisRoutes);
 app.use('/organizacao', organizacaoRoutes);
 
