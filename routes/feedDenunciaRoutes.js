@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { executarQuery } = require("../db/dbConnect");
 
+const { verificarAutenticado } = require("../middlewares/autenticacao");
+
 const categorias = [
     { valor: "pichacao", nome: "Pichação" },
     { valor: "vandalismo", nome: "Vandalismo" },
@@ -41,7 +43,7 @@ function montarCartao(registro) {
     };
 }
 
-router.get("/", async (req, res) => {
+router.get("/", verificarAutenticado, async (req, res) => {
     const filtro = String(req.query.categoria || "").trim().toLowerCase();
     const categoriasValidas = categorias.map((categoria) => categoria.valor);
     const categoriaSelecionada = categoriasValidas.includes(filtro) ? filtro : "";

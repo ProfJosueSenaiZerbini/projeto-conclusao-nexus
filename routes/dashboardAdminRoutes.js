@@ -2,7 +2,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
+const { verificarAdmin } = require("../middlewares/autenticacao");
+
+router.get('/', verificarAdmin, (req, res) => {
     try {
         res.render('dashboardAdmin', {
             modoDemonstracao: false,
