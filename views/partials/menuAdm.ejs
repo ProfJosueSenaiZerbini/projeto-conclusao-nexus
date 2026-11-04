@@ -15,7 +15,7 @@
         <% } %>
     </a>
 
-    <<% if (usuario && usuario.tipo === 'superusuario' && usuario.emailConfirmado) { %>
+    <% if (usuario && usuario.tipo === 'superusuario' && usuario.emailConfirmado) { %>
         <a href="/gerenciarFiscais" class="item-menu">
             Gerenciar fiscais
         </a>
