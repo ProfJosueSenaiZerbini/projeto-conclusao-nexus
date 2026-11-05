@@ -84,6 +84,65 @@ router.get("/:id", verificarAcesso, async (req, res) => {
 
         const denuncia = resultado[0];
 
+        // Compatibilidade com denúncias antigas, nas quais título,
+        // visibilidade e data foram gravados dentro do campo descricao.
+        const descricaoOriginal = String(denuncia.descricao || "");
+        const linhasDescricao = descricaoOriginal.split(/\r?\n/);
+
+        const extrairCampoAntigo = (rotulo) => {
+            const linha = linhasDescricao.find(item =>
+                item.trim().toLowerCase().startsWith(`${rotulo.toLowerCase()}:`)
+            );
+
+            return linha
+                ? linha.slice(linha.indexOf(":") + 1).trim()
+                : "";
+        };
+
+        const possuiDadosAntigos = linhasDescricao.some(linha =>
+            /^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+        );
+
+        if (!denuncia.titulo) {
+            denuncia.titulo = extrairCampoAntigo("Título");
+        }
+
+        if (possuiDadosAntigos) {
+            // Nas denúncias antigas, os metadados estavam no texto e
+            // podem ser mais confiáveis que os valores padrão da tabela.
+            const visibilidadeAntiga = extrairCampoAntigo("Visibilidade");
+            if (visibilidadeAntiga) {
+                denuncia.visibilidade =
+                    /identificad/i.test(visibilidadeAntiga)
+                        ? "identificado"
+                        : "anonimo";
+            }
+
+            const dataAntiga = extrairCampoAntigo("Data da ocorrência");
+            if (!denuncia.dataOcorrenciaFormatada && dataAntiga) {
+                const partesData = dataAntiga.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                denuncia.dataOcorrenciaFormatada = partesData
+                    ? `${partesData[3]}/${partesData[2]}/${partesData[1]}`
+                    : dataAntiga;
+            }
+
+            const indiceSeparador = linhasDescricao.findIndex(
+                (linha, indice) => indice > 0 && linha.trim() === ""
+            );
+
+            if (indiceSeparador >= 0) {
+                denuncia.descricao = linhasDescricao
+                    .slice(indiceSeparador + 1)
+                    .join("\n")
+                    .trim();
+            } else {
+                denuncia.descricao = linhasDescricao
+                    .filter(linha => !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim()))
+                    .join("\n")
+                    .trim();
+            }
+        }
+
         denuncia.nomeExibicao =
             String(denuncia.visibilidade || "anonimo").toLowerCase() === "identificado"
                 ? denuncia.nomeUsuario

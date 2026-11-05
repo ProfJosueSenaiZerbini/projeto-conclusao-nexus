@@ -95,37 +95,33 @@ router.post(
                     resultadoLocalizacao.insertId
                 );
 
-                // Mantém a estrutura atual do banco.
-                const descricaoCompleta = [
-                    `Título: ${titulo.trim()}`,
-                    `Visibilidade: ${
-                        visibilidade === "anonimo"
-                            ? "Anônima"
-                            : "Identificada"
-                    }`,
-                    data ? `Data da ocorrência: ${data}` : null,
-                    "",
-                    descricao.trim()
-                ]
-                    .filter(Boolean)
-                    .join("\n");
+                // 2. Cadastra cada informação em sua própria coluna.
+                // Assim, título, visibilidade e data não ficam misturados
+                // com o texto da descrição.
+                const visibilidadeValida =
+                    visibilidade === "identificado" ? "identificado" : "anonimo";
 
-                // 2. Cadastra a denúncia.
                 const resultadoDenuncia = await conn.query(
                     `INSERT INTO DENUNCIA
                         (
                             idUsuario,
+                            titulo,
                             tipo,
                             descricao,
+                            dataOcorrencia,
+                            visibilidade,
                             status,
                             prioridade,
                             idLocalizacao
                         )
-                     VALUES (?, ?, ?, ?, ?, ?)`,
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         idUsuario,
+                        titulo.trim(),
                         categoria,
-                        descricaoCompleta,
+                        descricao.trim(),
+                        data?.trim() || null,
+                        visibilidadeValida,
                         "Pendente",
                         "Média",
                         idLocalizacao
