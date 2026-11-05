@@ -21,7 +21,8 @@
 
             <div class="conteudo">
 
-                <%- include(usuario && usuario.tipo === 'admin' ? "partials/menuAdm" : "partials/menu") %>
+                <%- include(usuario && ['fiscal', 'superusuario'].includes(usuario.tipo) 
+                        ? "partials/menuAdm" : "partials/menu") %>
 
                     <main class="area-notificacoes">
                         <div class="cabecalho-notificacoes">

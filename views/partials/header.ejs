@@ -25,11 +25,9 @@
                 </div>
 
                 <div class="profile-info">
-                    <strong>
-                        <%= usuario ? usuario.nome : 'Visitante' %>
-                    </strong>
                     <span>
-                        <%= usuario ? (usuario.tipo==='admin' ? 'Administrador' : 'Usuário' ) : 'Não autenticado' %>
+                        <%= usuario ? (usuario.tipo === 'superusuario' ? 'Superusuário' 
+                                : usuario.tipo === 'fiscal' ? 'Fiscal' : 'Usuário') : 'Não autenticado' %>
                     </span>
                 </div>
 

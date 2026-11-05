@@ -20,8 +20,9 @@
         <div class="container">
 
             <!-- MENU LATERAL -->
-            <%- include("partials/menu") %>
-
+           <%- include(usuario && ['fiscal', 'superusuario'].includes(usuario.tipo) 
+                    ? "partials/menuAdm" : "partials/menu") %>
+                    
             <!-- CONTEÚDO PRINCIPAL -->
             <main class="area-detalhes">
 
