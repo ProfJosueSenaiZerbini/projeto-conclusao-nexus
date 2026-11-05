@@ -1,17 +1,24 @@
 
 const denunciaAdmModel = require("../models/denunciaAdmModel");
 
-// ========================================
 // EXIBIR PÁGINA ADMINISTRATIVA
-// ========================================
-
 async function listar(req, res) {
     try {
-        const denuncias = await denunciaAdmModel.listarDenuncias();
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
 
-        return res.render("denunciaAdm", {
-            denuncias
-        });
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
+
+        const denuncias = await denunciaAdmModel.listarDenuncias(
+            idOrganizacao
+        );
+
+        return res.render("denunciaAdm", { denuncias });
 
     } catch (erro) {
         console.error("Erro ao buscar denúncias:", erro);
@@ -22,14 +29,21 @@ async function listar(req, res) {
     }
 }
 
-// ========================================
 // ALTERAR STATUS
-// ========================================
-
 async function alterarStatus(req, res) {
     try {
-        const idDenuncia = Number(req.params.id);
-        const novoStatus = req.body.status;
+        const idDenuncia = Number(req.params.idDenuncia);
+        const { novoStatus } = req.body;
+
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
@@ -46,7 +60,10 @@ async function alterarStatus(req, res) {
             return res.status(400).send("Status inválido.");
         }
 
-        const resultado = await denunciaAdmModel.buscarStatus(idDenuncia);
+        const resultado = await denunciaAdmModel.buscarStatus(
+            idDenuncia,
+            idOrganizacao
+        );
 
         if (resultado.length === 0) {
             return res.status(404).send("Denúncia não encontrada.");
@@ -60,11 +77,13 @@ async function alterarStatus(req, res) {
 
         await denunciaAdmModel.atualizarStatus(
             idDenuncia,
+            idOrganizacao,
             novoStatus
         );
 
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
+            idOrganizacao,
             `Status alterado para: ${novoStatus}`
         );
 
@@ -83,14 +102,21 @@ async function alterarStatus(req, res) {
     }
 }
 
-// ========================================
 // ALTERAR PRIORIDADE
-// ========================================
-
 async function alterarPrioridade(req, res) {
     try {
-        const idDenuncia = Number(req.params.id);
-        const novaPrioridade = req.body.prioridade;
+        const idDenuncia = Number(req.params.idDenuncia);
+        const { novaPrioridade } = req.body;
+
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
@@ -107,7 +133,8 @@ async function alterarPrioridade(req, res) {
         }
 
         const resultado = await denunciaAdmModel.buscarPrioridade(
-            idDenuncia
+            idDenuncia,
+            idOrganizacao
         );
 
         if (resultado.length === 0) {
@@ -122,11 +149,13 @@ async function alterarPrioridade(req, res) {
 
         await denunciaAdmModel.atualizarPrioridade(
             idDenuncia,
+            idOrganizacao,
             novaPrioridade
         );
 
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
+            idOrganizacao,
             `Prioridade alterada para: ${novaPrioridade}`
         );
 
