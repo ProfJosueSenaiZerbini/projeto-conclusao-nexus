@@ -1,12 +1,9 @@
 
 const { executarQuery } = require("../db/dbConnect");
 
-// ========================================
-// LISTAR DENÚNCIAS
-// ========================================
-
-async function listarDenuncias() {
-    return await executarQuery(
+// Lista somente as denúncias da organização do fiscal/superusuário.
+async function listarDenuncias(idOrganizacao) {
+    return executarQuery(
         `SELECT
             d.idDenuncia,
             d.tipo,
@@ -15,80 +12,102 @@ async function listarDenuncias() {
             d.status,
             d.prioridade,
             l.endereco,
-            u.nome AS nomeUsuario
+            u.nome AS nomeUsuario,
+            d.fiscal_id AS idFiscalResponsavel,
+            f.nome AS nomeFiscalResponsavel
         FROM DENUNCIA d
         INNER JOIN LOCALIZACAO l
             ON d.idLocalizacao = l.idLocalizacao
         INNER JOIN USUARIO u
             ON d.idUsuario = u.id
-        ORDER BY d.dataAbertura DESC`
+        WHERE d.idOrganizacao = ?
+        ORDER BY d.dataAbertura DESC`,
+        [idOrganizacao]
     );
 }
 
-// ========================================
-// BUSCAR STATUS ATUAL
-// ========================================
-
-async function buscarStatus(idDenuncia) {
-    return await executarQuery(
+async function buscarStatus(idDenuncia, idOrganizacao) {
+    return executarQuery(
         `SELECT status
          FROM DENUNCIA
-         WHERE idDenuncia = ?`,
-        [idDenuncia]
+         WHERE idDenuncia = ?
+           AND idOrganizacao = ?`,
+        [idDenuncia, idOrganizacao]
     );
 }
 
-// ========================================
-// ATUALIZAR STATUS
-// ========================================
-
-async function atualizarStatus(idDenuncia, status) {
-    return await executarQuery(
+async function atualizarStatus(idDenuncia, idOrganizacao, status) {
+    return executarQuery(
         `UPDATE DENUNCIA
          SET status = ?
-         WHERE idDenuncia = ?`,
-        [status, idDenuncia]
+         WHERE idDenuncia = ?
+           AND idOrganizacao = ?`,
+        [status, idDenuncia, idOrganizacao]
     );
 }
 
-// ========================================
-// BUSCAR PRIORIDADE ATUAL
-// ========================================
-
-async function buscarPrioridade(idDenuncia) {
-    return await executarQuery(
+async function buscarPrioridade(idDenuncia, idOrganizacao) {
+    return executarQuery(
         `SELECT prioridade
          FROM DENUNCIA
-         WHERE idDenuncia = ?`,
-        [idDenuncia]
+         WHERE idDenuncia = ?
+           AND idOrganizacao = ?`,
+        [idDenuncia, idOrganizacao]
     );
 }
 
-// ========================================
-// ATUALIZAR PRIORIDADE
-// ========================================
-
-async function atualizarPrioridade(idDenuncia, prioridade) {
-    return await executarQuery(
+async function atualizarPrioridade(
+    idDenuncia,
+    idOrganizacao,
+    prioridade
+) {
+    return executarQuery(
         `UPDATE DENUNCIA
          SET prioridade = ?
-         WHERE idDenuncia = ?`,
-        [prioridade, idDenuncia]
+         WHERE idDenuncia = ?
+           AND idOrganizacao = ?`,
+        [prioridade, idDenuncia, idOrganizacao]
     );
 }
+
+
+// ========================================
+// ATRIBUIR DENÚNCIA A UM FISCAL
+// A condição fiscal_id IS NULL garante que apenas
+// o primeiro fiscal consiga assumir a denúncia.
+// ========================================
+
+async function atribuirFiscal(idDenuncia, idFiscal) {
+    return await executarQuery(
+        `UPDATE DENUNCIA
+         SET fiscal_id = ?
+         WHERE idDenuncia = ?
+           AND fiscal_id IS NULL`,
+        [idFiscal, idDenuncia]
+    );
+}
+
 
 // ========================================
 // REGISTRAR HISTÓRICO
 // ========================================
 
-async function registrarHistorico(idDenuncia, titulo) {
-    return await executarQuery(
+async function registrarHistorico(
+    idDenuncia,
+    idOrganizacao,
+    titulo
+) {
+    return executarQuery(
         `INSERT INTO HISTORICO_DENUNCIA
             (idDenuncia, titulo)
-         VALUES (?, ?)`,
-        [idDenuncia, titulo]
+         SELECT d.idDenuncia, ?
+         FROM DENUNCIA d
+         WHERE d.idDenuncia = ?
+           AND d.idOrganizacao = ?`,
+        [titulo, idDenuncia, idOrganizacao]
     );
 }
+
 
 module.exports = {
     listarDenuncias,
@@ -96,5 +115,6 @@ module.exports = {
     atualizarStatus,
     buscarPrioridade,
     atualizarPrioridade,
+    atribuirFiscal,
     registrarHistorico
 };

@@ -592,3 +592,93 @@ body {
         width: 100%;
     }
 }
+
+
+/* =========================
+   MENU DOS TRÊS PONTOS
+========================= */
+
+.menu-mais-opcoes {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.btn-mais-opcoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    color: #667085;
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+    list-style: none;
+}
+
+.btn-mais-opcoes::-webkit-details-marker {
+    display: none;
+}
+
+.btn-mais-opcoes:hover,
+.menu-mais-opcoes[open] .btn-mais-opcoes {
+    background: #f2f4f7;
+    color: #1d2939;
+}
+
+.opcoes-mais {
+    position: absolute;
+    top: 34px;
+    right: 0;
+    z-index: 110;
+    width: 220px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .13);
+    text-align: left;
+}
+
+.opcoes-mais form {
+    margin: 0;
+}
+
+.opcoes-mais .btn-atribuir {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: #175cd3;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.opcoes-mais .btn-atribuir:hover {
+    background: #1249a8;
+}
+
+.responsavel-denuncia,
+.estado-atribuicao {
+    display: block;
+    color: #344054;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.estado-atribuicao {
+    margin-top: 5px;
+    color: #027a48;
+    font-weight: 600;
+}
+
+
+.estado-atribuicao.indisponivel {
+    color: #b54708;
+    font-weight: 500;
+}

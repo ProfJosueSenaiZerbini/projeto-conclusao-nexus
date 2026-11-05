@@ -1,16 +1,26 @@
 
 const denunciaAdmModel = require("../models/denunciaAdmModel");
 
-// ========================================
 // EXIBIR PÁGINA ADMINISTRATIVA
-// ========================================
-
 async function listar(req, res) {
     try {
-        const denuncias = await denunciaAdmModel.listarDenuncias();
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
 
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
+
+        const denuncias = await denunciaAdmModel.listarDenuncias(
+            idOrganizacao
+        );
+        
         return res.render("denunciaAdm", {
-            denuncias
+            denuncias,
+            usuarioLogado: req.session.usuario
         });
 
     } catch (erro) {
@@ -22,14 +32,78 @@ async function listar(req, res) {
     }
 }
 
+
 // ========================================
-// ALTERAR STATUS
+// FISCAL ATRIBUI A DENÚNCIA A SI MESMO
 // ========================================
 
-async function alterarStatus(req, res) {
+async function atribuirASiMesmo(req, res) {
     try {
         const idDenuncia = Number(req.params.id);
-        const novoStatus = req.body.status;
+        const usuario = req.session.usuario;
+
+        if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
+            return res.status(400).send("ID da denúncia inválido.");
+        }
+
+        // Superusuários administram o painel, mas a atribuição é
+        // uma ação exclusiva de fiscais.
+        if (usuario.tipo !== "fiscal") {
+            return res.status(403).send(
+                "Somente fiscais podem atribuir denúncias a si mesmos."
+            );
+        }
+
+        const idFiscal = Number(usuario.id);
+        if (!Number.isInteger(idFiscal) || idFiscal <= 0) {
+            return res.status(401).send("Sessão de fiscal inválida. Faça login novamente.");
+        }
+
+        const resultado = await denunciaAdmModel.atribuirFiscal(
+            idDenuncia,
+            idFiscal
+        );
+
+        // UPDATE condicional é atômico: se outro fiscal já assumiu,
+        // affectedRows será zero e a atribuição não será sobrescrita.
+        if (!resultado || resultado.affectedRows !== 1) {
+            const existe = await denunciaAdmModel.buscarStatus(idDenuncia);
+            if (existe.length === 0) {
+                return res.status(404).send("Denúncia não encontrada.");
+            }
+            return res.status(409).send(
+                "Esta denúncia já foi atribuída a outro fiscal e não pode ser assumida."
+            );
+        }
+
+        await denunciaAdmModel.registrarHistorico(
+            idDenuncia,
+            `Denúncia atribuída ao fiscal ${usuario.nome}.`
+        );
+
+        return res.redirect("/denunciaAdm");
+    } catch (erro) {
+        console.error("Erro ao atribuir denúncia:", erro);
+        return res.status(500).send("Erro ao atribuir a denúncia.");
+    }
+}
+
+// ========================================
+// ALTERAR STATUS
+async function alterarStatus(req, res) {
+    try {
+        const idDenuncia = Number(req.params.idDenuncia);
+        const { novoStatus } = req.body;
+
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
@@ -46,7 +120,10 @@ async function alterarStatus(req, res) {
             return res.status(400).send("Status inválido.");
         }
 
-        const resultado = await denunciaAdmModel.buscarStatus(idDenuncia);
+        const resultado = await denunciaAdmModel.buscarStatus(
+            idDenuncia,
+            idOrganizacao
+        );
 
         if (resultado.length === 0) {
             return res.status(404).send("Denúncia não encontrada.");
@@ -60,11 +137,13 @@ async function alterarStatus(req, res) {
 
         await denunciaAdmModel.atualizarStatus(
             idDenuncia,
+            idOrganizacao,
             novoStatus
         );
 
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
+            idOrganizacao,
             `Status alterado para: ${novoStatus}`
         );
 
@@ -83,14 +162,21 @@ async function alterarStatus(req, res) {
     }
 }
 
-// ========================================
 // ALTERAR PRIORIDADE
-// ========================================
-
 async function alterarPrioridade(req, res) {
     try {
-        const idDenuncia = Number(req.params.id);
-        const novaPrioridade = req.body.prioridade;
+        const idDenuncia = Number(req.params.idDenuncia);
+        const { novaPrioridade } = req.body;
+
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
@@ -107,7 +193,8 @@ async function alterarPrioridade(req, res) {
         }
 
         const resultado = await denunciaAdmModel.buscarPrioridade(
-            idDenuncia
+            idDenuncia,
+            idOrganizacao
         );
 
         if (resultado.length === 0) {
@@ -122,11 +209,13 @@ async function alterarPrioridade(req, res) {
 
         await denunciaAdmModel.atualizarPrioridade(
             idDenuncia,
+            idOrganizacao,
             novaPrioridade
         );
 
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
+            idOrganizacao,
             `Prioridade alterada para: ${novaPrioridade}`
         );
 
@@ -145,8 +234,10 @@ async function alterarPrioridade(req, res) {
     }
 }
 
+
 module.exports = {
     listar,
+    atribuirASiMesmo,
     alterarStatus,
     alterarPrioridade
 };

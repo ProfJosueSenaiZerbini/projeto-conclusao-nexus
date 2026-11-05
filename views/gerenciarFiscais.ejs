@@ -15,9 +15,9 @@
 
     <%- include("partials/header") %>
 
-    <%- include(usuario && ['admin', 'superusuario'].includes(usuario.tipo)
-        ? "partials/menuAdm"
-        : "partials/menu") %>
+    <%- include(usuario && usuario.tipo === 'superusuario'
+    ? "partials/menuAdm"
+    : "partials/menu") %>
 
     <main class="container">
         <h1>Gerenciar Fiscais</h1>

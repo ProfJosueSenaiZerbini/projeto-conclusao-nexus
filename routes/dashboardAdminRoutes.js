@@ -1,10 +1,11 @@
-
 const express = require('express');
 const router = express.Router();
 
-const { verificarAdmin } = require("../middlewares/autenticacao");
+const {
+    verificarPainelOrganizacao
+} = require('../middlewares/autenticacao');
 
-router.get('/', verificarAdmin, (req, res) => {
+router.get('/', verificarPainelOrganizacao, (req, res) => {
     try {
         res.render('dashboardAdmin', {
             modoDemonstracao: false,
@@ -23,9 +24,13 @@ router.get('/', verificarAdmin, (req, res) => {
                 features: []
             }
         });
+
     } catch (erro) {
         console.error('Erro ao abrir dashboard administrativo:', erro);
-        res.status(500).send('Erro ao carregar o dashboard administrativo.');
+
+        res.status(500).send(
+            'Erro ao carregar o dashboard administrativo.'
+        );
     }
 });
 

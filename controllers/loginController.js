@@ -3,13 +3,14 @@ const loginModel = require('../models/loginModel');
 
 async function senhaValida(senhaInformada, senhaArmazenada) {
     if (!senhaArmazenada) return false;
-    // Compatibilidade temporária com contas antigas que ainda guardam senha em texto.
+
+    // Compatibilidade temporária com contas antigas.
     if (/^\$2[aby]\$/.test(senhaArmazenada)) {
         return bcrypt.compare(senhaInformada, senhaArmazenada);
     }
+
     return senhaArmazenada === senhaInformada;
 }
-
 
 async function login(req, res) {
     const { email, senha } = req.body;
@@ -29,7 +30,6 @@ async function login(req, res) {
             loginModel.buscarSuperusuarioPorEmail(emailNormalizado)
         ]);
 
-        // Identifica quais contas correspondem ao e-mail e à senha.
         const contasValidas = [];
 
         if (
@@ -47,7 +47,7 @@ async function login(req, res) {
             await senhaValida(senha, fiscais[0].senha)
         ) {
             contasValidas.push({
-                tipo: 'admin',
+                tipo: 'fiscal',
                 conta: fiscais[0]
             });
         }
@@ -68,7 +68,6 @@ async function login(req, res) {
             });
         }
 
-        // Evita escolher um perfil arbitrariamente se houver duplicidade.
         if (contasValidas.length > 1) {
             return res.status(401).render('login', {
                 mensagemErro:
@@ -89,19 +88,18 @@ async function login(req, res) {
             return res.redirect('/dashboardUsuario');
         }
 
-        if (tipo === 'admin') {
+        if (tipo === 'fiscal') {
             req.session.usuario = {
                 id: conta.id,
                 idOrganizacao: conta.idOrganizacao,
                 nome: conta.nome,
                 email: conta.email,
-                tipo: 'admin'
+                tipo: 'fiscal'
             };
 
             return res.redirect('/dashboardAdmin');
         }
 
-        // Superusuário
         const organizacaoAtiva =
             conta.statusOrganizacao === 'ativa' &&
             conta.statusContrato === 'ativo';
