@@ -17,6 +17,12 @@ router.get(
 );
 
 router.post(
+    "/:id/atribuir",
+    verificarEquipeConfirmada,
+    denunciaAdmController.atribuirASiMesmo
+);
+
+router.post(
     "/:id/status",
     verificarEquipeConfirmada,
     denunciaAdmController.alterarStatus

@@ -15,12 +15,16 @@ async function listarDenuncias() {
             d.status,
             d.prioridade,
             l.endereco,
-            u.nome AS nomeUsuario
+            u.nome AS nomeUsuario,
+            d.fiscal_id AS idFiscalResponsavel,
+            f.nome AS nomeFiscalResponsavel
         FROM DENUNCIA d
         INNER JOIN LOCALIZACAO l
             ON d.idLocalizacao = l.idLocalizacao
         INNER JOIN USUARIO u
             ON d.idUsuario = u.id
+        LEFT JOIN FISCAL f
+            ON d.fiscal_id = f.id
         ORDER BY d.dataAbertura DESC`
     );
 }
@@ -77,6 +81,23 @@ async function atualizarPrioridade(idDenuncia, prioridade) {
     );
 }
 
+
+// ========================================
+// ATRIBUIR DENÚNCIA A UM FISCAL
+// A condição fiscal_id IS NULL garante que apenas
+// o primeiro fiscal consiga assumir a denúncia.
+// ========================================
+
+async function atribuirFiscal(idDenuncia, idFiscal) {
+    return await executarQuery(
+        `UPDATE DENUNCIA
+         SET fiscal_id = ?
+         WHERE idDenuncia = ?
+           AND fiscal_id IS NULL`,
+        [idFiscal, idDenuncia]
+    );
+}
+
 // ========================================
 // REGISTRAR HISTÓRICO
 // ========================================
@@ -96,5 +117,6 @@ module.exports = {
     atualizarStatus,
     buscarPrioridade,
     atualizarPrioridade,
+    atribuirFiscal,
     registrarHistorico
 };
