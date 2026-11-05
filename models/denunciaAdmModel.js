@@ -12,7 +12,9 @@ async function listarDenuncias(idOrganizacao) {
             d.status,
             d.prioridade,
             l.endereco,
-            u.nome AS nomeUsuario
+            u.nome AS nomeUsuario,
+            d.fiscal_id AS idFiscalResponsavel,
+            f.nome AS nomeFiscalResponsavel
         FROM DENUNCIA d
         INNER JOIN LOCALIZACAO l
             ON d.idLocalizacao = l.idLocalizacao
@@ -69,6 +71,26 @@ async function atualizarPrioridade(
 }
 
 
+// ========================================
+// ATRIBUIR DENÚNCIA A UM FISCAL
+// A condição fiscal_id IS NULL garante que apenas
+// o primeiro fiscal consiga assumir a denúncia.
+// ========================================
+
+async function atribuirFiscal(idDenuncia, idFiscal) {
+    return await executarQuery(
+        `UPDATE DENUNCIA
+         SET fiscal_id = ?
+         WHERE idDenuncia = ?
+           AND fiscal_id IS NULL`,
+        [idFiscal, idDenuncia]
+    );
+}
+
+// ========================================
+// REGISTRAR HISTÓRICO
+// ========================================
+
 async function registrarHistorico(
     idDenuncia,
     idOrganizacao,
@@ -92,5 +114,6 @@ module.exports = {
     atualizarStatus,
     buscarPrioridade,
     atualizarPrioridade,
+    atribuirFiscal,
     registrarHistorico
 };

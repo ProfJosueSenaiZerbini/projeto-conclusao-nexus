@@ -244,9 +244,36 @@
                                             </details>
 
                                             <!-- MAIS OPÇÕES -->
-                                            <button type="button" title="Mais opções">
-                                                ⋮
-                                            </button>
+                                            <details class="menu-mais-opcoes">
+                                                <summary class="btn-mais-opcoes" title="Mais opções"
+                                                    aria-label="Mais opções">⋮</summary>
+                                                <div class="opcoes-mais">
+                                                    <% if (denuncia.idFiscalResponsavel) { %>
+                                                        <span class="responsavel-denuncia">
+                                                            Atribuída a: <strong><%= denuncia.nomeFiscalResponsavel || 'Fiscal' %></strong>
+                                                        </span>
+                                                        <% if (usuarioLogado && usuarioLogado.tipo === 'fiscal' &&
+                                                            Number(denuncia.idFiscalResponsavel) === Number(usuarioLogado.id)) { %>
+                                                            <span class="estado-atribuicao">✓ Atribuída a você</span>
+                                                        <% } else { %>
+                                                            <span class="estado-atribuicao indisponivel">
+                                                                Já assumida por outro fiscal
+                                                            </span>
+                                                        <% } %>
+                                                    <% } else if (usuarioLogado && usuarioLogado.tipo === 'fiscal') { %>
+                                                        <form action="/denunciaAdm/<%= denuncia.idDenuncia %>/atribuir"
+                                                            method="POST">
+                                                            <button type="submit" class="btn-atribuir">
+                                                                ✓ Atribuir a mim
+                                                            </button>
+                                                        </form>
+                                                    <% } else { %>
+                                                        <span class="estado-atribuicao">
+                                                            Ainda não atribuída
+                                                        </span>
+                                                    <% } %>
+                                                </div>
+                                            </details>
 
                                         </div>
                                     </div>
