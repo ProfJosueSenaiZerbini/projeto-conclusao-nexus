@@ -1,4 +1,3 @@
-
 const { executarQuery } = require("../db/dbConnect");
 
 // Lista somente as denúncias da organização do fiscal/superusuário.
@@ -20,6 +19,8 @@ async function listarDenuncias(idOrganizacao) {
             ON d.idLocalizacao = l.idLocalizacao
         INNER JOIN USUARIO u
             ON d.idUsuario = u.id
+        LEFT JOIN FISCAL f
+            ON d.fiscal_id = f.id
         WHERE d.idOrganizacao = ?
         ORDER BY d.dataAbertura DESC`,
         [idOrganizacao]
@@ -107,7 +108,6 @@ async function registrarHistorico(
         [titulo, idDenuncia, idOrganizacao]
     );
 }
-
 
 module.exports = {
     listarDenuncias,
