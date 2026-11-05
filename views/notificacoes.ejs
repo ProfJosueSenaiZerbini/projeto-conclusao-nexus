@@ -39,7 +39,7 @@
                             <% if (notificacoes && notificacoes.length> 0) { %>
                                 <% notificacoes.forEach(n=> { %>
                                     <!-- O LINK ENVOLVE O CARD INTEIRO -->
-                                    <a href="/denuncia/<%= n.denuncia_id %>" class="link-notificacao"
+                                    <a href="/denunciaDetalhe/<%= n.denuncia_id %>" class="link-notificacao"
                                         style="text-decoration: none; color: inherit;">
                                         <article class="notificacao-item <%= n.lida ? '' : 'nao-lida' %>">
                                             <div class="notificacao-indicador"></div>

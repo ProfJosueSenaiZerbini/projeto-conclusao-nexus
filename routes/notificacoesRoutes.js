@@ -1,43 +1,71 @@
-const express = require('express');
+
+const express = require("express");
 const router = express.Router();
 
-const { verificarAutenticado } = require('../middlewares/autenticacao');
+const { executarQuery } = require("../db/dbConnect");
+const { verificarAutenticado } = require("../middlewares/autenticacao");
 
-// 1. Criamos a lista FORA da rota para ela manter o estado atualizado enquanto o servidor rodar
-let bancoFicticioNotificacoes = [
-    {
-        denuncia_id: "001",
-        titulo: "Status da Denúncia Atualizado",
-        mensagem: "Sua denúncia sobre 'Poste sem iluminação' mudou para Em análise.",
-        horario: "10:30",
-        data: "10/09/2026",
-        lida: false
-    },
-    {
-        denuncia_id: "002",
-        titulo: "Denúncia Concluída",
-        mensagem: "A equipe técnica resolveu a solicitação 'Vazamento de água'.",
-        horario: "16:45",
-        data: "08/09/2026",
-        lida: true
+// Exibe as notificações do usuário autenticado.
+router.get("/", verificarAutenticado, async (req, res) => {
+    try {
+        let notificacoes = [];
+
+        // As notificações de denúncias são vinculadas ao usuário.
+        if (req.session.usuario.tipo === "usuario") {
+            notificacoes = await executarQuery(
+                `SELECT
+                    n.idNotificacao,
+                    n.idDenuncia AS denuncia_id,
+                    n.conteudo AS mensagem,
+                    n.lida,
+                    DATE_FORMAT(n.dataHora, '%H:%i') AS horario,
+                    DATE_FORMAT(n.dataHora, '%d/%m/%Y') AS data,
+                    'Denúncia registrada' AS titulo
+                 FROM NOTIFICACAO n
+                 WHERE n.idUsuario = ?
+                 ORDER BY n.dataHora DESC, n.idNotificacao DESC`,
+                [req.session.usuario.id]
+            );
+        }
+
+        return res.render("notificacoes", {
+            notificacoes
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar notificações:", erro);
+
+        return res.status(500).send(
+            "Erro ao carregar as notificações."
+        );
     }
-];
-
-// Rota GET - Exibe a tela com os dados atuais
-router.get('/', verificarAutenticado, (req, res) => {
-    res.render('notificacoes', { notificacoes: bancoFicticioNotificacoes });
 });
 
-// Rota POST - Marca todas como lidas
-router.post('/marcar-todas-lidas', verificarAutenticado, (req, res) => {
-    // Altera o estado de TODAS as notificações para true
-    bancoFicticioNotificacoes = bancoFicticioNotificacoes.map(n => ({
-        ...n,
-        lida: true
-    }));
+// Marca todas as notificações do usuário como lidas.
+router.post(
+    "/marcar-todas-lidas",
+    verificarAutenticado,
+    async (req, res) => {
+        try {
+            if (req.session.usuario.tipo === "usuario") {
+                await executarQuery(
+                    `UPDATE NOTIFICACAO
+                     SET lida = 1
+                     WHERE idUsuario = ?`,
+                    [req.session.usuario.id]
+                );
+            }
 
-    // Redireciona de volta para recarregar a tela atualizada
-    res.redirect('/notificacoes');
-});
+            return res.redirect("/notificacoes");
+
+        } catch (erro) {
+            console.error("Erro ao marcar notificações:", erro);
+
+            return res.status(500).send(
+                "Erro ao atualizar notificações."
+            );
+        }
+    }
+);
 
 module.exports = router;

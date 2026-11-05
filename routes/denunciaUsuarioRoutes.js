@@ -4,8 +4,9 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { executarQuery, executarTransacao } = require("../db/dbConnect");
+const { executarTransacao } = require("../db/dbConnect");
 const { verificarUsuario } = require("../middlewares/autenticacao");
+
 
 const pastaUploads = path.join(__dirname, "..", "public", "uploads");
 fs.mkdirSync(pastaUploads, { recursive: true });
@@ -48,7 +49,7 @@ async function removerArquivos(files = []) {
 }
 
 router.get("/", verificarUsuario, (req, res) => {
-    res.render("denunciaUsuario");
+        res.render("denunciaUsuario");
 });
 
 router.post(
@@ -146,7 +147,19 @@ router.post(
                     ]
                 );
 
-                // 4. Registra todas as evidências.
+                // 4. Cria uma notificação para o usuário.
+                await conn.query(
+                    `INSERT INTO NOTIFICACAO
+                        (idDenuncia, idUsuario, conteudo)
+                     VALUES (?, ?, ?)`,
+                    [
+                        novoIdDenuncia,
+                        idUsuario,
+                        `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
+                    ]
+                );
+
+                // 5. Registra todas as evidências.
                 for (const arquivo of arquivos) {
                     const tipoEvidencia =
                         arquivo.mimetype.startsWith("image/")
