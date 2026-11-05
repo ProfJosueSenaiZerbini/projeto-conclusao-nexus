@@ -79,6 +79,7 @@
 
 
 // Mantém apenas um menu de opções dos três pontos aberto por vez.
+
 document.addEventListener("toggle", (evento) => {
   const menuAberto = evento.target;
   if (!menuAberto.matches || !menuAberto.matches(".menu-mais-opcoes") || !menuAberto.open) return;

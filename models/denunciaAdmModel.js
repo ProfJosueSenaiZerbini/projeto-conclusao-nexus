@@ -98,6 +98,7 @@ async function atribuirFiscal(idDenuncia, idFiscal) {
     );
 }
 
+
 // ========================================
 // REGISTRAR HISTÓRICO
 // ========================================

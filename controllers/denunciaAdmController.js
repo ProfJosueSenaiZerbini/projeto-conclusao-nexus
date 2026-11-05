@@ -202,6 +202,7 @@ async function alterarPrioridade(req, res) {
     }
 }
 
+
 module.exports = {
     listar,
     atribuirASiMesmo,
