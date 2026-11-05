@@ -107,6 +107,29 @@ router.get("/", verificarAutenticado, async (req, res) => {
         `;
 
         const parametros = [];
+        const tipoUsuario = req.session.usuario.tipo;
+
+        if (
+            tipoUsuario === "fiscal" ||
+            tipoUsuario === "superusuario"
+        ) {
+
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (
+            !Number.isInteger(idOrganizacao) ||
+            idOrganizacao <= 0
+        ) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
+
+        sql += " AND d.idOrganizacao = ?";
+            parametros.push(idOrganizacao);
+        }
 
         if (categoriaSelecionada) {
             sql += " AND LOWER(d.tipo) = ?";
