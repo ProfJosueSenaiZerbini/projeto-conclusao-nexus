@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const { verificarAutenticado } = require('../middlewares/autenticacao');
+const {
+    verificarAutenticado
+} = require('../middlewares/autenticacao');
 
-// 1. Criamos a lista FORA da rota para ela manter o estado atualizado enquanto o servidor rodar
+// Lista fictícia utilizada durante o desenvolvimento.
 let bancoFicticioNotificacoes = [
     {
         denuncia_id: "001",
@@ -23,20 +25,20 @@ let bancoFicticioNotificacoes = [
     }
 ];
 
-// Rota GET - Exibe a tela com os dados atuais
+// Exibe as notificações.
 router.get('/', verificarAutenticado, (req, res) => {
-    res.render('notificacoes', { notificacoes: bancoFicticioNotificacoes });
+    res.render('notificacoes', {
+        notificacoes: bancoFicticioNotificacoes
+    });
 });
 
-// Rota POST - Marca todas como lidas
+// Marca todas as notificações como lidas.
 router.post('/marcar-todas-lidas', verificarAutenticado, (req, res) => {
-    // Altera o estado de TODAS as notificações para true
     bancoFicticioNotificacoes = bancoFicticioNotificacoes.map(n => ({
         ...n,
         lida: true
     }));
 
-    // Redireciona de volta para recarregar a tela atualizada
     res.redirect('/notificacoes');
 });
 

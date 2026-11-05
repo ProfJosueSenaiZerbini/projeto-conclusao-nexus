@@ -1,5 +1,4 @@
 function verificarUsuario(req, res, next) {
-
     if (!req.session.usuario) {
         return res.redirect('/login');
     }
@@ -11,31 +10,39 @@ function verificarUsuario(req, res, next) {
     next();
 }
 
-
-
-function verificarAdmin(req, res, next) {
+// Permite acessar o painel compartilhado da organização.
+function verificarPainelOrganizacao(req, res, next) {
     if (!req.session.usuario) {
         return res.redirect('/login');
     }
 
-    const tipo = req.session.usuario.tipo;
-
-    if (!['admin', 'superusuario'].includes(tipo)) {
+    if (!['fiscal', 'superusuario'].includes(req.session.usuario.tipo)) {
         return res.status(403).send('Acesso negado.');
-    }
-
-    if (
-        tipo === 'superusuario' &&
-        !req.session.usuario.emailConfirmado
-    ) {
-        return res.status(403).send(
-            'Confirme seu e-mail para acessar esta funcionalidade.'
-        );
     }
 
     next();
 }
 
+// Operações sobre denúncias exigem fiscal ou superusuário confirmado.
+function verificarEquipeConfirmada(req, res, next) {
+    if (!req.session.usuario) {
+        return res.redirect('/login');
+    }
+
+    const { tipo, emailConfirmado } = req.session.usuario;
+
+    if (!['fiscal', 'superusuario'].includes(tipo)) {
+        return res.status(403).send('Acesso negado.');
+    }
+
+    if (tipo === 'superusuario' && !emailConfirmado) {
+        return res.status(403).send('Confirme seu e-mail para continuar.');
+    }
+
+    next();
+}
+
+// Exclusivo do superusuário.
 function verificarSuperusuario(req, res, next) {
     if (!req.session.usuario) {
         return res.redirect('/login');
@@ -52,33 +59,30 @@ function verificarSuperusuario(req, res, next) {
     next();
 }
 
+// Permite acesso às funcionalidades destinadas a todas as contas.
 function verificarAutenticado(req, res, next) {
     if (!req.session.usuario) {
         return res.redirect('/login');
     }
 
-    const tipo = req.session.usuario.tipo;
-
-    if (!['usuario', 'admin', 'superusuario', 'fiscal'].includes(tipo)) {
+    if (!['usuario', 'fiscal', 'superusuario'].includes(req.session.usuario.tipo)) {
         return res.status(403).send('Acesso negado.');
     }
 
     if (
-        tipo === 'superusuario' &&
+        req.session.usuario.tipo === 'superusuario' &&
         !req.session.usuario.emailConfirmado
     ) {
-        return res.status(403).send(
-            'Confirme seu e-mail para continuar.'
-        );
+        return res.status(403).send('Confirme seu e-mail para continuar.');
     }
 
     next();
 }
 
-
 module.exports = {
     verificarUsuario,
-    verificarAdmin,
+    verificarPainelOrganizacao,
+    verificarEquipeConfirmada,
     verificarSuperusuario,
     verificarAutenticado
 };

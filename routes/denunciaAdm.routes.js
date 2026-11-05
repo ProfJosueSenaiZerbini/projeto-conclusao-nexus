@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -7,21 +6,25 @@ const denunciaAdmController = require(
 );
 
 const {
-    verificarAdmin
+    verificarEquipeConfirmada
 } = require("../middlewares/autenticacao");
 
-// Todas as rotas abaixo exigem acesso administrativo.
-router.get("/", verificarAdmin, denunciaAdmController.listar);
+// Todas as rotas exigem fiscal ou superusuário com e-mail confirmado.
+router.get(
+    "/",
+    verificarEquipeConfirmada,
+    denunciaAdmController.listar
+);
 
 router.post(
     "/:id/status",
-    verificarAdmin,
+    verificarEquipeConfirmada,
     denunciaAdmController.alterarStatus
 );
 
 router.post(
     "/:id/prioridade",
-    verificarAdmin,
+    verificarEquipeConfirmada,
     denunciaAdmController.alterarPrioridade
 );
 
