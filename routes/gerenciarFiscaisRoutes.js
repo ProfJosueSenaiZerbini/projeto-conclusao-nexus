@@ -25,4 +25,10 @@ router.post(
     fiscalController.cadastrarFiscal
 );
 
+router.post(
+    '/:id/desativar',
+    verificarSuperusuario,
+    fiscalController.desativarFiscal
+);
+
 module.exports = router;
