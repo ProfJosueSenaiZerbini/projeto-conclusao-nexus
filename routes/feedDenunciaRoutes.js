@@ -49,7 +49,8 @@ function montarCartao(registro) {
     return {
         ...registro,
 
-        titulo: extrair("Título") ||
+        titulo: registro.titulo ||
+            extrair("Título") ||
             (categoria ? categoria.nome : registro.tipo),
 
         descricao: descricao || descricaoOriginal,
@@ -92,6 +93,7 @@ router.get("/", verificarAutenticado, async (req, res) => {
             SELECT
                 d.idDenuncia,
                 d.tipo,
+                d.titulo,
                 d.descricao,
                 d.status,
                 d.prioridade,
