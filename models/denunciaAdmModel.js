@@ -78,15 +78,18 @@ async function atualizarPrioridade(
 // o primeiro fiscal consiga assumir a denúncia.
 // ========================================
 
-async function atribuirFiscal(idDenuncia, idFiscal) {
-    return await executarQuery(
+
+async function atribuirFiscal(idDenuncia, idFiscal, idOrganizacao) {
+    return executarQuery(
         `UPDATE DENUNCIA
          SET fiscal_id = ?
          WHERE idDenuncia = ?
+           AND idOrganizacao = ?
            AND fiscal_id IS NULL`,
-        [idFiscal, idDenuncia]
+        [idFiscal, idDenuncia, idOrganizacao]
     );
 }
+
 
 
 // ========================================

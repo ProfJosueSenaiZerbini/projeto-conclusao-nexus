@@ -17,7 +17,7 @@ async function listar(req, res) {
         const denuncias = await denunciaAdmModel.listarDenuncias(
             idOrganizacao
         );
-        
+
         return res.render("denunciaAdm", {
             denuncias,
             usuarioLogado: req.session.usuario
@@ -37,6 +37,7 @@ async function listar(req, res) {
 // FISCAL ATRIBUI A DENÚNCIA A SI MESMO
 // ========================================
 
+
 async function atribuirASiMesmo(req, res) {
     try {
         const idDenuncia = Number(req.params.id);
@@ -46,8 +47,7 @@ async function atribuirASiMesmo(req, res) {
             return res.status(400).send("ID da denúncia inválido.");
         }
 
-        // Superusuários administram o painel, mas a atribuição é
-        // uma ação exclusiva de fiscais.
+        // Somente fiscais podem atribuir denúncias a si mesmos.
         if (usuario.tipo !== "fiscal") {
             return res.status(403).send(
                 "Somente fiscais podem atribuir denúncias a si mesmos."
@@ -55,22 +55,39 @@ async function atribuirASiMesmo(req, res) {
         }
 
         const idFiscal = Number(usuario.id);
+
         if (!Number.isInteger(idFiscal) || idFiscal <= 0) {
-            return res.status(401).send("Sessão de fiscal inválida. Faça login novamente.");
+            return res.status(401).send(
+                "Sessão de fiscal inválida. Faça login novamente."
+            );
+        }
+
+        const idOrganizacao = Number(usuario.idOrganizacao);
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
         }
 
         const resultado = await denunciaAdmModel.atribuirFiscal(
             idDenuncia,
-            idFiscal
+            idFiscal,
+            idOrganizacao
         );
 
-        // UPDATE condicional é atômico: se outro fiscal já assumiu,
-        // affectedRows será zero e a atribuição não será sobrescrita.
         if (!resultado || resultado.affectedRows !== 1) {
-            const existe = await denunciaAdmModel.buscarStatus(idDenuncia);
+            const existe = await denunciaAdmModel.buscarStatus(
+                idDenuncia,
+                idOrganizacao
+            );
+
             if (existe.length === 0) {
-                return res.status(404).send("Denúncia não encontrada.");
+                return res.status(404).send(
+                    "Denúncia não encontrada."
+                );
             }
+
             return res.status(409).send(
                 "Esta denúncia já foi atribuída a outro fiscal e não pode ser assumida."
             );
@@ -78,13 +95,17 @@ async function atribuirASiMesmo(req, res) {
 
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
+            idOrganizacao,
             `Denúncia atribuída ao fiscal ${usuario.nome}.`
         );
 
         return res.redirect("/denunciaAdm");
+
     } catch (erro) {
         console.error("Erro ao atribuir denúncia:", erro);
-        return res.status(500).send("Erro ao atribuir a denúncia.");
+        return res.status(500).send(
+            "Erro ao atribuir a denúncia."
+        );
     }
 }
 
