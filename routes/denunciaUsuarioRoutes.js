@@ -4,17 +4,20 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+
 const { executarTransacao } = require("../db/dbConnect");
 const { verificarUsuario } = require("../middlewares/autenticacao");
 
-
 const pastaUploads = path.join(__dirname, "..", "public", "uploads");
+
 fs.mkdirSync(pastaUploads, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, pastaUploads),
+
     filename: (_req, file, cb) => {
         const extensao = path.extname(file.originalname);
+
         const nomeSeguro = path
             .basename(file.originalname, extensao)
             .replace(/[^a-zA-Z0-9_-]/g, "_");
@@ -25,10 +28,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
+
     limits: {
         files: 10,
         fileSize: 20 * 1024 * 1024
     },
+
     fileFilter: (_req, file, cb) => {
         if (
             file.mimetype.startsWith("image/") ||
@@ -48,15 +53,18 @@ async function removerArquivos(files = []) {
     );
 }
 
+// Exibe a página de cadastro.
 router.get("/", verificarUsuario, (req, res) => {
-        res.render("denunciaUsuario");
+    res.render("denunciaUsuario");
 });
 
+// Cadastra uma nova denúncia.
 router.post(
     "/",
     verificarUsuario,
     upload.array("arquivo"),
     async (req, res) => {
+
         const {
             visibilidade,
             categoria,
@@ -69,6 +77,7 @@ router.post(
         const idUsuario = req.session.usuario.id;
         const arquivos = req.files || [];
 
+        // Validação dos campos obrigatórios.
         if (
             !categoria?.trim() ||
             !titulo?.trim() ||
@@ -83,10 +92,51 @@ router.post(
         }
 
         try {
+
             const idDenuncia = await executarTransacao(async conn => {
-                // 1. Cadastra a localização na mesma transação.
+
+                // 1. Busca a organização responsável pela categoria.
+                const resultadoOrganizacao = await conn.query(
+                    `SELECT
+                        o.idOrganizacao,
+                        o.status,
+                        o.statusContrato
+                     FROM ORGANIZACAO_TIPO_DENUNCIA ot
+                     INNER JOIN ORGANIZACAO o
+                        ON o.idOrganizacao = ot.idOrganizacao
+                     WHERE ot.tipo = ?
+                     LIMIT 1`,
+                    [categoria.trim()]
+                );
+
+                // Verifica se existe organização cadastrada.
+                if (resultadoOrganizacao.length === 0) {
+                    throw new Error(
+                        "Não existe uma organização responsável por esta categoria."
+                    );
+
+                }
+
+                const organizacao = resultadoOrganizacao[0];
+
+                // Verifica se a organização pode receber denúncias.
+                if (
+                    organizacao.status !== "ativa" ||
+                    organizacao.statusContrato !== "ativo"
+                ) {
+                    throw new Error(
+                        "A organização responsável não está disponível."
+                    );
+                }
+
+                const idOrganizacao = Number(
+                    organizacao.idOrganizacao
+                );
+
+                // 2. Cadastra a localização na mesma transação.
                 const resultadoLocalizacao = await conn.query(
-                    `INSERT INTO LOCALIZACAO (tipo, endereco)
+                    `INSERT INTO LOCALIZACAO
+                        (tipo, endereco)
                      VALUES (?, ?)`,
                     ["Manual", local.trim()]
                 );
@@ -95,33 +145,39 @@ router.post(
                     resultadoLocalizacao.insertId
                 );
 
-                // 2. Cadastra cada informação em sua própria coluna.
-                // Assim, título, visibilidade e data não ficam misturados
-                // com o texto da descrição.
-                const visibilidadeValida =
-                    visibilidade === "identificado" ? "identificado" : "anonimo";
+                // 3. Montar a descrição completa.
+                const descricaoCompleta = [
+                    `Título: ${titulo.trim()}`,
+                    `Visibilidade: ${
+                    visibilidade === "anonimo"
+                        ? "Anônima"
+                        : "Identificada"
+                 }`,
+                 data ? `Data da ocorrência: ${data}` : null,
+                 "",
+                 descricao.trim()
+             ]
+                .filter(Boolean)
+                .join("\n");
 
+                // 4. Cadastra a denúncia com o id da organização.
                 const resultadoDenuncia = await conn.query(
                     `INSERT INTO DENUNCIA
                         (
                             idUsuario,
-                            titulo,
+                            idOrganizacao,
                             tipo,
                             descricao,
-                            dataOcorrencia,
-                            visibilidade,
                             status,
                             prioridade,
                             idLocalizacao
                         )
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                     VALUES (?, ?, ?, ?, ?, ?, ?)`,
                     [
                         idUsuario,
-                        titulo.trim(),
-                        categoria,
-                        descricao.trim(),
-                        data?.trim() || null,
-                        visibilidadeValida,
+                        idOrganizacao,
+                        categoria.trim(),
+                        descricaoCompleta,
                         "Pendente",
                         "Média",
                         idLocalizacao
@@ -132,7 +188,7 @@ router.post(
                     resultadoDenuncia.insertId
                 );
 
-                // 3. Registra o histórico inicial.
+                // 5. Registra o histórico inicial.
                 await conn.query(
                     `INSERT INTO HISTORICO_DENUNCIA
                         (idDenuncia, titulo)
@@ -143,7 +199,7 @@ router.post(
                     ]
                 );
 
-                // 4. Cria uma notificação para o usuário.
+                // 6. Cria uma notificação para o usuário.
                 await conn.query(
                     `INSERT INTO NOTIFICACAO
                         (idDenuncia, idUsuario, conteudo)
@@ -155,8 +211,9 @@ router.post(
                     ]
                 );
 
-                // 5. Registra todas as evidências.
+                // 7. Registra todas as evidências.
                 for (const arquivo of arquivos) {
+
                     const tipoEvidencia =
                         arquivo.mimetype.startsWith("image/")
                             ? "imagem"
@@ -180,19 +237,32 @@ router.post(
                     );
                 }
 
-                // O helper executará COMMIT após este retorno.
+                // Retorna o ID para finalizar a transação.
                 return novoIdDenuncia;
             });
 
+            // 8. Redireciona para os detalhes da denúncia.
             return res.redirect(
                 `/denunciaDetalhe/${idDenuncia}`
             );
-        } catch (erro) {
-            console.error("Erro ao cadastrar denúncia:", erro);
 
-            // O helper executa ROLLBACK em caso de erro SQL.
-            // Também removemos os arquivos salvos pelo Multer.
+        } catch (erro) {
+
+            console.error(
+                "Erro ao cadastrar denúncia:",
+                erro
+            );
+
+            // Remove os arquivos caso a transação falhe.
             await removerArquivos(arquivos);
+
+            // Erros de encaminhamento da organização.
+            if (
+                erro.codigo === "ORGANIZACAO_NAO_ENCONTRADA" ||
+                erro.codigo === "ORGANIZACAO_INATIVA"
+            ) {
+                return res.status(400).send(erro.message);
+            }
 
             return res.status(500).send(
                 "Erro ao cadastrar denúncia."
