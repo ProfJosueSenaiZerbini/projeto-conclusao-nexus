@@ -177,8 +177,22 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             }
         }
 
+        const tipoVisualizador = req.session.usuario.tipo;
+        const equipePodeVerIdentidade =
+            ["fiscal", "superusuario"].includes(tipoVisualizador);
+
+        const visibilidadeNormalizada = String(
+            denuncia.visibilidade || "anonimo"
+        )
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        const denunciaAnonima = visibilidadeNormalizada === "anonimo";
+
+        // A identidade de uma denúncia anônima só é exibida à equipe.
         denuncia.nomeExibicao =
-            String(denuncia.visibilidade || "anonimo").toLowerCase() === "identificado"
+            !denunciaAnonima || equipePodeVerIdentidade
                 ? denuncia.nomeUsuario
                 : "Anônimo";
 
@@ -212,13 +226,24 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                     m.dataHora,
                     '%d/%m/%Y às %H:%i'
                 ) AS dataHoraFormatada,
-                u.nome AS autor
-             FROM MENSAGEM_DENUNCIA m
-             INNER JOIN USUARIO u
+                CASE
+                    WHEN m.idUsuario = d.idUsuario
+                        AND LOWER(COALESCE(d.visibilidade, 'anonimo')) = 'anonimo'
+                        AND ? = 0
+                    THEN 'Anônimo'
+                    ELSE u.nome
+                END AS autor
+            FROM MENSAGEM_DENUNCIA m
+            INNER JOIN USUARIO u
                 ON m.idUsuario = u.id
-             WHERE m.idDenuncia = ?
-             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
-            [idDenuncia]
+            INNER JOIN DENUNCIA d
+                ON m.idDenuncia = d.idDenuncia
+            WHERE m.idDenuncia = ?
+            ORDER BY m.dataHora ASC, m.idMensagem ASC`,
+            [
+                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0, 
+                idDenuncia
+            ]
         );
 
         return res.render("denunciaDetalhe", {
