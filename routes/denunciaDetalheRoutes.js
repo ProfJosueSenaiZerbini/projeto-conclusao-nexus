@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 
@@ -43,6 +44,34 @@ router.get("/:id", verificarAcesso, async (req, res) => {
     }
 
     try {
+        const tipoUsuario = req.session.usuario.tipo;
+
+        let filtroOrganizacao = "";
+        const parametros = [idDenuncia];
+
+        // Fiscais e superusuários só podem acessar
+        // denúncias pertencentes à própria organização.
+        if (
+            tipoUsuario === "fiscal" ||
+            tipoUsuario === "superusuario"
+        ) {
+            const idOrganizacao = Number(
+                req.session.usuario.idOrganizacao
+            );
+
+            if (
+                !Number.isInteger(idOrganizacao) ||
+                idOrganizacao <= 0
+            ) {
+                return res.status(403).send(
+                    "Sua conta não está vinculada a uma organização."
+                );
+            }
+
+            filtroOrganizacao = " AND d.idOrganizacao = ?";
+            parametros.push(idOrganizacao);
+        }
+
         const resultado = await executarQuery(
             `SELECT
                 d.idDenuncia,
@@ -72,8 +101,9 @@ router.get("/:id", verificarAcesso, async (req, res) => {
              LEFT JOIN FISCAL f
                 ON d.fiscal_id = f.id
              WHERE d.idDenuncia = ?
+             ${filtroOrganizacao}
              LIMIT 1`,
-            [idDenuncia]
+            parametros
         );
 
         if (!resultado.length) {
@@ -84,8 +114,7 @@ router.get("/:id", verificarAcesso, async (req, res) => {
 
         const denuncia = resultado[0];
 
-        // Compatibilidade com denúncias antigas, nas quais título,
-        // visibilidade e data foram gravados dentro do campo descricao.
+        // Compatibilidade com denúncias antigas.
         const descricaoOriginal = String(denuncia.descricao || "");
         const linhasDescricao = descricaoOriginal.split(/\r?\n/);
 
@@ -108,9 +137,8 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         }
 
         if (possuiDadosAntigos) {
-            // Nas denúncias antigas, os metadados estavam no texto e
-            // podem ser mais confiáveis que os valores padrão da tabela.
             const visibilidadeAntiga = extrairCampoAntigo("Visibilidade");
+
             if (visibilidadeAntiga) {
                 denuncia.visibilidade =
                     /identificad/i.test(visibilidadeAntiga)
@@ -119,8 +147,12 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             }
 
             const dataAntiga = extrairCampoAntigo("Data da ocorrência");
+
             if (!denuncia.dataOcorrenciaFormatada && dataAntiga) {
-                const partesData = dataAntiga.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                const partesData = dataAntiga.match(
+                    /^(\d{4})-(\d{2})-(\d{2})$/
+                );
+
                 denuncia.dataOcorrenciaFormatada = partesData
                     ? `${partesData[3]}/${partesData[2]}/${partesData[1]}`
                     : dataAntiga;
@@ -137,7 +169,9 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                     .trim();
             } else {
                 denuncia.descricao = linhasDescricao
-                    .filter(linha => !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim()))
+                    .filter(linha =>
+                        !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+                    )
                     .join("\n")
                     .trim();
             }
