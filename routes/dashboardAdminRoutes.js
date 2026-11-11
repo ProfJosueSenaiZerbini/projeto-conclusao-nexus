@@ -1,34 +1,68 @@
+
 const express = require('express');
 const router = express.Router();
+
+const denunciaAdmModel = require('../models/denunciaAdmModel');
 
 const {
     verificarPainelOrganizacao
 } = require('../middlewares/autenticacao');
 
-router.get('/', verificarPainelOrganizacao, (req, res) => {
+router.get('/', verificarPainelOrganizacao, async (req, res) => {
     try {
-        res.render('dashboardAdmin', {
+        // Identifica a organização do usuário autenticado.
+        const idOrganizacao = Number(
+            req.session.usuario.idOrganizacao
+        );
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                'Sua conta não está vinculada a uma organização.'
+            );
+        }
+
+        // Busca somente as denúncias daquela organização.
+        const denuncias = await denunciaAdmModel.listarDenuncias(
+            idOrganizacao
+        );
+
+        // Calcula os indicadores do painel.
+        const resumo = {
+            total: denuncias.length,
+
+            urgentes: denuncias.filter(
+                d => d.prioridade === 'Alta'
+            ).length,
+
+            emAnalise: denuncias.filter(
+                d => d.status === 'Em análise'
+            ).length,
+
+            resolvidas: denuncias.filter(
+                d => d.status === 'Resolvida'
+            ).length
+        };
+
+        // Estrutura do mapa.
+        const geojson = {
+            type: 'FeatureCollection',
+            features: []
+        };
+
+        return res.render('dashboardAdmin', {
             modoDemonstracao: false,
-
-            resumo: {
-                total: 0,
-                urgentes: 0,
-                emAnalise: 0,
-                resolvidas: 0
-            },
-
-            denuncias: [],
-
-            geojson: {
-                type: 'FeatureCollection',
-                features: []
-            }
+            resumo,
+            denuncias,
+            geojson
         });
 
     } catch (erro) {
-        console.error('Erro ao abrir dashboard administrativo:', erro);
+        console.error(
+            'Erro ao carregar dashboard administrativo:',
+            erro
+        );
 
-        res.status(500).send(
+        return res.status(500).send(
             'Erro ao carregar o dashboard administrativo.'
         );
     }

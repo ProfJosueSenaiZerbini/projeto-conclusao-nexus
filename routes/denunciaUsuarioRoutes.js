@@ -71,6 +71,8 @@ router.post(
             titulo,
             descricao,
             local,
+            cidade,
+            estado,
             data
         } = req.body;
 
@@ -82,7 +84,10 @@ router.post(
             !categoria?.trim() ||
             !titulo?.trim() ||
             !descricao?.trim() ||
-            !local?.trim()
+            !local?.trim() ||
+            !cidade?.trim() ||
+            !estado?.trim()
+
         ) {
             await removerArquivos(arquivos);
 
@@ -95,26 +100,31 @@ router.post(
 
             const idDenuncia = await executarTransacao(async conn => {
 
-                // 1. Busca a organização responsável pela categoria.
+                // 1. Busca a organização responsável pela cidade e estado.
                 const resultadoOrganizacao = await conn.query(
                     `SELECT
-                        o.idOrganizacao,
-                        o.status,
-                        o.statusContrato
-                     FROM ORGANIZACAO_TIPO_DENUNCIA ot
-                     INNER JOIN ORGANIZACAO o
-                        ON o.idOrganizacao = ot.idOrganizacao
-                     WHERE ot.tipo = ?
-                     LIMIT 1`,
-                    [categoria.trim()]
+        o.idOrganizacao,
+        o.status,
+        o.statusContrato
+     FROM ORGANIZACAO_LOCALIDADE ol
+     INNER JOIN ORGANIZACAO o
+        ON o.idOrganizacao = ol.idOrganizacao
+     WHERE UPPER(TRIM(ol.cidade)) = UPPER(TRIM(?))
+       AND UPPER(TRIM(ol.estado)) = UPPER(TRIM(?))
+     LIMIT 1`,
+                    [
+                        cidade.trim(),
+                        estado.trim()
+                    ]
                 );
 
-                // Verifica se existe organização cadastrada.
+                // Verifica se existe organização responsável pela localidade.
                 if (resultadoOrganizacao.length === 0) {
-                    throw new Error(
-                        "Não existe uma organização responsável por esta categoria."
+                    const erro = new Error(
+                        "Não existe uma organização atendendo esta cidade e estado."
                     );
-
+                    erro.codigo = "ORGANIZACAO_NAO_ENCONTRADA";
+                    throw erro;
                 }
 
                 const organizacao = resultadoOrganizacao[0];
@@ -124,21 +134,26 @@ router.post(
                     organizacao.status !== "ativa" ||
                     organizacao.statusContrato !== "ativo"
                 ) {
-                    throw new Error(
+                    const erro = new Error(
                         "A organização responsável não está disponível."
                     );
+                    erro.codigo = "ORGANIZACAO_INATIVA";
+                    throw erro;
                 }
 
-                const idOrganizacao = Number(
-                    organizacao.idOrganizacao
-                );
+                const idOrganizacao = Number(organizacao.idOrganizacao);
 
                 // 2. Cadastra a localização na mesma transação.
                 const resultadoLocalizacao = await conn.query(
                     `INSERT INTO LOCALIZACAO
-                        (tipo, endereco)
-                     VALUES (?, ?)`,
-                    ["Manual", local.trim()]
+        (tipo, endereco, cidade, estado)
+     VALUES (?, ?, ?, ?)`,
+                    [
+                        "Manual",
+                        local.trim(),
+                        cidade.trim(),
+                        estado.trim().toUpperCase()
+                    ]
                 );
 
                 const idLocalizacao = Number(
@@ -148,17 +163,16 @@ router.post(
                 // 3. Montar a descrição completa.
                 const descricaoCompleta = [
                     `Título: ${titulo.trim()}`,
-                    `Visibilidade: ${
-                    visibilidade === "anonimo"
+                    `Visibilidade: ${visibilidade === "anonimo"
                         ? "Anônima"
                         : "Identificada"
-                 }`,
-                 data ? `Data da ocorrência: ${data}` : null,
-                 "",
-                 descricao.trim()
-             ]
-                .filter(Boolean)
-                .join("\n");
+                    }`,
+                    data ? `Data da ocorrência: ${data}` : null,
+                    "",
+                    descricao.trim()
+                ]
+                    .filter(Boolean)
+                    .join("\n");
 
                 // 4. Cadastra a denúncia com o id da organização.
                 const resultadoDenuncia = await conn.query(
