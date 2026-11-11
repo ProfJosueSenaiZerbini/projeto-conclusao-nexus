@@ -20,8 +20,22 @@ function verificarPainelOrganizacao(req, res, next) {
         return res.status(403).send('Acesso negado.');
     }
 
+    const idOrganizacao = Number(
+        req.session.usuario.idOrganizacao
+    );
+
+    if (
+        !Number.isInteger(idOrganizacao) ||
+        idOrganizacao <= 0
+    ) {
+        return res.status(403).send(
+            'Sua conta não está vinculada a uma organização.'
+        );
+    }
+
     next();
 }
+
 
 // Operações sobre denúncias exigem fiscal ou superusuário confirmado.
 function verificarEquipeConfirmada(req, res, next) {
@@ -29,14 +43,10 @@ function verificarEquipeConfirmada(req, res, next) {
         return res.redirect('/login');
     }
 
-    const { tipo, emailConfirmado } = req.session.usuario;
+    const { tipo } = req.session.usuario;
 
     if (!['fiscal', 'superusuario'].includes(tipo)) {
         return res.status(403).send('Acesso negado.');
-    }
-
-    if (tipo === 'superusuario' && !emailConfirmado) {
-        return res.status(403).send('Confirme seu e-mail para continuar.');
     }
 
     next();
@@ -52,10 +62,6 @@ function verificarSuperusuario(req, res, next) {
         return res.status(403).send('Acesso negado.');
     }
 
-    if (!req.session.usuario.emailConfirmado) {
-        return res.status(403).send('Confirme seu e-mail para continuar.');
-    }
-
     next();
 }
 
@@ -67,13 +73,6 @@ function verificarAutenticado(req, res, next) {
 
     if (!['usuario', 'fiscal', 'superusuario'].includes(req.session.usuario.tipo)) {
         return res.status(403).send('Acesso negado.');
-    }
-
-    if (
-        req.session.usuario.tipo === 'superusuario' &&
-        !req.session.usuario.emailConfirmado
-    ) {
-        return res.status(403).send('Confirme seu e-mail para continuar.');
     }
 
     next();

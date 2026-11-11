@@ -113,8 +113,8 @@ async function atribuirASiMesmo(req, res) {
 // ALTERAR STATUS
 async function alterarStatus(req, res) {
     try {
-        const idDenuncia = Number(req.params.idDenuncia);
-        const { novoStatus } = req.body;
+        const idDenuncia = Number(req.params.id);
+        const novoStatus = req.body.status;
 
         const idOrganizacao = Number(
             req.session.usuario.idOrganizacao
@@ -186,8 +186,8 @@ async function alterarStatus(req, res) {
 // ALTERAR PRIORIDADE
 async function alterarPrioridade(req, res) {
     try {
-        const idDenuncia = Number(req.params.idDenuncia);
-        const { novaPrioridade } = req.body;
+        const idDenuncia = Number(req.params.id);
+        const novaPrioridade = req.body.prioridade;
 
         const idOrganizacao = Number(
             req.session.usuario.idOrganizacao

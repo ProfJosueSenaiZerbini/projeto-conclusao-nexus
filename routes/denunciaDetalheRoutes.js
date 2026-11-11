@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 
@@ -12,17 +13,12 @@ function verificarAcesso(req, res, next) {
         return res.redirect("/login");
     }
 
-    const { tipo, emailConfirmado } = req.session.usuario;
-
+    const { tipo } = req.session.usuario;
+    
     if (!["usuario", "fiscal", "superusuario"].includes(tipo)) {
         return res.status(403).send("Acesso negado.");
     }
 
-    if (tipo === "superusuario" && !emailConfirmado) {
-        return res.status(403).send(
-            "Confirme seu e-mail para acessar as denúncias."
-        );
-    }
 
     next();
 }
@@ -43,6 +39,34 @@ router.get("/:id", verificarAcesso, async (req, res) => {
     }
 
     try {
+        const tipoUsuario = req.session.usuario.tipo;
+
+        let filtroOrganizacao = "";
+        const parametros = [idDenuncia];
+
+        // Fiscais e superusuários só podem acessar
+        // denúncias pertencentes à própria organização.
+        if (
+            tipoUsuario === "fiscal" ||
+            tipoUsuario === "superusuario"
+        ) {
+            const idOrganizacao = Number(
+                req.session.usuario.idOrganizacao
+            );
+
+            if (
+                !Number.isInteger(idOrganizacao) ||
+                idOrganizacao <= 0
+            ) {
+                return res.status(403).send(
+                    "Sua conta não está vinculada a uma organização."
+                );
+            }
+
+            filtroOrganizacao = " AND d.idOrganizacao = ?";
+            parametros.push(idOrganizacao);
+        }
+
         const resultado = await executarQuery(
             `SELECT
                 d.idDenuncia,
@@ -72,8 +96,9 @@ router.get("/:id", verificarAcesso, async (req, res) => {
              LEFT JOIN FISCAL f
                 ON d.fiscal_id = f.id
              WHERE d.idDenuncia = ?
+             ${filtroOrganizacao}
              LIMIT 1`,
-            [idDenuncia]
+            parametros
         );
 
         if (!resultado.length) {
@@ -84,8 +109,7 @@ router.get("/:id", verificarAcesso, async (req, res) => {
 
         const denuncia = resultado[0];
 
-        // Compatibilidade com denúncias antigas, nas quais título,
-        // visibilidade e data foram gravados dentro do campo descricao.
+        // Compatibilidade com denúncias antigas.
         const descricaoOriginal = String(denuncia.descricao || "");
         const linhasDescricao = descricaoOriginal.split(/\r?\n/);
 
@@ -108,9 +132,8 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         }
 
         if (possuiDadosAntigos) {
-            // Nas denúncias antigas, os metadados estavam no texto e
-            // podem ser mais confiáveis que os valores padrão da tabela.
             const visibilidadeAntiga = extrairCampoAntigo("Visibilidade");
+
             if (visibilidadeAntiga) {
                 denuncia.visibilidade =
                     /identificad/i.test(visibilidadeAntiga)
@@ -119,8 +142,12 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             }
 
             const dataAntiga = extrairCampoAntigo("Data da ocorrência");
+
             if (!denuncia.dataOcorrenciaFormatada && dataAntiga) {
-                const partesData = dataAntiga.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                const partesData = dataAntiga.match(
+                    /^(\d{4})-(\d{2})-(\d{2})$/
+                );
+
                 denuncia.dataOcorrenciaFormatada = partesData
                     ? `${partesData[3]}/${partesData[2]}/${partesData[1]}`
                     : dataAntiga;
@@ -137,14 +164,30 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                     .trim();
             } else {
                 denuncia.descricao = linhasDescricao
-                    .filter(linha => !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim()))
+                    .filter(linha =>
+                        !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+                    )
                     .join("\n")
                     .trim();
             }
         }
 
+        const tipoVisualizador = req.session.usuario.tipo;
+        const equipePodeVerIdentidade =
+            ["fiscal", "superusuario"].includes(tipoVisualizador);
+
+        const visibilidadeNormalizada = String(
+            denuncia.visibilidade || "anonimo"
+        )
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        const denunciaAnonima = visibilidadeNormalizada === "anonimo";
+
+        // A identidade de uma denúncia anônima só é exibida à equipe.
         denuncia.nomeExibicao =
-            String(denuncia.visibilidade || "anonimo").toLowerCase() === "identificado"
+            !denunciaAnonima || equipePodeVerIdentidade
                 ? denuncia.nomeUsuario
                 : "Anônimo";
 
@@ -178,13 +221,24 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                     m.dataHora,
                     '%d/%m/%Y às %H:%i'
                 ) AS dataHoraFormatada,
-                u.nome AS autor
-             FROM MENSAGEM_DENUNCIA m
-             INNER JOIN USUARIO u
+                CASE
+                    WHEN m.idUsuario = d.idUsuario
+                        AND LOWER(COALESCE(d.visibilidade, 'anonimo')) = 'anonimo'
+                        AND ? = 0
+                    THEN 'Anônimo'
+                    ELSE u.nome
+                END AS autor
+            FROM MENSAGEM_DENUNCIA m
+            INNER JOIN USUARIO u
                 ON m.idUsuario = u.id
-             WHERE m.idDenuncia = ?
-             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
-            [idDenuncia]
+            INNER JOIN DENUNCIA d
+                ON m.idDenuncia = d.idDenuncia
+            WHERE m.idDenuncia = ?
+            ORDER BY m.dataHora ASC, m.idMensagem ASC`,
+            [
+                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0, 
+                idDenuncia
+            ]
         );
 
         return res.render("denunciaDetalhe", {
