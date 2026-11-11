@@ -16,12 +16,26 @@ function verificarPainelOrganizacao(req, res, next) {
         return res.redirect('/login');
     }
 
-    if (!['fiscal', 'superusuario'].includes(req.session.usuario.tipo)) {
+    if (!['fiscal', 'superusuario'].includes(tipo)) {
         return res.status(403).send('Acesso negado.');
+    }
+
+    const idOrganizacao = Number(
+        req.session.usuario.idOrganizacao
+    );
+
+    if (
+        !Number.isInteger(idOrganizacao) ||
+        idOrganizacao <= 0
+    ) {
+        return res.status(403).send(
+            'Sua conta não está vinculada a uma organização.'
+        );
     }
 
     next();
 }
+
 
 // Operações sobre denúncias exigem fiscal ou superusuário confirmado.
 function verificarEquipeConfirmada(req, res, next) {
