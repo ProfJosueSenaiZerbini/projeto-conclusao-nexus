@@ -13,17 +13,12 @@ function verificarAcesso(req, res, next) {
         return res.redirect("/login");
     }
 
-    const { tipo, emailConfirmado } = req.session.usuario;
-
+    const { tipo } = req.session.usuario;
+    
     if (!["usuario", "fiscal", "superusuario"].includes(tipo)) {
         return res.status(403).send("Acesso negado.");
     }
 
-    if (tipo === "superusuario" && !emailConfirmado) {
-        return res.status(403).send(
-            "Confirme seu e-mail para acessar as denúncias."
-        );
-    }
 
     next();
 }
