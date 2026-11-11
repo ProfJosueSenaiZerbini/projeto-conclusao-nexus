@@ -677,3 +677,29 @@ body {
     .form-mensagem-rodape { align-items: flex-start; flex-direction: column; }
     .form-mensagem button { align-self: stretch; }
 }
+
+/* Impede que mensagens longas ultrapassem os limites dos comentários. */
+.comentario-item {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.comentario-item p {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.comentario-header {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.comentario-header strong,
+.comentario-header span {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
