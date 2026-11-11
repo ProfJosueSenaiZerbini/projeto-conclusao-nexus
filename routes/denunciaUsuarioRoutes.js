@@ -49,7 +49,7 @@ async function removerArquivos(files = []) {
 }
 
 router.get("/", verificarUsuario, (req, res) => {
-        res.render("denunciaUsuario");
+    res.render("denunciaUsuario");
 });
 
 router.post(
@@ -63,6 +63,8 @@ router.post(
             titulo,
             descricao,
             local,
+            cidade,
+            estado,
             data
         } = req.body;
 
@@ -73,36 +75,44 @@ router.post(
             !categoria?.trim() ||
             !titulo?.trim() ||
             !descricao?.trim() ||
-            !local?.trim()
+            !local?.trim() ||
+            !cidade?.trim() ||
+            !estado?.trim() ||
+            !/^[A-Za-z]{2}$/.test(estado.trim())
         ) {
-            await removerArquivos(arquivos);
+    await removerArquivos(arquivos);
 
-            return res.status(400).send(
-                "Preencha todos os campos obrigatórios da denúncia."
-            );
-        }
+    return res.status(400).send(
+        "Preencha todos os campos obrigatórios da denúncia."
+    );
+}
 
-        try {
-            const idDenuncia = await executarTransacao(async conn => {
-                // 1. Cadastra a localização na mesma transação.
-                const resultadoLocalizacao = await conn.query(
-                    `INSERT INTO LOCALIZACAO (tipo, endereco)
-                     VALUES (?, ?)`,
-                    ["Manual", local.trim()]
-                );
+try {
+    const idDenuncia = await executarTransacao(async conn => {
+        // 1. Cadastra a localização na mesma transação.
+        const resultadoLocalizacao = await conn.query(
+            `INSERT INTO LOCALIZACAO (tipo, endereco, cidade, estado)
+                     VALUES (?, ?, ?, ?)`,
+            [
+                "Manual",
+                local.trim(),
+                cidade.trim(),
+                estado.trim().toUpperCase()
+            ]
+        );
 
-                const idLocalizacao = Number(
-                    resultadoLocalizacao.insertId
-                );
+        const idLocalizacao = Number(
+            resultadoLocalizacao.insertId
+        );
 
-                // 2. Cadastra cada informação em sua própria coluna.
-                // Assim, título, visibilidade e data não ficam misturados
-                // com o texto da descrição.
-                const visibilidadeValida =
-                    visibilidade === "identificado" ? "identificado" : "anonimo";
+        // 2. Cadastra cada informação em sua própria coluna.
+        // Assim, título, visibilidade e data não ficam misturados
+        // com o texto da descrição.
+        const visibilidadeValida =
+            visibilidade === "identificado" ? "identificado" : "anonimo";
 
-                const resultadoDenuncia = await conn.query(
-                    `INSERT INTO DENUNCIA
+        const resultadoDenuncia = await conn.query(
+            `INSERT INTO DENUNCIA
                         (
                             idUsuario,
                             titulo,
@@ -115,55 +125,55 @@ router.post(
                             idLocalizacao
                         )
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [
-                        idUsuario,
-                        titulo.trim(),
-                        categoria,
-                        descricao.trim(),
-                        data?.trim() || null,
-                        visibilidadeValida,
-                        "Pendente",
-                        "Média",
-                        idLocalizacao
-                    ]
-                );
+            [
+                idUsuario,
+                titulo.trim(),
+                categoria,
+                descricao.trim(),
+                data?.trim() || null,
+                visibilidadeValida,
+                "Pendente",
+                "Média",
+                idLocalizacao
+            ]
+        );
 
-                const novoIdDenuncia = Number(
-                    resultadoDenuncia.insertId
-                );
+        const novoIdDenuncia = Number(
+            resultadoDenuncia.insertId
+        );
 
-                // 3. Registra o histórico inicial.
-                await conn.query(
-                    `INSERT INTO HISTORICO_DENUNCIA
+        // 3. Registra o histórico inicial.
+        await conn.query(
+            `INSERT INTO HISTORICO_DENUNCIA
                         (idDenuncia, titulo)
                      VALUES (?, ?)`,
-                    [
-                        novoIdDenuncia,
-                        "Denúncia registrada"
-                    ]
-                );
+            [
+                novoIdDenuncia,
+                "Denúncia registrada"
+            ]
+        );
 
-                // 4. Cria uma notificação para o usuário.
-                await conn.query(
-                    `INSERT INTO NOTIFICACAO
+        // 4. Cria uma notificação para o usuário.
+        await conn.query(
+            `INSERT INTO NOTIFICACAO
                         (idDenuncia, idUsuario, conteudo)
                      VALUES (?, ?, ?)`,
-                    [
-                        novoIdDenuncia,
-                        idUsuario,
-                        `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
-                    ]
-                );
+            [
+                novoIdDenuncia,
+                idUsuario,
+                `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
+            ]
+        );
 
-                // 5. Registra todas as evidências.
-                for (const arquivo of arquivos) {
-                    const tipoEvidencia =
-                        arquivo.mimetype.startsWith("image/")
-                            ? "imagem"
-                            : "video";
+        // 5. Registra todas as evidências.
+        for (const arquivo of arquivos) {
+            const tipoEvidencia =
+                arquivo.mimetype.startsWith("image/")
+                    ? "imagem"
+                    : "video";
 
-                    await conn.query(
-                        `INSERT INTO EVIDENCIA
+            await conn.query(
+                `INSERT INTO EVIDENCIA
                             (
                                 idDenuncia,
                                 tipoEvidencia,
@@ -171,33 +181,33 @@ router.post(
                                 dadosEvidencia
                             )
                          VALUES (?, ?, ?, ?)`,
-                        [
-                            novoIdDenuncia,
-                            tipoEvidencia,
-                            null,
-                            `/uploads/${arquivo.filename}`
-                        ]
-                    );
-                }
-
-                // O helper executará COMMIT após este retorno.
-                return novoIdDenuncia;
-            });
-
-            return res.redirect(
-                `/denunciaDetalhe/${idDenuncia}`
-            );
-        } catch (erro) {
-            console.error("Erro ao cadastrar denúncia:", erro);
-
-            // O helper executa ROLLBACK em caso de erro SQL.
-            // Também removemos os arquivos salvos pelo Multer.
-            await removerArquivos(arquivos);
-
-            return res.status(500).send(
-                "Erro ao cadastrar denúncia."
+                [
+                    novoIdDenuncia,
+                    tipoEvidencia,
+                    null,
+                    `/uploads/${arquivo.filename}`
+                ]
             );
         }
+
+        // O helper executará COMMIT após este retorno.
+        return novoIdDenuncia;
+    });
+
+    return res.redirect(
+        `/denunciaDetalhe/${idDenuncia}`
+    );
+} catch (erro) {
+    console.error("Erro ao cadastrar denúncia:", erro);
+
+    // O helper executa ROLLBACK em caso de erro SQL.
+    // Também removemos os arquivos salvos pelo Multer.
+    await removerArquivos(arquivos);
+
+    return res.status(500).send(
+        "Erro ao cadastrar denúncia."
+    );
+}
     }
 );
 
