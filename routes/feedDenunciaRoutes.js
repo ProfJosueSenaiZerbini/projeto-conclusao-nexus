@@ -56,8 +56,10 @@ function montarCartao(registro) {
         descricao: descricao || descricaoOriginal,
 
         anonima:
-            visibilidade.toLowerCase() === "anônima" ||
-            visibilidade.toLowerCase() === "anonima",
+            String(registro.visibilidade || visibilidade || "anonimo")
+                .normalize("NFD")
+                .replace(/[\\u0300-\\u036f]/g, "")
+                .toLowerCase() === "anonimo",
 
         categoriaNome: categoria
             ? categoria.nome
@@ -97,6 +99,7 @@ router.get("/", verificarAutenticado, async (req, res) => {
                 d.descricao,
                 d.status,
                 d.prioridade,
+                d.visibilidade,
                 d.dataAbertura,
                 l.endereco,
                 u.nome AS nomeUsuario
