@@ -53,7 +53,7 @@ body {
 .campo-busca {
     display: flex;
     align-items: center;
-    width: 280px;
+    width: 100%;
     height: 40px;
     overflow: hidden;
 
