@@ -100,6 +100,44 @@
 
                 </div>
 
+
+<div class="campo campo-localidades">
+    <label>Localidades de atuação</label>
+
+    <p class="descricao">
+        Selecione todas as regiões em que este fiscal poderá trabalhar.
+    </p>
+
+    <% if (localidades && localidades.length > 0) { %>
+
+        <div class="lista-localidades">
+
+            <% localidades.forEach(function(localidade) { %>
+
+                <label class="opcao-localidade">
+                    <input
+                        type="checkbox"
+                        name="localidades[]"
+                        value="<%= localidade.idLocalidade %>"
+                    >
+
+                    <span>
+                        <%= localidade.cidade %> -
+                        <%= localidade.estado %>
+                    </span>
+                </label>
+
+            <% }); %>
+
+        </div>
+            <% } else { %>
+                <p class="mensagem erro">
+                    Nenhuma localidade cadastrada.
+                    Cadastre uma localidade antes de registrar fiscais.
+                </p>
+            <% } %>
+        </div>
+
                 <div class="campo campo-botao">
                     <button type="submit" class="botao">
                         Cadastrar fiscal
@@ -118,6 +156,7 @@
                             <th>Nome</th>
                             <th>E-mail</th>
                             <th>CPF</th>
+                            <th>Localidades de atuação</th>
                             <th>Status</th>
                             <th>Ação</th>
                         </tr>
@@ -130,6 +169,7 @@
                                     <td><%= fiscal.nome %></td>
                                     <td><%= fiscal.email %></td>
                                     <td><%= fiscal.cpf %></td>
+                                    <td><%= fiscal.localidades || 'Nenhuma localidade atribuída' %></td>
                                     <td><%= fiscal.status === 'ativo' ? 'Ativo' : 'Desativado' %></td>
                                     <td>
                                         <% if (fiscal.status === 'ativo') { %>
@@ -142,7 +182,7 @@
                             <% }); %>
                         <% } else { %>
                             <tr>
-                                <td colspan="5" class="vazio">
+                                <td colspan="6" class="vazio">
                                     Nenhum fiscal cadastrado.
                                 </td>
                             </tr>

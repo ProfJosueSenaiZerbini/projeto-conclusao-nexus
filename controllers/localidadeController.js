@@ -1,20 +1,9 @@
-
 const localidadeModel = require('../models/localidadeModel');
 
 // Exibe a página de gerenciamento.
 async function exibirLocalidades(req, res) {
     try {
-        const idOrganizacao = Number(req.session.usuario.idOrganizacao);
-
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                'Sua conta não está vinculada a uma organização.'
-            );
-        }
-
-        const localidades = await localidadeModel.listarLocalidades(
-            idOrganizacao
-        );
+        const localidades = await localidadeModel.listarLocalidades();
 
         return res.render('gerenciarLocalidades', {
             localidades,
@@ -28,6 +17,7 @@ async function exibirLocalidades(req, res) {
 
     } catch (erro) {
         console.error('Erro ao carregar localidades:', erro);
+
         return res.status(500).send(
             'Não foi possível carregar as localidades.'
         );
@@ -36,37 +26,30 @@ async function exibirLocalidades(req, res) {
 
 // Cadastra uma nova localidade.
 async function cadastrarLocalidade(req, res) {
-    const idOrganizacao = Number(req.session.usuario.idOrganizacao);
-
     const cidade = String(req.body.cidade || '').trim();
     const estado = String(req.body.estado || '').trim().toUpperCase();
 
-    if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-        return res.status(403).send(
-            'Sua conta não está vinculada a uma organização.'
+    if (
+        !cidade ||
+        cidade.length > 100 ||
+        !/^[A-Za-zÀ-ÿ\s'-]+$/.test(cidade)
+    ) {
+        return res.status(400).send(
+            'Informe um nome de cidade válido.'
         );
     }
 
-    if (!cidade || cidade.length > 100 || !/^[A-Za-zÀ-ÿ\s'-]+$/.test(cidade)) {
-        return res.status(400).send('Informe um nome de cidade válido.');
-    }
-
     if (!/^[A-Z]{2}$/.test(estado)) {
-        return res.status(400).send('Informe uma UF válida com duas letras.');
+        return res.status(400).send(
+            'Informe uma UF válida com duas letras.'
+        );
     }
 
     try {
-        const resultado = await localidadeModel.cadastrarLocalidade({
-            idOrganizacao,
+        await localidadeModel.cadastrarLocalidade({
             cidade,
             estado
         });
-
-        if (resultado.affectedRows !== 1) {
-            return res.status(403).send(
-                'Sua organização não está ativa para cadastrar localidades.'
-            );
-        }
 
         return res.redirect('/organizacao/localidades?sucesso=1');
 
@@ -75,7 +58,7 @@ async function cadastrarLocalidade(req, res) {
 
         if (erro.code === 'ER_DUP_ENTRY') {
             return res.status(409).send(
-                'Esta cidade já está vinculada a uma organização.'
+                'Esta cidade já está cadastrada.'
             );
         }
 
@@ -87,22 +70,18 @@ async function cadastrarLocalidade(req, res) {
 
 // Remove uma localidade.
 async function removerLocalidade(req, res) {
-    const idOrganizacao = Number(req.session.usuario.idOrganizacao);
-    const id = Number(req.params.id);
+    const idLocalidade = Number(req.params.id);
 
     if (
-        !Number.isInteger(idOrganizacao) ||
-        idOrganizacao <= 0 ||
-        !Number.isInteger(id) ||
-        id <= 0
+        !Number.isInteger(idLocalidade) ||
+        idLocalidade <= 0
     ) {
         return res.status(400).send('Dados inválidos.');
     }
 
     try {
         const resultado = await localidadeModel.removerLocalidade(
-            id,
-            idOrganizacao
+            idLocalidade
         );
 
         if (resultado.affectedRows !== 1) {
@@ -115,6 +94,12 @@ async function removerLocalidade(req, res) {
 
     } catch (erro) {
         console.error('Erro ao remover localidade:', erro);
+
+        if (erro.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(409).send(
+                'Esta localidade possui denúncias ou outros vínculos e não pode ser removida.'
+            );
+        }
 
         return res.status(500).send(
             'Não foi possível remover a localidade.'

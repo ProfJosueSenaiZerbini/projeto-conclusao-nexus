@@ -1,38 +1,29 @@
-
 const { executarQuery } = require('../db/dbConnect');
 
-// Lista as localidades cadastradas pela organização.
-async function listarLocalidades(idOrganizacao) {
+// Lista todas as localidades cadastradas no sistema.
+async function listarLocalidades() {
     return executarQuery(
-        `SELECT id, cidade, estado, dataCadastro
-         FROM ORGANIZACAO_LOCALIDADE
-         WHERE idOrganizacao = ?
-         ORDER BY cidade ASC`,
-        [idOrganizacao]
+        `SELECT idLocalidade, cidade, estado, dataCadastro
+         FROM LOCALIDADE
+         ORDER BY estado ASC, cidade ASC`
     );
 }
 
-// Cadastra uma nova localidade.
-async function cadastrarLocalidade({ idOrganizacao, cidade, estado }) {
+// Cadastra uma nova localidade independente de organização.
+async function cadastrarLocalidade({ cidade, estado }) {
     return executarQuery(
-        `INSERT INTO ORGANIZACAO_LOCALIDADE
-            (idOrganizacao, cidade, estado)
-         SELECT idOrganizacao, ?, ?
-         FROM ORGANIZACAO
-         WHERE idOrganizacao = ?
-           AND status = 'ativa'
-           AND statusContrato = 'ativo'`,
-        [cidade, estado, idOrganizacao]
+        `INSERT INTO LOCALIDADE (cidade, estado)
+         VALUES (?, ?)`,
+        [cidade, estado]
     );
 }
 
-// Remove uma localidade pertencente à organização.
-async function removerLocalidade(id, idOrganizacao) {
+// Remove uma localidade que ainda não esteja sendo utilizada.
+async function removerLocalidade(idLocalidade) {
     return executarQuery(
-        `DELETE FROM ORGANIZACAO_LOCALIDADE
-         WHERE id = ?
-           AND idOrganizacao = ?`,
-        [id, idOrganizacao]
+        `DELETE FROM LOCALIDADE
+         WHERE idLocalidade = ?`,
+        [idLocalidade]
     );
 }
 

@@ -52,6 +52,20 @@ CREATE TABLE ORGANIZACAO_LOCALIDADE (
     INDEX idx_org_localidade_organizacao (idOrganizacao)
 );
 
+-- 1.2 LOCALIDADE
+-- Cadastro independente de organização.
+CREATE TABLE LOCALIDADE (
+    idLocalidade INT PRIMARY KEY AUTO_INCREMENT,
+    cidade VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,
+    dataCadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_localidade_cidade_estado
+        UNIQUE (cidade, estado),
+
+    INDEX idx_localidade_cidade_estado (cidade, estado)
+);
+
 -- 2. ORGANIZACAO_TIPO_DENUNCIA
 CREATE TABLE ORGANIZACAO_TIPO_DENUNCIA (
     tipoDenuncia VARCHAR(100) PRIMARY KEY,
@@ -170,6 +184,28 @@ CREATE TABLE FISCAL (
     INDEX idx_fiscal_status (status)
 );
 
+-- 7.1 FISCAL_LOCALIDADE
+-- Define em quais localidades cada fiscal trabalha.
+CREATE TABLE FISCAL_LOCALIDADE (
+    idFiscal INT NOT NULL,
+    idLocalidade INT NOT NULL,
+    dataAtribuicao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (idFiscal, idLocalidade),
+
+    CONSTRAINT fk_fl_fiscal
+        FOREIGN KEY (idFiscal)
+        REFERENCES FISCAL(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_fl_localidade
+        FOREIGN KEY (idLocalidade)
+        REFERENCES LOCALIDADE(idLocalidade)
+        ON DELETE CASCADE,
+
+    INDEX idx_fl_localidade (idLocalidade)
+);
+
 -- 8. LOCALIZACAO
 CREATE TABLE LOCALIZACAO (
     idLocalizacao INT PRIMARY KEY AUTO_INCREMENT,
@@ -202,8 +238,9 @@ CREATE TABLE DENUNCIA (
     dataAbertura DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     idLocalizacao INT NOT NULL UNIQUE,
+    idLocalidade INT NULL,
     fiscal_id INT NULL,
-    idOrganizacao INT NOT NULL,
+    idOrganizacao INT NULL,
 
     CONSTRAINT fk_denuncia_organizacao
         FOREIGN KEY (idOrganizacao)
@@ -218,12 +255,18 @@ CREATE TABLE DENUNCIA (
         FOREIGN KEY (idLocalizacao)
         REFERENCES LOCALIZACAO(idLocalizacao),
 
+    CONSTRAINT fk_denuncia_localidade
+        FOREIGN KEY (idLocalidade)
+        REFERENCES LOCALIDADE(idLocalidade)
+        ON DELETE RESTRICT,
+
     CONSTRAINT fk_denuncia_fiscal
         FOREIGN KEY (fiscal_id)
         REFERENCES FISCAL(id)
         ON DELETE SET NULL,
 
     INDEX idx_denuncia_organizacao (idOrganizacao),
+    INDEX idx_denuncia_localidade (idLocalidade),
     INDEX idx_denuncia_fiscal (fiscal_id),
     INDEX idx_denuncia_usuario (idUsuario),
     INDEX idx_denuncia_status (status),

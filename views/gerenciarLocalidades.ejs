@@ -19,10 +19,10 @@
     <main class="container">
         <h1>Gerenciar localidades</h1>
 
-        <p class="descricao">
-            Cadastre as cidades e estados atendidos pela sua organização.
-            As denúncias dessas localidades serão encaminhadas automaticamente
-            para sua organização.
+       <p class="descricao">
+            Cadastre as localidades disponíveis no Nexus.
+            Os fiscais poderão ser vinculados às regiões e visualizar
+            as denúncias correspondentes à sua área de atuação.
         </p>
 
         <% if (mensagemErro) { %>
@@ -106,7 +106,7 @@
                                     </td>
                                     <td>
                                         <form
-                                            action="/organizacao/localidades/<%= localidade.id %>/remover"
+                                            action="/organizacao/localidades/<%= localidade.idLocalidade %>/remover"
                                             method="POST"
                                             onsubmit="return confirm('Deseja remover esta localidade?');"
                                         >
@@ -120,7 +120,7 @@
                         <% } else { %>
                             <tr>
                                 <td colspan="4" class="vazio">
-                                    Nenhuma localidade cadastrada.
+                                    Nenhuma localidade disponível no Nexus.
                                 </td>
                             </tr>
                         <% } %>
