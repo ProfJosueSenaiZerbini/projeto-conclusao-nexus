@@ -260,3 +260,50 @@ body {
 @media (max-width: 480px) {
     .filtros-feed button { width: auto; }
 }
+
+/* Pesquisa automática do feed */
+.pesquisa-feed {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 620px);
+    min-height: 48px;
+    padding: 0 14px;
+    background: #fff;
+    border: 1px solid #d8dde1;
+    border-radius: 9px;
+    transition: border-color .2s, box-shadow .2s;
+}
+.pesquisa-feed:focus-within {
+    border-color: #1C4532;
+    box-shadow: 0 0 0 3px rgba(28, 69, 50, .10);
+}
+.icone-pesquisa { color: #697780; font-size: 25px; line-height: 1; }
+.pesquisa-feed input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #263238;
+    font: inherit;
+    font-size: 14px;
+}
+.pesquisa-feed input::placeholder { color: #929ba2; }
+.pesquisa-feed button {
+    border: 0;
+    background: transparent;
+    color: #697780;
+    cursor: pointer;
+    font-size: 23px;
+    line-height: 1;
+}
+.pesquisa-feed button[hidden],
+.feed-card[hidden],
+.feed-vazio[hidden] { display: none !important; }
+.resultado-pesquisa {
+    min-height: 18px;
+    margin: 8px 0 0 !important;
+    color: #707b86;
+    font-size: 12px !important;
+}

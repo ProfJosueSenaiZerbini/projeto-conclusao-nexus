@@ -28,21 +28,24 @@
                     <h1>Feed de Denúncias</h1>
                     <p>Veja as denúncias públicas registradas e filtre pela categoria informada no cadastro.</p>
                     
-                    <form class="filtros-feed" action="/feedDenuncia" method="GET" aria-label="Filtrar denúncias por categoria">
-                        <button type="submit" name="categoria" value="" class="<%= !categoriaSelecionada ? 'ativo' : '' %>">Todas</button>
-                        <% categorias.forEach(categoria => { %>
-                            <button type="submit" name="categoria" value="<%= categoria.valor %>" class="<%= categoriaSelecionada === categoria.valor ? 'ativo' : '' %>"><%= categoria.nome %></button>
-                        <% }) %>
-                    </form>
+                    <div class="pesquisa-feed">
+                        <span class="icone-pesquisa" aria-hidden="true">⌕</span>
+                        <input
+                            type="search"
+                            id="pesquisaFeed"
+                            placeholder="Pesquisar denúncias..."
+                            aria-label="Pesquisar denúncias"
+                            autocomplete="off"
+                        />
+                        <button type="button" id="limparPesquisa" aria-label="Limpar pesquisa" hidden>×</button>
+                    </div>
+                    <p class="resultado-pesquisa" id="resultadoPesquisa" aria-live="polite"></p>
                 </section>
 
-                <% if (!denuncias.length) { %>
-                    <section class="feed-vazio">
-                        <h2>Nenhuma denúncia encontrada</h2>
-                        <p>Não há denúncias nesta categoria no momento.</p>
-                        <a href="/feedDenuncia">Ver todas as denúncias</a>
-                    </section>
-                <% } %>
+                <section class="feed-vazio" id="feedVazio" <%= denuncias.length ? 'hidden' : '' %>>
+                    <h2>Nenhuma denúncia encontrada</h2>
+                    <p id="mensagemFeedVazio"><%= denuncias.length ? 'Nenhuma denúncia corresponde à sua pesquisa.' : 'Não há denúncias públicas no momento.' %></p>
+                </section>
 
                 <% denuncias.forEach(denuncia => { %>
                     <article class="feed-card">
@@ -82,4 +85,6 @@
         </div>
     </div>
 </body>
+
+    <script src="/js/feedDenuncia.js"></script>
 </html>

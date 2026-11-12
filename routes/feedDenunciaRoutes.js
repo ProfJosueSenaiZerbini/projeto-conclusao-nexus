@@ -78,18 +78,6 @@ function montarCartao(registro) {
 }
 
 router.get("/", verificarAutenticado, async (req, res) => {
-    const filtro = String(
-        req.query.categoria || ""
-    ).trim().toLowerCase();
-
-    const categoriasValidas = categorias.map(
-        (categoria) => categoria.valor
-    );
-
-    const categoriaSelecionada = categoriasValidas.includes(filtro)
-        ? filtro
-        : "";
-
     try {
         let sql = `
             SELECT
@@ -136,11 +124,6 @@ router.get("/", verificarAutenticado, async (req, res) => {
             parametros.push(idOrganizacao);
         }
 
-        if (categoriaSelecionada) {
-            sql += " AND LOWER(d.tipo) = ?";
-            parametros.push(categoriaSelecionada);
-        }
-
         sql += `
             ORDER BY d.dataAbertura DESC, d.idDenuncia DESC
         `;
@@ -165,9 +148,7 @@ router.get("/", verificarAutenticado, async (req, res) => {
         );
 
         return res.render("feedDenuncia", {
-            denuncias,
-            categorias,
-            categoriaSelecionada
+            denuncias
         });
 
     } catch (erro) {
