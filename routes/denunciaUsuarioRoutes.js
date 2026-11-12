@@ -100,17 +100,13 @@ router.post(
 
             const idDenuncia = await executarTransacao(async conn => {
 
-                // 1. Busca a organização responsável pela cidade e estado.
-                const resultadoOrganizacao = await conn.query(
-                    `SELECT
-        o.idOrganizacao,
-        o.status,
-        o.statusContrato
-     FROM ORGANIZACAO_LOCALIDADE ol
-     INNER JOIN ORGANIZACAO o
-        ON o.idOrganizacao = ol.idOrganizacao
-     WHERE UPPER(TRIM(ol.cidade)) = UPPER(TRIM(?))
-       AND UPPER(TRIM(ol.estado)) = UPPER(TRIM(?))
+
+                // 1. Busca a localidade no cadastro global.
+                const resultadoLocalidade = await conn.query(
+                    `SELECT idLocalidade
+     FROM LOCALIDADE
+     WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
+       AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
      LIMIT 1`,
                     [
                         cidade.trim(),
@@ -118,36 +114,25 @@ router.post(
                     ]
                 );
 
-                // Verifica se existe organização responsável pela localidade.
-                if (resultadoOrganizacao.length === 0) {
+                // Verifica se a localidade existe.
+                if (resultadoLocalidade.length === 0) {
                     const erro = new Error(
-                        "Não existe uma organização atendendo esta cidade e estado."
+                        "A cidade e o estado informados não estão cadastrados."
                     );
-                    erro.codigo = "ORGANIZACAO_NAO_ENCONTRADA";
+                    erro.codigo = "LOCALIDADE_NAO_ENCONTRADA";
                     throw erro;
                 }
 
-                const organizacao = resultadoOrganizacao[0];
+                const idLocalidade = Number(
+                    resultadoLocalidade[0].idLocalidade
+                );
 
-                // Verifica se a organização pode receber denúncias.
-                if (
-                    organizacao.status !== "ativa" ||
-                    organizacao.statusContrato !== "ativo"
-                ) {
-                    const erro = new Error(
-                        "A organização responsável não está disponível."
-                    );
-                    erro.codigo = "ORGANIZACAO_INATIVA";
-                    throw erro;
-                }
-
-                const idOrganizacao = Number(organizacao.idOrganizacao);
 
                 // 2. Cadastra a localização na mesma transação.
                 const resultadoLocalizacao = await conn.query(
                     `INSERT INTO LOCALIZACAO
-        (tipo, endereco, cidade, estado)
-     VALUES (?, ?, ?, ?)`,
+                    (tipo, endereco, cidade, estado)
+                        VALUES (?, ?, ?, ?)`,
                     [
                         "Manual",
                         local.trim(),
@@ -176,26 +161,29 @@ router.post(
 
                 // 4. Cadastra a denúncia com o id da organização.
                 const resultadoDenuncia = await conn.query(
+
                     `INSERT INTO DENUNCIA
-                        (
-                            idUsuario,
-                            idOrganizacao,
-                            tipo,
-                            descricao,
-                            status,
-                            prioridade,
-                            idLocalizacao
-                        )
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [
+                    (
                         idUsuario,
                         idOrganizacao,
+                        idLocalidade,
+                        tipo,
+                        descricao,
+                        status,
+                        prioridade,
+                        idLocalizacao
+                    )
+                        VALUES (?, NULL, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        idUsuario,
+                        idLocalidade,
                         categoria.trim(),
                         descricaoCompleta,
                         "Pendente",
                         "Média",
                         idLocalizacao
                     ]
+
                 );
 
                 const novoIdDenuncia = Number(
@@ -271,10 +259,7 @@ router.post(
             await removerArquivos(arquivos);
 
             // Erros de encaminhamento da organização.
-            if (
-                erro.codigo === "ORGANIZACAO_NAO_ENCONTRADA" ||
-                erro.codigo === "ORGANIZACAO_INATIVA"
-            ) {
+            if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
                 return res.status(400).send(erro.message);
             }
 
