@@ -4,10 +4,7 @@ CREATE DATABASE IF NOT EXISTS sistema_denuncia
 
 USE sistema_denuncia;
 
--- =====================================================
--- 1. ORGANIZACAO
--- =====================================================
-
+-- 1. ORGANIZACAO 
 CREATE TABLE ORGANIZACAO (
     idOrganizacao INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
@@ -35,12 +32,27 @@ CREATE TABLE ORGANIZACAO (
     fimPeriodoTransicao DATETIME NULL
 );
 
--- =====================================================
--- 2. ORGANIZACAO_TIPO_DENUNCIA
--- Define qual organização atende cada categoria.
--- O cidadão não precisa informar idOrganizacao.
--- =====================================================
+-- 1.1 ORGANIZACAO_LOCALIDADE 
+CREATE TABLE ORGANIZACAO_LOCALIDADE (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    idOrganizacao INT NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,
+    dataCadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    CONSTRAINT fk_org_localidade_organizacao
+        FOREIGN KEY (idOrganizacao)
+        REFERENCES ORGANIZACAO(idOrganizacao)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT uq_org_localidade_cidade_estado
+        UNIQUE (cidade, estado),
+
+    INDEX idx_org_localidade_organizacao (idOrganizacao)
+);
+
+-- 2. ORGANIZACAO_TIPO_DENUNCIA
 CREATE TABLE ORGANIZACAO_TIPO_DENUNCIA (
     tipoDenuncia VARCHAR(100) PRIMARY KEY,
     idOrganizacao INT NOT NULL,
@@ -54,10 +66,7 @@ CREATE TABLE ORGANIZACAO_TIPO_DENUNCIA (
     INDEX idx_tipo_organizacao (idOrganizacao)
 );
 
--- =====================================================
 -- 3. SUPERUSUARIO
--- =====================================================
-
 CREATE TABLE SUPERUSUARIO (
     idSuperusuario INT PRIMARY KEY AUTO_INCREMENT,
     idOrganizacao INT NOT NULL UNIQUE,
@@ -85,10 +94,7 @@ CREATE TABLE SUPERUSUARIO (
         ON DELETE RESTRICT
 );
 
--- =====================================================
 -- 4. CONVITE_SUPERUSUARIO
--- =====================================================
-
 CREATE TABLE CONVITE_SUPERUSUARIO (
     idConvite INT PRIMARY KEY AUTO_INCREMENT,
     idOrganizacao INT NOT NULL,
@@ -108,10 +114,7 @@ CREATE TABLE CONVITE_SUPERUSUARIO (
     INDEX idx_convite_validade (expiraEm, usadoEm, revogado)
 );
 
--- =====================================================
 -- 5. CONVITE_TRANSFERENCIA_SUPERUSUARIO
--- =====================================================
-
 CREATE TABLE CONVITE_TRANSFERENCIA_SUPERUSUARIO (
     idTransferencia INT PRIMARY KEY AUTO_INCREMENT,
     idOrganizacao INT NOT NULL,
@@ -132,10 +135,7 @@ CREATE TABLE CONVITE_TRANSFERENCIA_SUPERUSUARIO (
     INDEX idx_transferencia_validade (expiraEm, usadoEm, revogado)
 );
 
--- =====================================================
 -- 6. USUARIO
--- =====================================================
-
 CREATE TABLE USUARIO (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
@@ -144,10 +144,7 @@ CREATE TABLE USUARIO (
     senha VARCHAR(255) NOT NULL
 );
 
--- =====================================================
 -- 7. FISCAL
--- =====================================================
-
 CREATE TABLE FISCAL (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
@@ -173,23 +170,21 @@ CREATE TABLE FISCAL (
     INDEX idx_fiscal_status (status)
 );
 
--- =====================================================
 -- 8. LOCALIZACAO
--- =====================================================
-
 CREATE TABLE LOCALIZACAO (
     idLocalizacao INT PRIMARY KEY AUTO_INCREMENT,
     tipo VARCHAR(50) NOT NULL,
     endereco TEXT NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,
     latitude DECIMAL(10, 8) NULL,
-    longitude DECIMAL(11, 8) NULL
+    longitude DECIMAL(11, 8) NULL,
+
+    INDEX idx_localizacao_cidade_estado (cidade, estado)
 );
 
--- =====================================================
 -- 9. DENUNCIA
 -- A organização é vinculada automaticamente pela categoria.
--- =====================================================
-
 CREATE TABLE DENUNCIA (
     idDenuncia INT PRIMARY KEY AUTO_INCREMENT,
     idUsuario INT NOT NULL,
@@ -236,10 +231,7 @@ CREATE TABLE DENUNCIA (
     INDEX idx_denuncia_data (dataAbertura)
 );
 
--- =====================================================
 -- 10. EVIDENCIA
--- =====================================================
-
 CREATE TABLE EVIDENCIA (
     idEvidencia INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
@@ -255,11 +247,8 @@ CREATE TABLE EVIDENCIA (
     INDEX idx_evidencia_denuncia (idDenuncia)
 );
 
--- =====================================================
 -- 11. NOTIFICACAO
 -- Inclui controle de notificações lidas e não lidas.
--- =====================================================
-
 CREATE TABLE NOTIFICACAO (
     idNotificacao INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
@@ -285,10 +274,7 @@ CREATE TABLE NOTIFICACAO (
     INDEX idx_notificacao_data (dataHora)
 );
 
--- =====================================================
 -- 12. HISTORICO_DENUNCIA
--- =====================================================
-
 CREATE TABLE HISTORICO_DENUNCIA (
     idHistorico INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
@@ -304,10 +290,7 @@ CREATE TABLE HISTORICO_DENUNCIA (
     INDEX idx_historico_data (dataRegistro)
 );
 
--- =====================================================
 -- 13. MENSAGEM_DENUNCIA
--- =====================================================
-
 CREATE TABLE MENSAGEM_DENUNCIA (
     idMensagem INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
