@@ -221,6 +221,17 @@ tbody tr:hover {
     background: #f5faf7;
 }
 
+.btn-remover {
+    padding: 4px;
+    border-radius: 7px;
+    background-color: #cd0e00;
+    color: #ffffff;
+    border: none;
+}
+
+.btn-remover:hover {
+    background-color: #6f0700;
+}
 
 /* Responsividade */
 @media (max-width: 1000px) {
