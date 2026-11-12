@@ -6,11 +6,11 @@ async function buscarUsuarioPorEmail(email) {
 
 async function buscarFiscalPorEmail(email) {
     return executarQuery(
-        `SELECT f.* FROM FISCAL f
-         INNER JOIN ORGANIZACAO o ON o.idOrganizacao = f.idOrganizacao
-         WHERE f.email = ? AND f.status = 'ativo'
-           AND ((o.status = 'ativa' AND o.statusContrato = 'ativo')
-             OR (o.status = 'em_transicao' AND o.fimPeriodoTransicao > CURRENT_TIMESTAMP))`,
+        `SELECT *
+         FROM FISCAL
+         WHERE LOWER(email) = LOWER(?)
+           AND status = 'ativo'
+         LIMIT 1`,
         [email]
     );
 }

@@ -91,7 +91,6 @@ async function login(req, res) {
         if (tipo === 'fiscal') {
             req.session.usuario = {
                 id: conta.id,
-                idOrganizacao: conta.idOrganizacao,
                 nome: conta.nome,
                 email: conta.email,
                 tipo: 'fiscal'

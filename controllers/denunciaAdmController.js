@@ -8,14 +8,8 @@ async function listar(req, res) {
             req.session.usuario.idOrganizacao
         );
 
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                "Sua conta não está vinculada a uma organização."
-            );
-        }
-
         const denuncias = await denunciaAdmModel.listarDenuncias(
-            idOrganizacao
+            req.session.usuario
         );
 
         return res.render("denunciaAdm", {

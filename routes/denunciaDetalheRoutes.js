@@ -41,32 +41,41 @@ router.get("/:id", verificarAcesso, async (req, res) => {
     try {
         const tipoUsuario = req.session.usuario.tipo;
 
-        let filtroOrganizacao = "";
-        const parametros = [idDenuncia];
+let filtroAcesso = "";
+const parametros = [idDenuncia];
 
-        // Fiscais e superusuários só podem acessar
-        // denúncias pertencentes à própria organização.
-        if (
-            tipoUsuario === "fiscal" ||
-            tipoUsuario === "superusuario"
-        ) {
-            const idOrganizacao = Number(
-                req.session.usuario.idOrganizacao
-            );
+if (tipoUsuario === "fiscal") {
+    const idFiscal = Number(req.session.usuario.id);
 
-            if (
-                !Number.isInteger(idOrganizacao) ||
-                idOrganizacao <= 0
-            ) {
-                return res.status(403).send(
-                    "Sua conta não está vinculada a uma organização."
-                );
-            }
+    filtroAcesso = `
+        AND EXISTS (
+            SELECT 1
+            FROM FISCAL_LOCALIDADE fl
+            WHERE fl.idFiscal = ?
+              AND fl.idLocalidade = d.idLocalidade
+        )
+    `;
 
-            filtroOrganizacao = " AND d.idOrganizacao = ?";
-            parametros.push(idOrganizacao);
-        }
+    parametros.push(idFiscal);
+}
 
+if (tipoUsuario === "superusuario") {
+    const idOrganizacao = Number(
+        req.session.usuario.idOrganizacao
+    );
+
+    if (
+        !Number.isInteger(idOrganizacao) ||
+        idOrganizacao <= 0
+    ) {
+        return res.status(403).send(
+            "Sua conta não está vinculada a uma organização."
+        );
+    }
+
+    filtroAcesso = " AND d.idOrganizacao = ?";
+    parametros.push(idOrganizacao);
+}
         const resultado = await executarQuery(
             `SELECT
                 d.idDenuncia,
@@ -96,7 +105,7 @@ router.get("/:id", verificarAcesso, async (req, res) => {
              LEFT JOIN FISCAL f
                 ON d.fiscal_id = f.id
              WHERE d.idDenuncia = ?
-             ${filtroOrganizacao}
+             ${filtroAcesso}
              LIMIT 1`,
             parametros
         );

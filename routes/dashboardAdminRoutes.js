@@ -1,32 +1,33 @@
-
 const express = require('express');
 const router = express.Router();
 
 const denunciaAdmModel = require('../models/denunciaAdmModel');
-
-const {
-    verificarPainelOrganizacao
-} = require('../middlewares/autenticacao');
+const { verificarPainelOrganizacao } = require('../middlewares/autenticacao');
 
 router.get('/', verificarPainelOrganizacao, async (req, res) => {
     try {
-        // Identifica a organização do usuário autenticado.
-        const idOrganizacao = Number(
-            req.session.usuario.idOrganizacao
-        );
+        const usuario = req.session.usuario;
 
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                'Sua conta não está vinculada a uma organização.'
+        let denuncias;
+
+        if (usuario.tipo === 'fiscal') {
+            denuncias = await denunciaAdmModel.listarDenunciasPorFiscal(
+                usuario.id
+            );
+        } else {
+            const idOrganizacao = Number(usuario.idOrganizacao);
+
+            if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+                return res.status(403).send(
+                    'Sua conta não está vinculada a uma organização.'
+                );
+            }
+
+            denuncias = await denunciaAdmModel.listarDenuncias(
+                idOrganizacao
             );
         }
 
-        // Busca somente as denúncias daquela organização.
-        const denuncias = await denunciaAdmModel.listarDenuncias(
-            idOrganizacao
-        );
-
-        // Calcula os indicadores do painel.
         const resumo = {
             total: denuncias.length,
 
@@ -43,7 +44,6 @@ router.get('/', verificarPainelOrganizacao, async (req, res) => {
             ).length
         };
 
-        // Estrutura do mapa.
         const geojson = {
             type: 'FeatureCollection',
             features: []
@@ -67,5 +67,6 @@ router.get('/', verificarPainelOrganizacao, async (req, res) => {
         );
     }
 });
+
 
 module.exports = router;

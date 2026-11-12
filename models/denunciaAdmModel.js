@@ -27,6 +27,39 @@ async function listarDenuncias(idOrganizacao) {
     );
 }
 
+
+// Lista denúncias das localidades vinculadas ao fiscal.
+async function listarDenunciasPorFiscal(idFiscal) {
+    return executarQuery(
+        `SELECT
+            d.idDenuncia,
+            d.tipo,
+            d.descricao,
+            d.dataAbertura,
+            d.status,
+            d.prioridade,
+            l.endereco,
+            u.nome AS nomeUsuario,
+            d.fiscal_id AS idFiscalResponsavel,
+            f.nome AS nomeFiscalResponsavel
+        FROM DENUNCIA d
+        INNER JOIN LOCALIZACAO l
+            ON d.idLocalizacao = l.idLocalizacao
+        INNER JOIN USUARIO u
+            ON d.idUsuario = u.id
+        LEFT JOIN FISCAL f
+            ON d.fiscal_id = f.id
+        WHERE d.idLocalidade IN (
+            SELECT idLocalidade
+            FROM FISCAL_LOCALIDADE
+            WHERE idFiscal = ?
+        )
+        ORDER BY d.dataAbertura DESC`,
+        [idFiscal]
+    );
+}
+
+
 async function buscarStatus(idDenuncia, idOrganizacao) {
     return executarQuery(
         `SELECT status
@@ -119,5 +152,6 @@ module.exports = {
     buscarPrioridade,
     atualizarPrioridade,
     atribuirFiscal,
-    registrarHistorico
+    registrarHistorico,
+    listarDenunciasPorFiscal
 };
