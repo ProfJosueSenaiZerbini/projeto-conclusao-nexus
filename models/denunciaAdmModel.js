@@ -1,6 +1,8 @@
+
 const { executarQuery } = require("../db/dbConnect");
 
-// Lista somente as denúncias da organização do fiscal/superusuário.
+// LISTAR DENÚNCIAS POR ORGANIZAÇÃO
+// Uso: superusuários
 async function listarDenuncias(idOrganizacao) {
     return executarQuery(
         `SELECT
@@ -27,8 +29,8 @@ async function listarDenuncias(idOrganizacao) {
     );
 }
 
-
-// Lista denúncias das localidades vinculadas ao fiscal.
+// LISTAR DENÚNCIAS POR LOCALIDADE
+// Uso: fiscais
 async function listarDenunciasPorFiscal(idFiscal) {
     return executarQuery(
         `SELECT
@@ -49,17 +51,18 @@ async function listarDenunciasPorFiscal(idFiscal) {
             ON d.idUsuario = u.id
         LEFT JOIN FISCAL f
             ON d.fiscal_id = f.id
-        WHERE d.idLocalidade IN (
-            SELECT idLocalidade
-            FROM FISCAL_LOCALIDADE
-            WHERE idFiscal = ?
+        WHERE EXISTS (
+            SELECT 1
+            FROM FISCAL_LOCALIDADE fl
+            WHERE fl.idFiscal = ?
+              AND fl.idLocalidade = d.idLocalidade
         )
         ORDER BY d.dataAbertura DESC`,
         [idFiscal]
     );
 }
 
-
+// BUSCAR STATUS POR ORGANIZAÇÃO
 async function buscarStatus(idDenuncia, idOrganizacao) {
     return executarQuery(
         `SELECT status
@@ -70,6 +73,24 @@ async function buscarStatus(idDenuncia, idOrganizacao) {
     );
 }
 
+// BUSCAR STATUS POR LOCALIDADE
+async function buscarStatusPorFiscal(idDenuncia, idFiscal) {
+    return executarQuery(
+        `SELECT d.status
+         FROM DENUNCIA d
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [idDenuncia, idFiscal, idFiscal]
+    );
+}
+
+// ATUALIZAR STATUS POR ORGANIZAÇÃO
 async function atualizarStatus(idDenuncia, idOrganizacao, status) {
     return executarQuery(
         `UPDATE DENUNCIA
@@ -80,6 +101,24 @@ async function atualizarStatus(idDenuncia, idOrganizacao, status) {
     );
 }
 
+// ATUALIZAR STATUS POR LOCALIDADE
+async function atualizarStatusPorFiscal(idDenuncia, idFiscal, status) {
+    return executarQuery(
+        `UPDATE DENUNCIA d
+         SET d.status = ?
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [status, idDenuncia, idFiscal, idFiscal]
+    );
+}
+
+// BUSCAR PRIORIDADE POR ORGANIZAÇÃO
 async function buscarPrioridade(idDenuncia, idOrganizacao) {
     return executarQuery(
         `SELECT prioridade
@@ -90,6 +129,24 @@ async function buscarPrioridade(idDenuncia, idOrganizacao) {
     );
 }
 
+// BUSCAR PRIORIDADE POR LOCALIDADE
+async function buscarPrioridadePorFiscal(idDenuncia, idFiscal) {
+    return executarQuery(
+        `SELECT d.prioridade
+         FROM DENUNCIA d
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [idDenuncia, idFiscal, idFiscal]
+    );
+}
+
+// ATUALIZAR PRIORIDADE POR ORGANIZAÇÃO
 async function atualizarPrioridade(
     idDenuncia,
     idOrganizacao,
@@ -104,14 +161,44 @@ async function atualizarPrioridade(
     );
 }
 
+// ATUALIZAR PRIORIDADE POR LOCALIDADE
+async function atualizarPrioridadePorFiscal(idDenuncia, idFiscal, prioridade) {
+    return executarQuery(
+        `UPDATE DENUNCIA d
+         SET d.prioridade = ?
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [prioridade, idDenuncia, idFiscal, idFiscal]
+    );
+}
 
-// ========================================
-// ATRIBUIR DENÚNCIA A UM FISCAL
-// A condição fiscal_id IS NULL garante que apenas
-// o primeiro fiscal consiga assumir a denúncia.
-// ========================================
+// FISCAL ASSUME UMA DENÚNCIA
+async function atribuirFiscalPorLocalidade(
+    idDenuncia,
+    idFiscal
+) {
+    return executarQuery(
+        `UPDATE DENUNCIA d
+         SET d.fiscal_id = ?
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id IS NULL
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [idFiscal, idDenuncia, idFiscal]
+    );
+}
 
-
+// ATRIBUIR DENÚNCIA POR ORGANIZAÇÃO
 async function atribuirFiscal(idDenuncia, idFiscal, idOrganizacao) {
     return executarQuery(
         `UPDATE DENUNCIA
@@ -123,16 +210,13 @@ async function atribuirFiscal(idDenuncia, idFiscal, idOrganizacao) {
     );
 }
 
-
-
-// ========================================
-// REGISTRAR HISTÓRICO
-// ========================================
-
+// REGISTRAR HISTÓRICO POR ORGANIZAÇÃO
 async function registrarHistorico(
     idDenuncia,
     idOrganizacao,
-    titulo
+    titulo,
+    autorNome,
+    tipoAutor
 ) {
     return executarQuery(
         `INSERT INTO HISTORICO_DENUNCIA
@@ -141,17 +225,46 @@ async function registrarHistorico(
          FROM DENUNCIA d
          WHERE d.idDenuncia = ?
            AND d.idOrganizacao = ?`,
-        [titulo, idDenuncia, idOrganizacao]
+        [titulo,autorNome, tipoAutor, idDenuncia, idOrganizacao]
+    );
+}
+
+// REGISTRAR HISTÓRICO POR LOCALIDADE
+async function registrarHistoricoPorFiscal(idDenuncia, idFiscal, titulo) {
+    return executarQuery(
+        `INSERT INTO HISTORICO_DENUNCIA
+            (idDenuncia, titulo)
+         SELECT d.idDenuncia, ?
+         FROM DENUNCIA d
+         WHERE d.idDenuncia = ?
+           AND d.fiscal_id = ?
+           AND EXISTS (
+               SELECT 1
+               FROM FISCAL_LOCALIDADE fl
+               WHERE fl.idFiscal = ?
+                 AND fl.idLocalidade = d.idLocalidade
+           )`,
+        [titulo, idDenuncia, idFiscal, idFiscal]
     );
 }
 
 module.exports = {
     listarDenuncias,
+    listarDenunciasPorFiscal,
+
     buscarStatus,
+    buscarStatusPorFiscal,
     atualizarStatus,
+    atualizarStatusPorFiscal,
+
     buscarPrioridade,
+    buscarPrioridadePorFiscal,
     atualizarPrioridade,
+    atualizarPrioridadePorFiscal,
+
     atribuirFiscal,
+    atribuirFiscalPorLocalidade,
+
     registrarHistorico,
-    listarDenunciasPorFiscal
+    registrarHistoricoPorFiscal
 };

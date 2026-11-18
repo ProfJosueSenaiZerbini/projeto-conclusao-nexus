@@ -19,7 +19,6 @@ const categorias = [
 
 function montarCartao(registro) {
     const descricaoOriginal = String(registro.descricao || "");
-
     const linhas = descricaoOriginal.split(/\r?\n/);
 
     const extrair = (rotulo) => {
@@ -58,7 +57,7 @@ function montarCartao(registro) {
         anonima:
             String(registro.visibilidade || visibilidade || "anonimo")
                 .normalize("NFD")
-                .replace(/[\\u0300-\\u036f]/g, "")
+                .replace(/[\u0300-\u036f]/g, "")
                 .toLowerCase() === "anonimo",
 
         categoriaNome: categoria
@@ -100,27 +99,42 @@ router.get("/", verificarAutenticado, async (req, res) => {
         `;
 
         const parametros = [];
-        const tipoUsuario = req.session.usuario.tipo;
+        const usuario = req.session.usuario;
+        const tipoUsuario = usuario.tipo;
 
-        if (
-            tipoUsuario === "fiscal" ||
-            tipoUsuario === "superusuario"
-        ) {
+        if (tipoUsuario === "fiscal") {
+            const idFiscal = Number(usuario.id);
 
-        const idOrganizacao = Number(
-            req.session.usuario.idOrganizacao
-        );
+            if (!Number.isInteger(idFiscal) || idFiscal <= 0) {
+                return res.status(401).send(
+                    "Sessão de fiscal inválida. Faça login novamente."
+                );
+            }
 
-        if (
-            !Number.isInteger(idOrganizacao) ||
-            idOrganizacao <= 0
-        ) {
-            return res.status(403).send(
-                "Sua conta não está vinculada a uma organização."
-            );
-        }
+            sql += `
+                AND EXISTS (
+                    SELECT 1
+                    FROM FISCAL_LOCALIDADE fl
+                    WHERE fl.idLocalidade = d.idLocalidade
+                      AND fl.idFiscal = ?
+                )
+            `;
 
-        sql += " AND d.idOrganizacao = ?";
+            parametros.push(idFiscal);
+
+        } else if (tipoUsuario === "superusuario") {
+            const idOrganizacao = Number(usuario.idOrganizacao);
+
+            if (
+                !Number.isInteger(idOrganizacao) ||
+                idOrganizacao <= 0
+            ) {
+                return res.status(403).send(
+                    "Sua conta não está vinculada a uma organização."
+                );
+            }
+
+            sql += " AND d.idOrganizacao = ?";
             parametros.push(idOrganizacao);
         }
 
