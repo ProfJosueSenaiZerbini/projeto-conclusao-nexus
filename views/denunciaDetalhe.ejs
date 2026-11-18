@@ -249,32 +249,36 @@
                                     </div>
 
                                     <!-- Formulário para Enviar Nova Mensagem -->
+
                                     <% if (podeEnviarMensagem || podeEnviarMensagemFiscal) { %>
 
                                         <form action="/denunciaDetalhe/<%= denuncia.idDenuncia %>/mensagem"
                                             method="POST" class="form-mensagem">
+
                                             <label for="texto-mensagem">
                                                 <%= podeEnviarMensagemFiscal ? "Responder ao cidadão"
-                                                    : "Enviar atualização ou dúvida" %>
-                                                    atualização ou dúvida
+                                                    : "Enviar mensagem ao fiscal" %>
                                             </label>
 
                                             <textarea id="texto-mensagem" name="texto" rows="3" maxlength="2000"
-                                                placeholder="Escreva uma mensagem sobre esta denúncia..."
-                                                required></textarea>
+                                                placeholder="Escreva sua mensagem..." required></textarea>
 
                                             <div class="form-mensagem-rodape">
                                                 <small>Máximo de 2000 caracteres.</small>
                                                 <button type="submit">Enviar mensagem</button>
                                             </div>
+
                                         </form>
+
                                         <% } else { %>
+
                                             <p class="mensagem-permissao">
-                                                Somente o usuário que registrou esta denúncia pode enviar mensagens por
-                                                este espaço.
+                                                Somente o cidadão responsável e o fiscal designado
+                                                podem enviar mensagens nesta conversa.
                                             </p>
 
                                             <% } %>
+
 
                                 </div>
 

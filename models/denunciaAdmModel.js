@@ -215,26 +215,37 @@ async function registrarHistorico(
     idDenuncia,
     idOrganizacao,
     titulo,
-    autorNome,
-    tipoAutor
+    autorNome = null,
+    tipoAutor = null
 ) {
     return executarQuery(
         `INSERT INTO HISTORICO_DENUNCIA
             (idDenuncia, titulo, autorNome, tipoAutor)
-         SELECT d.idDenuncia, ?
+         SELECT d.idDenuncia, ?, ?, ?
          FROM DENUNCIA d
          WHERE d.idDenuncia = ?
            AND d.idOrganizacao = ?`,
-        [titulo,autorNome, tipoAutor, idDenuncia, idOrganizacao]
+        [titulo,
+            autorNome,
+            tipoAutor, 
+            idDenuncia,
+            idOrganizacao]
     );
 }
 
 // REGISTRAR HISTÓRICO POR LOCALIDADE
-async function registrarHistoricoPorFiscal(idDenuncia, idFiscal, titulo) {
+async function registrarHistoricoPorFiscal(
+    idDenuncia,
+    idFiscal,
+    titulo,
+    autorNome = null,
+    tipoAutor = "fiscal"
+) {
     return executarQuery(
         `INSERT INTO HISTORICO_DENUNCIA
-            (idDenuncia, titulo)
-         SELECT d.idDenuncia, ?
+            (idDenuncia, titulo, autorNome, tipoAutor)
+         SELECT
+            d.idDenuncia, ?, ?, ?
          FROM DENUNCIA d
          WHERE d.idDenuncia = ?
            AND d.fiscal_id = ?
@@ -244,7 +255,14 @@ async function registrarHistoricoPorFiscal(idDenuncia, idFiscal, titulo) {
                WHERE fl.idFiscal = ?
                  AND fl.idLocalidade = d.idLocalidade
            )`,
-        [titulo, idDenuncia, idFiscal, idFiscal]
+        [
+            titulo,
+            autorNome,
+            tipoAutor,
+            idDenuncia,
+            idFiscal,
+            idFiscal
+        ]
     );
 }
 

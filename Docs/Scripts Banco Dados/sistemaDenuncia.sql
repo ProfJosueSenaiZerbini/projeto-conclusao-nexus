@@ -166,6 +166,7 @@ CREATE TABLE FISCAL (
     cpf VARCHAR(18) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
     idOrganizacao INT NULL,
+    idSuperusuario INT NULL,
 
     status ENUM(
         'ativo',
@@ -180,8 +181,15 @@ CREATE TABLE FISCAL (
         REFERENCES ORGANIZACAO(idOrganizacao)
         ON DELETE RESTRICT,
 
+    CONSTRAINT fk_fiscal_superusuario
+        FOREIGN KEY (idSuperusuario)
+        REFERENCES SUPERUSUARIO(idSuperusuario)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
     INDEX idx_fiscal_organizacao (idOrganizacao),
-    INDEX idx_fiscal_status (status)
+    INDEX idx_fiscal_status (status),
+    INDEX idx_fiscal_superusuario (idSuperusuario)
 );
 
 -- 7.1 FISCAL_LOCALIDADE
@@ -324,7 +332,7 @@ CREATE TABLE HISTORICO_DENUNCIA (
     titulo VARCHAR(255) NOT NULL,
     dataRegistro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     autorNome VARCHAR(100) NULL,
-    tipoAutor VARCHAR(30) NULL
+    tipoAutor VARCHAR(30) NULL,
 
     CONSTRAINT fk_historico_denuncia
         FOREIGN KEY (idDenuncia)
@@ -339,7 +347,7 @@ CREATE TABLE HISTORICO_DENUNCIA (
 CREATE TABLE MENSAGEM_DENUNCIA (
     idMensagem INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
-    idUsuario INT NOT NULL,
+    idUsuario INT NULL,
     idFiscal INT NULL,
     texto TEXT NOT NULL,
     dataHora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
