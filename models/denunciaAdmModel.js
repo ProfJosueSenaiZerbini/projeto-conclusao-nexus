@@ -136,7 +136,7 @@ async function registrarHistorico(
 ) {
     return executarQuery(
         `INSERT INTO HISTORICO_DENUNCIA
-            (idDenuncia, titulo)
+            (idDenuncia, titulo, autorNome, tipoAutor)
          SELECT d.idDenuncia, ?
          FROM DENUNCIA d
          WHERE d.idDenuncia = ?

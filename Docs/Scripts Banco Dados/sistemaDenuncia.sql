@@ -323,6 +323,8 @@ CREATE TABLE HISTORICO_DENUNCIA (
     idDenuncia INT NOT NULL,
     titulo VARCHAR(255) NOT NULL,
     dataRegistro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    autorNome VARCHAR(100) NULL,
+    tipoAutor VARCHAR(30) NULL
 
     CONSTRAINT fk_historico_denuncia
         FOREIGN KEY (idDenuncia)

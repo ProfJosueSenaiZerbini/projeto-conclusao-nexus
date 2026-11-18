@@ -16,233 +16,308 @@
     <!-- HEADER -->
     <%- include("partials/header") %>
 
-    <div class="pagina">
-        <div class="container">
+        <div class="pagina">
+            <div class="container">
 
-            <!-- MENU LATERAL -->
-           <%- include(usuario && ['fiscal', 'superusuario'].includes(usuario.tipo) 
-                    ? "partials/menuAdm" : "partials/menu") %>
-                    
-            <!-- CONTEÚDO PRINCIPAL -->
-            <main class="area-detalhes">
+                <!-- MENU LATERAL -->
+                <%- include(usuario && ['fiscal', 'superusuario' ].includes(usuario.tipo) ? "partials/menuAdm"
+                    : "partials/menu" ) %>
 
-                <!-- CABEÇALHO DA DENÚNCIA -->
-                <div class="cabecalho-denuncia">
-                    <div>
-                        <div class="breadcrumb">
-                            Denúncias / Detalhes
-                        </div>
-                        <h1><%= denuncia.titulo || `Denúncia #${denuncia.idDenuncia}` %></h1>
-                        <p class="subtitulo">Denúncia #<%= denuncia.idDenuncia %> · <%= denuncia.tipo %></p>
-                    </div>
+                    <!-- CONTEÚDO PRINCIPAL -->
+                    <main class="area-detalhes">
 
-                    <div class="cabecalho-meta">
-                        <span class="status status-<%= String(denuncia.status || 'pendente').toLowerCase().replace(/[^a-z0-9]+/g, '-') %>"><%= denuncia.status || "Não informado" %></span>
-                        <span class="prioridade prioridade-<%= String(denuncia.prioridade || 'media').toLowerCase().replace(/[^a-z0-9]+/g, '-') %>"><%= denuncia.prioridade || "Não definida" %> prioridade</span>
-                    </div>
-                </div>
-
-                <!-- CORPO DA PÁGINA -->
-                <div class="layout-conteudo">
-
-                    <!-- COLUNA PRINCIPAL -->
-                    <section class="conteudo-principal">
-
-                        <!-- INFORMAÇÕES -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2>Informações da denúncia</h2>
-                                    <p>Dados registrados pelo cidadão</p>
+                        <!-- CABEÇALHO DA DENÚNCIA -->
+                        <div class="cabecalho-denuncia">
+                            <div>
+                                <div class="breadcrumb">
+                                    Denúncias / Detalhes
                                 </div>
+                                <h1>
+                                    <%= denuncia.titulo || `Denúncia #${denuncia.idDenuncia}` %>
+                                </h1>
+                                <p class="subtitulo">Denúncia #<%= denuncia.idDenuncia %> · <%= denuncia.tipo %>
+                                </p>
                             </div>
 
-                            <div class="grid-informacoes">
-                                <div class="informacao">
-                                    <span>Título</span>
-                                    <strong><%= denuncia.titulo %></strong>
-                                </div>
-
-                                <div class="informacao">
-                                    <span>Tipo de denúncia</span>
-                                    <strong><%= denuncia.tipo %></strong>
-                                </div>
-
-                                <div class="informacao">
-                                    <span>Denunciante</span>
-                                    <strong><%= denuncia.nomeExibicao %></strong>
-                                </div>
-
-                                <div class="informacao">
-                                    <span>Data de registro</span>
-                                    <strong><%= denuncia.dataAberturaFormatada || "Não informada" %></strong>
-                                </div>
-
-                                <div class="informacao">
-                                    <span>Data da ocorrência</span>
-                                    <strong><%= denuncia.dataOcorrenciaFormatada || "Não informada" %></strong>
-                                </div>
-
-                                <div class="informacao informacao-local">
-                                    <span>Localização</span>
-                                    <strong><%= denuncia.endereco || "Local não informado" %></strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- DESCRIÇÃO -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2>Descrição</h2>
-                                    <p>Relato apresentado pelo denunciante</p>
-                                </div>
-                            </div>
-
-                            <div class="descricao">
-                                <%= denuncia.descricao %>
-                            </div>
-                        </div>
-
-                        <!-- EVIDÊNCIAS -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2>Evidências</h2>
-                                    <p>Arquivos enviados junto à denúncia</p>
-                                </div>
-                                <span class="quantidade">
-                                    <%= evidencias ? evidencias.length : 0 %> arquivo(s)
+                            <div class="cabecalho-meta">
+                                <span
+                                    class="status status-<%= String(denuncia.status || 'pendente').toLowerCase().replace(/[^a-z0-9]+/g, '-') %>">
+                                    <%= denuncia.status || "Não informado" %>
+                                </span>
+                                <span
+                                    class="prioridade prioridade-<%= String(denuncia.prioridade || 'media').toLowerCase().replace(/[^a-z0-9]+/g, '-') %>">
+                                    <%= denuncia.prioridade || "Não definida" %> prioridade
                                 </span>
                             </div>
-
-                            <div class="evidencias">
-                                <% if (evidencias && evidencias.length > 0) { %>
-                                    <% evidencias.forEach((evidencia, index) => { %>
-                                        <div class="evidencia">
-                                            <div class="imagem-placeholder">
-                                                <% if (evidencia.dadosEvidencia && String(evidencia.tipoEvidencia).toLowerCase() === "video") { %>
-                                                    <video controls preload="metadata" aria-label="Vídeo de evidência <%= index + 1 %>">
-                                                        <source src="<%= evidencia.dadosEvidencia %>">
-                                                        Seu navegador não consegue reproduzir este vídeo.
-                                                    </video>
-                                                <% } else if (evidencia.dadosEvidencia) { %>
-                                                    <a href="<%= evidencia.dadosEvidencia %>" target="_blank" rel="noopener noreferrer" aria-label="Abrir evidência <%= index + 1 %>">
-                                                        <img src="<%= evidencia.dadosEvidencia %>" alt="Evidência <%= index + 1 %>" loading="lazy">
-                                                    </a>
-                                                <% } else { %>
-                                                    <span>Arquivo indisponível</span>
-                                                <% } %>
-                                            </div>
-                                            <span><%= String(evidencia.tipoEvidencia || "arquivo").toUpperCase() %> · Evidência <%= index + 1 %></span>
-                                        </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <p>Nenhuma evidência anexada.</p>
-                                <% } %>
-                            </div>
                         </div>
 
-                        <!-- HISTÓRICO DE STATUS -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2>Histórico de Status</h2>
-                                    <p>Linha do tempo de alterações da denúncia</p>
-                                </div>
-                            </div>
+                        <!-- CORPO DA PÁGINA -->
+                        <div class="layout-conteudo">
 
-                            <div class="historico">
-                                <% if (historico && historico.length > 0) { %>
-                                    <% historico.forEach(item => { %>
-                                        <div class="evento">
-                                            <div class="evento-ponto"></div>
-                                            <div class="evento-conteudo">
-                                                <strong><%= item.titulo %></strong>
-                                                <span><%= item.dataRegistroFormatada || "Data não informada" %></span>
-                                            </div>
+                            <!-- COLUNA PRINCIPAL -->
+                            <section class="conteudo-principal">
+
+                                <!-- INFORMAÇÕES -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <h2>Informações da denúncia</h2>
+                                            <p>Dados registrados pelo cidadão</p>
                                         </div>
-                                    <% }) %>
-                                <% } %>
-                            </div>
-                        </div>
-
-                        <!-- NOVO BLOCO: MURAL DE DIÁLOGO PÚBLICO (SUGESTÃO DO PROFESSOR) -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div>
-                                    <h2>Atualizações e Diálogo Público</h2>
-                                    <p>Troca de mensagens entre a fiscalização e o cidadão</p>
-                                </div>
-                            </div>
-
-                            <!-- Lista de Mensagens -->
-                            <div class="lista-comentarios" style="margin-bottom: 20px;">
-                                <% if (mensagens && mensagens.length > 0) { %>
-                                    <% mensagens.forEach(msg => { %>
-                                        <div class="comentario-item">
-                                            
-<div class="comentario-header" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-    <strong><%= msg.autor %></strong>
-    <span><%= msg.dataHoraFormatada || "Data não informada" %></span>
-</div>
-
-                                            <p style="margin: 0;"><%= msg.texto %></p>
-                                        </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <p>Nenhuma mensagem registrada nesta denúncia até o momento.</p>
-                                <% } %>
-                            </div>
-
-                            <!-- Formulário para Enviar Nova Mensagem -->
-                            <% if (podeEnviarMensagem) { %>
-                                <form action="/denunciaDetalhe/<%= denuncia.idDenuncia %>/mensagem" method="POST" class="form-mensagem">
-                                    <label for="texto-mensagem">Enviar atualização ou dúvida</label>
-                                    <textarea id="texto-mensagem" name="texto" rows="3" maxlength="2000" placeholder="Escreva uma mensagem sobre esta denúncia..." required></textarea>
-                                    <div class="form-mensagem-rodape">
-                                        <small>Máximo de 2000 caracteres.</small>
-                                        <button type="submit">Enviar mensagem</button>
                                     </div>
-                                </form>
-                            <% } else { %>
-                                <p class="mensagem-permissao">Somente o usuário que registrou esta denúncia pode enviar mensagens por este espaço.</p>
-                            <% } %>
+
+                                    <div class="grid-informacoes">
+                                        <div class="informacao">
+                                            <span>Título</span>
+                                            <strong>
+                                                <%= denuncia.titulo %>
+                                            </strong>
+                                        </div>
+
+                                        <div class="informacao">
+                                            <span>Tipo de denúncia</span>
+                                            <strong>
+                                                <%= denuncia.tipo %>
+                                            </strong>
+                                        </div>
+
+                                        <div class="informacao">
+                                            <span>Denunciante</span>
+                                            <strong>
+                                                <%= denuncia.nomeExibicao %>
+                                            </strong>
+                                        </div>
+
+                                        <div class="informacao">
+                                            <span>Data de registro</span>
+                                            <strong>
+                                                <%= denuncia.dataAberturaFormatada || "Não informada" %>
+                                            </strong>
+                                        </div>
+
+                                        <div class="informacao">
+                                            <span>Data da ocorrência</span>
+                                            <strong>
+                                                <%= denuncia.dataOcorrenciaFormatada || "Não informada" %>
+                                            </strong>
+                                        </div>
+
+                                        <div class="informacao informacao-local">
+                                            <span>Localização</span>
+                                            <strong>
+                                                <%= denuncia.endereco || "Local não informado" %>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- DESCRIÇÃO -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <h2>Descrição</h2>
+                                            <p>Relato apresentado pelo denunciante</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="descricao">
+                                        <%= denuncia.descricao %>
+                                    </div>
+                                </div>
+
+                                <!-- EVIDÊNCIAS -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <h2>Evidências</h2>
+                                            <p>Arquivos enviados junto à denúncia</p>
+                                        </div>
+                                        <span class="quantidade">
+                                            <%= evidencias ? evidencias.length : 0 %> arquivo(s)
+                                        </span>
+                                    </div>
+
+                                    <div class="evidencias">
+                                        <% if (evidencias && evidencias.length> 0) { %>
+                                            <% evidencias.forEach((evidencia, index)=> { %>
+                                                <div class="evidencia">
+                                                    <div class="imagem-placeholder">
+                                                        <% if (evidencia.dadosEvidencia &&
+                                                            String(evidencia.tipoEvidencia).toLowerCase()==="video" ) {
+                                                            %>
+                                                            <video controls preload="metadata"
+                                                                aria-label="Vídeo de evidência <%= index + 1 %>">
+                                                                <source src="<%= evidencia.dadosEvidencia %>">
+                                                                Seu navegador não consegue reproduzir este vídeo.
+                                                            </video>
+                                                            <% } else if (evidencia.dadosEvidencia) { %>
+                                                                <a href="<%= evidencia.dadosEvidencia %>"
+                                                                    target="_blank" rel="noopener noreferrer"
+                                                                    aria-label="Abrir evidência <%= index + 1 %>">
+                                                                    <img src="<%= evidencia.dadosEvidencia %>"
+                                                                        alt="Evidência <%= index + 1 %>" loading="lazy">
+                                                                </a>
+                                                                <% } else { %>
+                                                                    <span>Arquivo indisponível</span>
+                                                                    <% } %>
+                                                    </div>
+                                                    <span>
+                                                        <%= String(evidencia.tipoEvidencia || "arquivo" ).toUpperCase()
+                                                            %> · Evidência <%= index + 1 %>
+                                                    </span>
+                                                </div>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <p>Nenhuma evidência anexada.</p>
+                                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- HISTÓRICO DE STATUS -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <h2>Histórico de Status</h2>
+                                            <p>Linha do tempo de alterações da denúncia</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="historico">
+                                        <% if (historico && historico.length> 0) { %>
+                                            <% historico.forEach(item=> { %>
+                                                <div class="evento">
+                                                    <div class="evento-ponto"></div>
+                                                    <div class="evento-conteudo">
+                                                        <strong>
+                                                            <%= item.titulo %>
+                                                        </strong>
+                                                        <span>
+                                                            <%= item.dataRegistroFormatada || "Data não informada" %>
+                                                        </span>
+
+                                                        <% if (item.autorNome) {%>
+                                                            <small>
+                                                                Realizado por: <%= item.autorNome %>
+                                                                    (<%= item.tipoAutor || "Usuário" %>)
+                                                            </small>
+                                                            <% } %>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <p>
+                                                            Nenhuma atualização registrada até o momento.
+                                                        </p>
+                                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- NOVO BLOCO: MURAL DE DIÁLOGO PÚBLICO (SUGESTÃO DO PROFESSOR) -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div>
+                                            <h2>Atualizações e Diálogo Público</h2>
+                                            <p>Troca de mensagens entre a fiscalização e o cidadão</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Lista de Mensagens -->
+                                    <div class="lista-comentarios" style="margin-bottom: 20px;">
+                                        <% if (mensagens && mensagens.length> 0) { %>
+                                            <% mensagens.forEach(msg=> { %>
+                                                <div class="comentario-item">
+
+                                                    <div class="comentario-header"
+                                                        style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                        <strong>
+                                                            <%= msg.autor %>
+                                                                <small>(<%= msg.tipoRemetente %>)</small>
+                                                        </strong>
+                                                        <span>
+                                                            <%= msg.dataHoraFormatada || "Data não informada" %>
+                                                        </span>
+                                                    </div>
+
+                                                    <p style="margin: 0;">
+                                                        <%= msg.texto %>
+                                                    </p>
+                                                </div>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <p>Nenhuma mensagem registrada nesta denúncia até o momento.</p>
+                                                        <% } %>
+                                    </div>
+
+                                    <!-- Formulário para Enviar Nova Mensagem -->
+                                    <% if (podeEnviarMensagem || podeEnviarMensagemFiscal) { %>
+
+                                        <form action="/denunciaDetalhe/<%= denuncia.idDenuncia %>/mensagem"
+                                            method="POST" class="form-mensagem">
+                                            <label for="texto-mensagem">
+                                                <%= podeEnviarMensagemFiscal ? "Responder ao cidadão"
+                                                    : "Enviar atualização ou dúvida" %>
+                                                    atualização ou dúvida
+                                            </label>
+
+                                            <textarea id="texto-mensagem" name="texto" rows="3" maxlength="2000"
+                                                placeholder="Escreva uma mensagem sobre esta denúncia..."
+                                                required></textarea>
+
+                                            <div class="form-mensagem-rodape">
+                                                <small>Máximo de 2000 caracteres.</small>
+                                                <button type="submit">Enviar mensagem</button>
+                                            </div>
+                                        </form>
+                                        <% } else { %>
+                                            <p class="mensagem-permissao">
+                                                Somente o usuário que registrou esta denúncia pode enviar mensagens por
+                                                este espaço.
+                                            </p>
+
+                                            <% } %>
+
+                                </div>
+
+                            </section>
+
+                            <!-- PAINEL LATERAL -->
+                            <aside class="painel-acoes">
+                                <div class="card resumo">
+                                    <h2>Resumo</h2>
+
+                                    <div class="resumo-item">
+                                        <span>ID</span>
+                                        <strong>#<%= denuncia.idDenuncia %></strong>
+                                    </div>
+
+                                    <div class="resumo-item">
+                                        <span>Status</span>
+                                        <strong>
+                                            <%= denuncia.status || "Não informado" %>
+                                        </strong>
+                                    </div>
+
+                                    <div class="resumo-item">
+                                        <span>Prioridade</span>
+                                        <strong>
+                                            <%= denuncia.prioridade || "Não definida" %>
+                                        </strong>
+                                    </div>
+
+                                    <div class="resumo-item">
+                                        <span>Responsável</span>
+                                        <strong>
+                                            <%= denuncia.nomeFiscal || "A definir" %>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </aside>
+
                         </div>
-
-                    </section>
-
-                    <!-- PAINEL LATERAL -->
-                    <aside class="painel-acoes">
-                        <div class="card resumo">
-                            <h2>Resumo</h2>
-
-                            <div class="resumo-item">
-                                <span>ID</span>
-                                <strong>#<%= denuncia.idDenuncia %></strong>
-                            </div>
-
-                            <div class="resumo-item">
-                                <span>Status</span>
-                                <strong><%= denuncia.status || "Não informado" %></strong>
-                            </div>
-
-                            <div class="resumo-item">
-                                <span>Prioridade</span>
-                                <strong><%= denuncia.prioridade || "Não definida" %></strong>
-                            </div>
-
-                            <div class="resumo-item">
-                                <span>Responsável</span>
-                                <strong><%= denuncia.nomeFiscal || "A definir" %></strong>
-                            </div>
-                        </div>
-                    </aside>
-
-                </div>
-            </main>
+                    </main>
+            </div>
         </div>
-    </div>
 
 </body>
+
 </html>

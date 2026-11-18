@@ -90,7 +90,9 @@ async function atribuirASiMesmo(req, res) {
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
             idOrganizacao,
-            `Denúncia atribuída ao fiscal ${usuario.nome}.`
+            `Denúncia atribuída ao fiscal ${usuario.nome}.`,
+            usuario.nome,
+            usuario.tipo
         );
 
         return res.redirect("/denunciaAdm");
@@ -159,7 +161,9 @@ async function alterarStatus(req, res) {
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
             idOrganizacao,
-            `Status alterado para: ${novoStatus}`
+            `Status alterado para: ${novoStatus}`,
+            req.session.usuario.nome,
+            req.session.usuario.tipo
         );
 
         console.log(
@@ -231,7 +235,9 @@ async function alterarPrioridade(req, res) {
         await denunciaAdmModel.registrarHistorico(
             idDenuncia,
             idOrganizacao,
-            `Prioridade alterada para: ${novaPrioridade}`
+            `Prioridade alterada para: ${novaPrioridade}`,
+            req.session.usuario.nome,
+            req.session.usuario.tipo
         );
 
         console.log(

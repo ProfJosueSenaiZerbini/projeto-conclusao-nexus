@@ -90,6 +90,7 @@ if (tipoUsuario === "superusuario") {
                 d.descricao,
                 d.status,
                 d.prioridade,
+                d.fiscal_id AS idFiscalResponsavel,
                 DATE_FORMAT(
                     d.dataAbertura,
                     '%d/%m/%Y às %H:%i'
@@ -212,6 +213,8 @@ if (tipoUsuario === "superusuario") {
             `SELECT
                 idHistorico,
                 titulo,
+                autorNome,
+                tipoAutor,
                 DATE_FORMAT(
                     dataRegistro,
                     '%d/%m/%Y às %H:%i'
@@ -235,14 +238,27 @@ if (tipoUsuario === "superusuario") {
                         AND LOWER(COALESCE(d.visibilidade, 'anonimo')) = 'anonimo'
                         AND ? = 0
                     THEN 'Anônimo'
-                    ELSE u.nome
-                END AS autor
+                    ELSE COALESCE (u.nome, f.nome, 'Remetente')
+                END AS autor,
+                CASE
+                    WHEN m.idFiscal IS NOT NULL THEN 'Fiscal'
+                    ELSE 'Cidadão'
+                END AS tipoRemetente
+
             FROM MENSAGEM_DENUNCIA m
+
+            INNER JOIN DENUNCIA d
+            ON m.idDenuncia = d.idDenuncia
+
             INNER JOIN USUARIO u
                 ON m.idUsuario = u.id
-            INNER JOIN DENUNCIA d
-                ON m.idDenuncia = d.idDenuncia
+
+            LEFT JOIN FISCAL f 
+                ON m.idFiscal = f.id
+
             WHERE m.idDenuncia = ?
+
+            
             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
             [
                 ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0, 
@@ -259,7 +275,12 @@ if (tipoUsuario === "superusuario") {
             podeEnviarMensagem:
                 req.session.usuario.tipo === "usuario" &&
                 Number(req.session.usuario.id) ===
-                Number(denuncia.idUsuario)
+                Number(denuncia.idUsuario),
+
+            podeEnviarMensagemFiscal:
+                req.session.usuario.tipo === "fiscal" &&
+                Number(req.session.usuario.id) ===
+                Number(denuncia.idFiscalResponsavel) 
         });
 
     } catch (erro) {
@@ -271,23 +292,14 @@ if (tipoUsuario === "superusuario") {
     }
 });
 
-router.post("/:id/mensagem", verificarUsuario, async (req, res) => {
+
+router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
     const idDenuncia = idValido(req.params.id);
-
+    const usuarioSessao = req.session.usuario;
     const texto = String(req.body.texto || "").trim();
-
-    const idUsuario = idValido(
-        req.session.usuario && req.session.usuario.id
-    );
 
     if (!idDenuncia) {
         return res.status(400).send("ID da denúncia inválido.");
-    }
-
-    if (!idUsuario) {
-        return res.status(401).send(
-            "Sessão inválida. Entre novamente."
-        );
     }
 
     if (!texto || texto.length > 2000) {
@@ -297,31 +309,64 @@ router.post("/:id/mensagem", verificarUsuario, async (req, res) => {
     }
 
     try {
-        const denuncia = await executarQuery(
-            `SELECT idUsuario
+        const resultado = await executarQuery(
+            `SELECT idUsuario, fiscal_id
              FROM DENUNCIA
              WHERE idDenuncia = ?
              LIMIT 1`,
             [idDenuncia]
         );
 
-        if (!denuncia.length) {
+        if (!resultado.length) {
             return res.status(404).send(
                 "Denúncia não encontrada."
             );
         }
 
-        if (Number(denuncia[0].idUsuario) !== idUsuario) {
+        const denuncia = resultado[0];
+
+        let idUsuario = null;
+        let idFiscal = null;
+
+        if (usuarioSessao.tipo === "usuario") {
+            const idSessao = idValido(usuarioSessao.id);
+
+            if (
+                !idSessao ||
+                Number(denuncia.idUsuario) !== idSessao
+            ) {
+                return res.status(403).send(
+                    "Somente o autor da denúncia pode enviar mensagens."
+                );
+            }
+
+            idUsuario = idSessao;
+
+        } else if (usuarioSessao.tipo === "fiscal") {
+            const idSessao = idValido(usuarioSessao.id);
+
+            if (
+                !idSessao ||
+                Number(denuncia.fiscal_id) !== idSessao
+            ) {
+                return res.status(403).send(
+                    "Somente o fiscal responsável pode responder."
+                );
+            }
+
+            idFiscal = idSessao;
+
+        } else {
             return res.status(403).send(
-                "Somente o autor da denúncia pode enviar mensagens neste espaço."
+                "Seu tipo de conta não pode enviar mensagens."
             );
         }
 
         await executarQuery(
             `INSERT INTO MENSAGEM_DENUNCIA
-                (idDenuncia, idUsuario, texto)
-             VALUES (?, ?, ?)`,
-            [idDenuncia, idUsuario, texto]
+                (idDenuncia, idUsuario, idFiscal, texto)
+             VALUES (?, ?, ?, ?)`,
+            [idDenuncia, idUsuario, idFiscal, texto]
         );
 
         return res.redirect(
@@ -332,9 +377,10 @@ router.post("/:id/mensagem", verificarUsuario, async (req, res) => {
         console.error("Erro ao enviar mensagem:", erro);
 
         return res.status(500).send(
-            "Erro ao enviar mensagem."
+            "Erro ao enviar a mensagem."
         );
     }
 });
+
 
 module.exports = router;
