@@ -1,47 +1,44 @@
 
 const denunciaAdmModel = require("../models/denunciaAdmModel");
 
-// EXIBIR PÁGINA ADMINISTRATIVA
 async function listar(req, res) {
     try {
-        const idOrganizacao = Number(
-            req.session.usuario.idOrganizacao
-        );
+        const usuario = req.session.usuario;
+        let denuncias;
 
-        const denuncias = await denunciaAdmModel.listarDenuncias(
-            req.session.usuario
-        );
+        if (usuario.tipo === "fiscal") {
+            denuncias = await denunciaAdmModel.listarDenunciasPorFiscal(
+                Number(usuario.id)
+            );
+        } else {
+            const idOrganizacao = Number(usuario.idOrganizacao);
+
+            if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+                return res.status(403).send(
+                    "Sua conta não está vinculada a uma organização."
+                );
+            }
+
+            denuncias = await denunciaAdmModel.listarDenuncias(
+                idOrganizacao
+            );
+        }
 
         return res.render("denunciaAdm", {
             denuncias,
-            usuarioLogado: req.session.usuario
+            usuarioLogado: usuario
         });
-
     } catch (erro) {
         console.error("Erro ao buscar denúncias:", erro);
-
-        return res.status(500).send(
-            "Erro ao carregar as denúncias."
-        );
+        return res.status(500).send("Erro ao carregar as denúncias.");
     }
 }
-
-
-// ========================================
-// FISCAL ATRIBUI A DENÚNCIA A SI MESMO
-// ========================================
-
 
 async function atribuirASiMesmo(req, res) {
     try {
         const idDenuncia = Number(req.params.id);
         const usuario = req.session.usuario;
 
-        if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
-            return res.status(400).send("ID da denúncia inválido.");
-        }
-
-        // Somente fiscais podem atribuir denúncias a si mesmos.
         if (usuario.tipo !== "fiscal") {
             return res.status(403).send(
                 "Somente fiscais podem atribuir denúncias a si mesmos."
@@ -50,75 +47,42 @@ async function atribuirASiMesmo(req, res) {
 
         const idFiscal = Number(usuario.id);
 
-        if (!Number.isInteger(idFiscal) || idFiscal <= 0) {
-            return res.status(401).send(
-                "Sessão de fiscal inválida. Faça login novamente."
-            );
+        if (
+            !Number.isInteger(idDenuncia) || idDenuncia <= 0 ||
+            !Number.isInteger(idFiscal) || idFiscal <= 0
+        ) {
+            return res.status(400).send("Dados inválidos.");
         }
 
-        const idOrganizacao = Number(usuario.idOrganizacao);
-
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                "Sua conta não está vinculada a uma organização."
-            );
-        }
-
-        const resultado = await denunciaAdmModel.atribuirFiscal(
+        const resultado = await denunciaAdmModel.atribuirFiscalPorLocalidade(
             idDenuncia,
-            idFiscal,
-            idOrganizacao
+            idFiscal
         );
 
         if (!resultado || resultado.affectedRows !== 1) {
-            const existe = await denunciaAdmModel.buscarStatus(
-                idDenuncia,
-                idOrganizacao
-            );
-
-            if (existe.length === 0) {
-                return res.status(404).send(
-                    "Denúncia não encontrada."
-                );
-            }
-
             return res.status(409).send(
-                "Esta denúncia já foi atribuída a outro fiscal e não pode ser assumida."
+                "Não foi possível assumir esta denúncia. Ela pode já ter sido atribuída ou não pertencer às suas localidades."
             );
         }
 
-        await denunciaAdmModel.registrarHistorico(
+        await denunciaAdmModel.registrarHistoricoPorFiscal(
             idDenuncia,
-            idOrganizacao,
+            idFiscal,
             `Denúncia atribuída ao fiscal ${usuario.nome}.`
         );
 
         return res.redirect("/denunciaAdm");
-
     } catch (erro) {
         console.error("Erro ao atribuir denúncia:", erro);
-        return res.status(500).send(
-            "Erro ao atribuir a denúncia."
-        );
+        return res.status(500).send("Erro ao atribuir a denúncia.");
     }
 }
 
-// ========================================
-// ALTERAR STATUS
 async function alterarStatus(req, res) {
     try {
+        const usuario = req.session.usuario;
         const idDenuncia = Number(req.params.id);
         const novoStatus = req.body.status;
-
-        const idOrganizacao = Number(
-            req.session.usuario.idOrganizacao
-        );
-
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                "Sua conta não está vinculada a uma organização."
-            );
-        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
@@ -135,6 +99,47 @@ async function alterarStatus(req, res) {
             return res.status(400).send("Status inválido.");
         }
 
+        if (usuario.tipo === "fiscal") {
+            const idFiscal = Number(usuario.id);
+
+            const resultado = await denunciaAdmModel.buscarStatusPorFiscal(
+                idDenuncia,
+                idFiscal
+            );
+
+            if (resultado.length === 0) {
+                return res.status(404).send(
+                    "Denúncia não encontrada nas suas localidades."
+                );
+            }
+
+            const statusAtual = resultado[0].status;
+
+            if (statusAtual !== novoStatus) {
+                await denunciaAdmModel.atualizarStatusPorFiscal(
+                    idDenuncia,
+                    idFiscal,
+                    novoStatus
+                );
+
+                await denunciaAdmModel.registrarHistoricoPorFiscal(
+                    idDenuncia,
+                    idFiscal,
+                    `Status alterado para: ${novoStatus}`
+                );
+            }
+
+            return res.redirect("/denunciaAdm");
+        }
+
+        const idOrganizacao = Number(usuario.idOrganizacao);
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
+        }
+
         const resultado = await denunciaAdmModel.buscarStatus(
             idDenuncia,
             idOrganizacao
@@ -146,65 +151,84 @@ async function alterarStatus(req, res) {
 
         const statusAtual = resultado[0].status;
 
-        if (statusAtual === novoStatus) {
-            return res.redirect("/denunciaAdm");
+        if (statusAtual !== novoStatus) {
+            await denunciaAdmModel.atualizarStatus(
+                idDenuncia,
+                idOrganizacao,
+                novoStatus
+            );
+
+            await denunciaAdmModel.registrarHistorico(
+                idDenuncia,
+                idOrganizacao,
+                `Status alterado para: ${novoStatus}`
+            );
         }
 
-        await denunciaAdmModel.atualizarStatus(
-            idDenuncia,
-            idOrganizacao,
-            novoStatus
-        );
-
-        await denunciaAdmModel.registrarHistorico(
-            idDenuncia,
-            idOrganizacao,
-            `Status alterado para: ${novoStatus}`
-        );
-
-        console.log(
-            `Denúncia ${idDenuncia}: ${statusAtual} → ${novoStatus}`
-        );
-
         return res.redirect("/denunciaAdm");
-
     } catch (erro) {
         console.error("Erro ao alterar status:", erro);
-
         return res.status(500).send(
             "Erro ao alterar o status da denúncia."
         );
     }
 }
 
-// ALTERAR PRIORIDADE
 async function alterarPrioridade(req, res) {
     try {
+        const usuario = req.session.usuario;
         const idDenuncia = Number(req.params.id);
         const novaPrioridade = req.body.prioridade;
-
-        const idOrganizacao = Number(
-            req.session.usuario.idOrganizacao
-        );
-
-        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-            return res.status(403).send(
-                "Sua conta não está vinculada a uma organização."
-            );
-        }
 
         if (!Number.isInteger(idDenuncia) || idDenuncia <= 0) {
             return res.status(400).send("ID da denúncia inválido.");
         }
 
-        const prioridadesValidas = [
-            "Baixa",
-            "Média",
-            "Alta"
-        ];
+        const prioridadesValidas = ["Baixa", "Média", "Alta"];
 
         if (!prioridadesValidas.includes(novaPrioridade)) {
             return res.status(400).send("Prioridade inválida.");
+        }
+
+        if (usuario.tipo === "fiscal") {
+            const idFiscal = Number(usuario.id);
+
+            const resultado = await denunciaAdmModel.buscarPrioridadePorFiscal(
+                idDenuncia,
+                idFiscal
+            );
+
+            if (resultado.length === 0) {
+                return res.status(404).send(
+                    "Denúncia não encontrada nas suas localidades."
+                );
+            }
+
+            const prioridadeAtual = resultado[0].prioridade;
+
+            if (prioridadeAtual !== novaPrioridade) {
+                await denunciaAdmModel.atualizarPrioridadePorFiscal(
+                    idDenuncia,
+                    idFiscal,
+                    novaPrioridade
+                );
+
+                await denunciaAdmModel.registrarHistoricoPorFiscal(
+                    idDenuncia,
+                    idFiscal,
+                    `Prioridade alterada para: ${novaPrioridade}`
+                );
+            }
+
+            return res.redirect("/denunciaAdm");
+        }
+
+        const idOrganizacao = Number(usuario.idOrganizacao);
+
+        if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
+            return res.status(403).send(
+                "Sua conta não está vinculada a uma organização."
+            );
         }
 
         const resultado = await denunciaAdmModel.buscarPrioridade(
@@ -218,37 +242,28 @@ async function alterarPrioridade(req, res) {
 
         const prioridadeAtual = resultado[0].prioridade;
 
-        if (prioridadeAtual === novaPrioridade) {
-            return res.redirect("/denunciaAdm");
+        if (prioridadeAtual !== novaPrioridade) {
+            await denunciaAdmModel.atualizarPrioridade(
+                idDenuncia,
+                idOrganizacao,
+                novaPrioridade
+            );
+
+            await denunciaAdmModel.registrarHistorico(
+                idDenuncia,
+                idOrganizacao,
+                `Prioridade alterada para: ${novaPrioridade}`
+            );
         }
 
-        await denunciaAdmModel.atualizarPrioridade(
-            idDenuncia,
-            idOrganizacao,
-            novaPrioridade
-        );
-
-        await denunciaAdmModel.registrarHistorico(
-            idDenuncia,
-            idOrganizacao,
-            `Prioridade alterada para: ${novaPrioridade}`
-        );
-
-        console.log(
-            `Denúncia ${idDenuncia}: prioridade ${prioridadeAtual} → ${novaPrioridade}`
-        );
-
         return res.redirect("/denunciaAdm");
-
     } catch (erro) {
         console.error("Erro ao alterar prioridade:", erro);
-
         return res.status(500).send(
             "Erro ao alterar a prioridade da denúncia."
         );
     }
 }
-
 
 module.exports = {
     listar,
