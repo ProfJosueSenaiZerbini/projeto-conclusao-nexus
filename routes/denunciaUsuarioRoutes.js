@@ -98,16 +98,16 @@ router.post(
 
         try {
 
-            const idDenuncia = await executarTransacao(async conn => {
 
+            const idDenuncia = await executarTransacao(async conn => {
 
                 // 1. Busca a localidade no cadastro global.
                 const resultadoLocalidade = await conn.query(
                     `SELECT idLocalidade
-     FROM LOCALIDADE
-     WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
-       AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
-     LIMIT 1`,
+         FROM LOCALIDADE
+         WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
+           AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
+         LIMIT 1`,
                     [
                         cidade.trim(),
                         estado.trim()
@@ -127,64 +127,11 @@ router.post(
                     resultadoLocalidade[0].idLocalidade
                 );
 
-                // 2. Identifica a organização responsável pela categoria.
-                const resultadoOrganizacao = await conn.query(
-                    `SELECT idOrganizacao
-     FROM ORGANIZACAO_TIPO_DENUNCIA
-     WHERE LOWER(TRIM(tipoDenuncia)) = LOWER(TRIM(?))
-     LIMIT 1`,
-                    [categoria.trim()]
-                );
-
-                if (resultadoOrganizacao.length === 0) {
-                    const erro = new Error(
-                        "Não existe uma organização responsável por essa categoria."
-                    );
-                    erro.codigo = "ORGANIZACAO_NAO_ENCONTRADA";
-                    throw erro;
-                }
-
-                const idOrganizacao = Number(
-                    resultadoOrganizacao[0].idOrganizacao
-                );
-
-
-                // 3. Seleciona o fiscal ativo com menos denúncias atribuídas.
-                const resultadoFiscal = await conn.query(
-                    `SELECT f.id
-     FROM FISCAL f
-     LEFT JOIN (
-         SELECT fiscal_id, COUNT(*) AS total
-         FROM DENUNCIA
-         WHERE idOrganizacao = ?
-           AND fiscal_id IS NOT NULL
-         GROUP BY fiscal_id
-     ) atribuicoes
-         ON atribuicoes.fiscal_id = f.id
-     WHERE f.idOrganizacao = ?
-       AND LOWER(TRIM(f.status)) = 'ativo'
-     ORDER BY COALESCE(atribuicoes.total, 0) ASC, f.id ASC
-     LIMIT 1`,
-                    [idOrganizacao, idOrganizacao]
-                );
-
-                if (resultadoFiscal.length === 0) {
-                    const erro = new Error(
-                        "Não existe fiscal ativo para atender essa organização."
-                    );
-                    erro.codigo = "FISCAL_NAO_ENCONTRADO";
-                    throw erro;
-                }
-
-                const idFiscal = Number(resultadoFiscal[0].id);
-
-
-
-                // 2. Cadastra a localização na mesma transação.
+                // 2. Cadastra a localização.
                 const resultadoLocalizacao = await conn.query(
                     `INSERT INTO LOCALIZACAO
-                    (tipo, endereco, cidade, estado)
-                        VALUES (?, ?, ?, ?)`,
+            (tipo, endereco, cidade, estado)
+         VALUES (?, ?, ?, ?)`,
                     [
                         "Manual",
                         local.trim(),
@@ -197,70 +144,59 @@ router.post(
                     resultadoLocalizacao.insertId
                 );
 
-                // 3. Montar a descrição completa.
-                const descricaoCompleta = [
-                    `Título: ${titulo.trim()}`,
-                    `Visibilidade: ${visibilidade === "anonimo"
-                        ? "Anônima"
-                        : "Identificada"
-                    }`,
-                    data ? `Data da ocorrência: ${data}` : null,
-                    "",
-                    descricao.trim()
-                ]
-                    .filter(Boolean)
-                    .join("\n");
-
-                // 4. Cadastra a denúncia com o id da organização.
+                // 3. Cadastra a denúncia vinculada à localidade.
                 const resultadoDenuncia = await conn.query(
-
                     `INSERT INTO DENUNCIA
-                    (
-                        idUsuario,
-                        idOrganizacao,
-                        fiscal_id,
-                        idLocalidade,
-                        tipo,
-                        descricao,
-                        status,
-                        prioridade,
-                        idLocalizacao
-                    )
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            (
+                idUsuario,
+                idOrganizacao,
+                idLocalidade,
+                titulo,
+                tipo,
+                descricao,
+                dataOcorrencia,
+                visibilidade,
+                status,
+                prioridade,
+                idLocalizacao
+            )
+         VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         idUsuario,
-                        idOrganizacao,
-                        idFiscal,
                         idLocalidade,
+                        titulo.trim(),
                         categoria.trim(),
-                        descricaoCompleta,
+                        descricao.trim(),
+                        data || null,
+                        visibilidade === "identificado"
+                            ? "identificado"
+                            : "anonimo",
                         "Pendente",
                         "Média",
                         idLocalizacao
                     ]
-
                 );
 
                 const novoIdDenuncia = Number(
                     resultadoDenuncia.insertId
                 );
 
-                // 5. Registra o histórico inicial.
+                // 4. Registra o histórico inicial.
                 await conn.query(
                     `INSERT INTO HISTORICO_DENUNCIA
-                        (idDenuncia, titulo)
-                     VALUES (?, ?)`,
+            (idDenuncia, titulo)
+         VALUES (?, ?)`,
                     [
                         novoIdDenuncia,
                         "Denúncia registrada"
                     ]
                 );
 
-                // 6. Cria uma notificação para o usuário.
+                // 5. Cria uma notificação para o usuário.
                 await conn.query(
                     `INSERT INTO NOTIFICACAO
-                        (idDenuncia, idUsuario, conteudo)
-                     VALUES (?, ?, ?)`,
+            (idDenuncia, idUsuario, conteudo)
+         VALUES (?, ?, ?)`,
                     [
                         novoIdDenuncia,
                         idUsuario,
@@ -268,7 +204,7 @@ router.post(
                     ]
                 );
 
-                // 7. Registra todas as evidências.
+                // 6. Registra todas as evidências.
                 for (const arquivo of arquivos) {
 
                     const tipoEvidencia =
@@ -278,13 +214,13 @@ router.post(
 
                     await conn.query(
                         `INSERT INTO EVIDENCIA
-                            (
-                                idDenuncia,
-                                tipoEvidencia,
-                                fotoVideoAudio,
-                                dadosEvidencia
-                            )
-                         VALUES (?, ?, ?, ?)`,
+                (
+                    idDenuncia,
+                    tipoEvidencia,
+                    fotoVideoAudio,
+                    dadosEvidencia
+                )
+             VALUES (?, ?, ?, ?)`,
                         [
                             novoIdDenuncia,
                             tipoEvidencia,
@@ -297,6 +233,7 @@ router.post(
                 // Retorna o ID para finalizar a transação.
                 return novoIdDenuncia;
             });
+
 
             // 8. Redireciona para os detalhes da denúncia.
             return res.redirect(
@@ -313,13 +250,8 @@ router.post(
             // Remove os arquivos caso a transação falhe.
             await removerArquivos(arquivos);
 
-            // Erros de encaminhamento da organização.
-            if (erro.codigo === "ORGANIZACAO_NAO_ENCONTRADA") {
-                return res.status(400).send(erro.message);
-            }
-
-            // Erro quando não existe fiscal ativo.
-            if (erro.codigo === "FISCAL_NAO_ENCONTRADO") {
+            // Erro quando a localidade não está cadastrada.
+            if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
                 return res.status(400).send(erro.message);
             }
 

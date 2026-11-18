@@ -19,8 +19,10 @@ async function renderGerenciar(
     mensagemSucesso = null
 ) {
     try {
+        const idSuperusuario = req.session.usuario.id;
+
         const [fiscais, localidades] = await Promise.all([
-            fiscalModel.listarFiscais(),
+            fiscalModel.listarFiscais(idSuperusuario),
             fiscalModel.listarLocalidades()
         ]);
 
@@ -133,7 +135,8 @@ async function cadastrarFiscal(req, res) {
             email,
             cpf,
             senha,
-            localidades
+            localidades,
+            idSuperusuario: req.session.usuario.id
         });
 
         return res.redirect('/gerenciarFiscais?sucesso=1');
@@ -167,7 +170,12 @@ async function reatribuirFiscal(req, res) {
     }
 
     try {
-        const resultado = await fiscalModel.reatribuirFiscal(idFiscal);
+        const idSuperusuario = req.session.usuario.id;
+
+        const resultado = await fiscalModel.reatribuirFiscal(
+            idFiscal,
+            idSuperusuario
+        );
 
         if (resultado.affectedRows !== 1) {
             return renderGerenciar(
@@ -200,8 +208,13 @@ async function desativarFiscal(req, res) {
     }
 
     try {
-        const resultado = await fiscalModel.desativarFiscal(idFiscal);
+        const idSuperusuario = req.session.usuario.id;
 
+        const resultado = await fiscalModel.desativarFiscal(
+            idFiscal,
+            idSuperusuario
+        );
+        
         if (resultado.affectedRows !== 1) {
             return renderGerenciar(
                 req,

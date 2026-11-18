@@ -5,7 +5,7 @@ const {
 } = require('../db/dbConnect');
 
 // Lista todos os fiscais e suas localidades.
-async function listarFiscais() {
+async function listarFiscais(idSuperusuario) {
     return executarQuery(
         `SELECT
             f.id,
@@ -25,10 +25,12 @@ async function listarFiscais() {
             ON fl.idFiscal = f.id
          LEFT JOIN LOCALIDADE l
             ON l.idLocalidade = fl.idLocalidade
+         WHERE f.idSuperusuario = ?
          GROUP BY
             f.id, f.nome, f.email, f.cpf,
             f.status, f.dataCadastro, f.dataDesativacao
-         ORDER BY f.nome ASC`
+         ORDER BY f.nome ASC`,
+        [idSuperusuario]
     );
 }
 
@@ -94,7 +96,8 @@ async function cadastrarFiscal({
     email,
     cpf,
     senha,
-    localidades
+    localidades,
+    idSuperusuario
 }) {
     const senhaHash = await bcrypt.hash(senha, 12);
 
@@ -121,9 +124,9 @@ async function cadastrarFiscal({
         // O fiscal não pertence a uma organização específica.
         const resultado = await conn.query(
             `INSERT INTO FISCAL
-                (idOrganizacao, nome, email, cpf, senha, status)
-             VALUES (NULL, ?, ?, ?, ?, 'ativo')`,
-            [nome, email, cpf, senhaHash]
+                (idOrganizacao, idSuperusuario, nome, email, cpf, senha, status)
+             VALUES (NULL, ?, ?, ?, ?, ?, 'ativo')`,
+            [idSuperusuario, nome, email, cpf, senhaHash]
         );
 
         const idFiscal = resultado.insertId;
@@ -143,26 +146,28 @@ async function cadastrarFiscal({
 }
 
 // Desativa fiscal sem remover suas localidades ou seu histórico.
-async function desativarFiscal(idFiscal) {
+async function desativarFiscal(idFiscal, idSuperusuario) {
     return executarQuery(
         `UPDATE FISCAL
          SET status = 'desativado',
              dataDesativacao = CURRENT_TIMESTAMP
          WHERE id = ?
+           AND idSuperusuario = ?
            AND status = 'ativo'`,
-        [idFiscal]
+        [idFiscal, idSuperusuario]
     );
 }
 
 // Reatribui (reativa) um fiscal, preservando os vínculos de localidades existentes.
-async function reatribuirFiscal(idFiscal) {
+async function reatribuirFiscal(idFiscal, idSuperusuario) {
     return executarQuery(
         `UPDATE FISCAL
          SET status = 'ativo',
              dataDesativacao = NULL
          WHERE id = ?
+           AND idSuperusuario = ?
            AND status = 'desativado'`,
-        [idFiscal]
+        [idFiscal, idSuperusuario]
     );
 }
 
