@@ -159,14 +159,21 @@
                                                                             : 'Desativado' %>
                                                                     </td>
                                                                     <td>
-                                                                        <% if (fiscal.status==='ativo' ) { %>
+                                                                        <% if (fiscal.status === 'ativo') { %>
                                                                             <form
                                                                                 action="/gerenciarFiscais/<%= fiscal.id %>/desativar"
                                                                                 method="POST"
-                                                                                onsubmit="return confirm('Deseja desativar este fiscal? O histórico será preservado.');">
-                                                                                <button type="submit">Desativar</button>
+                                                                                onsubmit="return confirm('Deseja desativar este fiscal? O histórico e as localidades atribuídas serão preservados.');">
+                                                                                <button type="submit" class="btn-acao btn-desativar">Desativar</button>
                                                                             </form>
-                                                                            <% } else { %>—<% } %>
+                                                                        <% } else { %>
+                                                                            <form
+                                                                                action="/gerenciarFiscais/<%= fiscal.id %>/reatribuir"
+                                                                                method="POST"
+                                                                                onsubmit="return confirm('Deseja reatribuir este fiscal e ativá-lo novamente?');">
+                                                                                <button type="submit" class="btn-acao btn-reatribuir">Reatribuir</button>
+                                                                            </form>
+                                                                        <% } %>
                                                                     </td>
                                                                 </tr>
                                                                 <% }); %>

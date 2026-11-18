@@ -142,7 +142,7 @@ async function cadastrarFiscal({
     });
 }
 
-// Desativa fiscal sem depender de organização.
+// Desativa fiscal sem remover suas localidades ou seu histórico.
 async function desativarFiscal(idFiscal) {
     return executarQuery(
         `UPDATE FISCAL
@@ -154,11 +154,24 @@ async function desativarFiscal(idFiscal) {
     );
 }
 
+// Reatribui (reativa) um fiscal, preservando os vínculos de localidades existentes.
+async function reatribuirFiscal(idFiscal) {
+    return executarQuery(
+        `UPDATE FISCAL
+         SET status = 'ativo',
+             dataDesativacao = NULL
+         WHERE id = ?
+           AND status = 'desativado'`,
+        [idFiscal]
+    );
+}
+
 module.exports = {
     listarFiscais,
     listarLocalidades,
     buscarEmailExistente,
     buscarCpfExistente,
     cadastrarFiscal,
-    desativarFiscal
+    desativarFiscal,
+    reatribuirFiscal
 };

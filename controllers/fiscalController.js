@@ -50,7 +50,9 @@ async function exibirGerenciarFiscais(req, res) {
             ? 'Fiscal cadastrado com sucesso!'
             : req.query.desativado === '1'
                 ? 'Fiscal desativado. O histórico foi preservado.'
-                : null
+                : req.query.reatribuido === '1'
+                    ? 'Fiscal reatribuído com sucesso.'
+                    : null
     );
 }
 
@@ -157,6 +159,39 @@ async function cadastrarFiscal(req, res) {
     }
 }
 
+async function reatribuirFiscal(req, res) {
+    const idFiscal = Number(req.params.id);
+
+    if (!Number.isInteger(idFiscal) || idFiscal <= 0) {
+        return res.status(400).send('Dados inválidos.');
+    }
+
+    try {
+        const resultado = await fiscalModel.reatribuirFiscal(idFiscal);
+
+        if (resultado.affectedRows !== 1) {
+            return renderGerenciar(
+                req,
+                res,
+                404,
+                'Fiscal não encontrado ou já está ativo.'
+            );
+        }
+
+        return res.redirect('/gerenciarFiscais?reatribuido=1');
+
+    } catch (erro) {
+        console.error('Erro ao reatribuir fiscal:', erro);
+
+        return renderGerenciar(
+            req,
+            res,
+            500,
+            'Não foi possível reatribuir o fiscal.'
+        );
+    }
+}
+
 async function desativarFiscal(req, res) {
     const idFiscal = Number(req.params.id);
 
@@ -193,5 +228,6 @@ async function desativarFiscal(req, res) {
 module.exports = {
     exibirGerenciarFiscais,
     cadastrarFiscal,
-    desativarFiscal
+    desativarFiscal,
+    reatribuirFiscal
 };

@@ -31,4 +31,10 @@ router.post(
     fiscalController.desativarFiscal
 );
 
+router.post(
+    '/:id/reatribuir',
+    verificarSuperusuario,
+    fiscalController.reatribuirFiscal
+);
+
 module.exports = router;
