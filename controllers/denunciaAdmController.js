@@ -10,18 +10,18 @@ async function listar(req, res) {
             denuncias = await denunciaAdmModel.listarDenunciasPorFiscal(
                 Number(usuario.id)
             );
-        } else {
-            const idOrganizacao = Number(usuario.idOrganizacao);
+        } else if (usuario.tipo === "superusuario") {
+            const idSuperusuario = Number(usuario.id);
 
-            if (!Number.isInteger(idOrganizacao) || idOrganizacao <= 0) {
-                return res.status(403).send(
-                    "Sua conta não está vinculada a uma organização."
-                );
+            if (!Number.isInteger(idSuperusuario) || idSuperusuario <= 0) {
+                return res.status(403).send("Superusuário inválido.");
             }
 
-            denuncias = await denunciaAdmModel.listarDenuncias(
-                idOrganizacao
+            denuncias = await denunciaAdmModel.listarDenunciasPorSuperusuario(
+                idSuperusuario
             );
+        } else {
+            return res.status(403).send("Acesso negado.");
         }
 
         return res.render("denunciaAdm", {

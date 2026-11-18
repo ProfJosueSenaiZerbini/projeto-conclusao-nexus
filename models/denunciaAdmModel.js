@@ -62,6 +62,40 @@ async function listarDenunciasPorFiscal(idFiscal) {
     );
 }
 
+// LISTAR DENÚNCIAS PELAS LOCALIDADES DOS FISCAIS DO SUPERUSUÁRIO
+async function listarDenunciasPorSuperusuario(idSuperusuario) {
+    return executarQuery(
+        `SELECT
+            d.idDenuncia,
+            d.tipo,
+            d.descricao,
+            d.dataAbertura,
+            d.status,
+            d.prioridade,
+            l.endereco,
+            u.nome AS nomeUsuario,
+            d.fiscal_id AS idFiscalResponsavel,
+            f.nome AS nomeFiscalResponsavel
+        FROM DENUNCIA d
+        INNER JOIN LOCALIZACAO l
+            ON d.idLocalizacao = l.idLocalizacao
+        INNER JOIN USUARIO u
+            ON d.idUsuario = u.id
+        LEFT JOIN FISCAL f
+            ON f.id = d.fiscal_id
+        WHERE EXISTS (
+            SELECT 1
+            FROM FISCAL fiscal
+            INNER JOIN FISCAL_LOCALIDADE fl
+                ON fl.idFiscal = fiscal.id
+            WHERE fiscal.idSuperusuario = ?
+              AND fl.idLocalidade = d.idLocalidade
+        )
+        ORDER BY d.dataAbertura DESC`,
+        [idSuperusuario]
+    );
+}
+
 // BUSCAR STATUS POR ORGANIZAÇÃO
 async function buscarStatus(idDenuncia, idOrganizacao) {
     return executarQuery(
@@ -227,7 +261,7 @@ async function registrarHistorico(
            AND d.idOrganizacao = ?`,
         [titulo,
             autorNome,
-            tipoAutor, 
+            tipoAutor,
             idDenuncia,
             idOrganizacao]
     );
@@ -269,6 +303,7 @@ async function registrarHistoricoPorFiscal(
 module.exports = {
     listarDenuncias,
     listarDenunciasPorFiscal,
+    listarDenunciasPorSuperusuario,
 
     buscarStatus,
     buscarStatusPorFiscal,
