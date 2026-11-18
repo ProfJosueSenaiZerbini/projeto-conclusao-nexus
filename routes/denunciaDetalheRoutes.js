@@ -250,7 +250,7 @@ if (tipoUsuario === "superusuario") {
             INNER JOIN DENUNCIA d
             ON m.idDenuncia = d.idDenuncia
 
-            INNER JOIN USUARIO u
+            LEFT JOIN USUARIO u
                 ON m.idUsuario = u.id
 
             LEFT JOIN FISCAL f 
