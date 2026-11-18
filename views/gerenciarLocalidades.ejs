@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,124 +11,120 @@
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/gerenciarFiscais.css">
 </head>
+
 <body>
 
+    <!-- HEADER -->
     <%- include("partials/header") %>
-    <%- include("partials/menuAdm") %>
+        <div class="pagina">
+            <div class="conteudo">
 
-    <main class="container">
-        <h1>Gerenciar localidades</h1>
+                <!-- MENU LATERAL -->
+                <%- include("partials/menuAdm") %>
 
-       <p class="descricao">
-            Cadastre as localidades disponíveis no Nexus.
-            Os fiscais poderão ser vinculados às regiões e visualizar
-            as denúncias correspondentes à sua área de atuação.
-        </p>
+                    <main class="container">
+                        <h1>Gerenciar localidades</h1>
 
-        <% if (mensagemErro) { %>
-            <div class="mensagem erro" role="alert">
-                <%= mensagemErro %>
+                        <p class="descricao">
+                            Cadastre as localidades disponíveis no Nexus.
+                            Os fiscais poderão ser vinculados às regiões e visualizar
+                            as denúncias correspondentes à sua área de atuação.
+                        </p>
+
+                        <% if (mensagemErro) { %>
+                            <div class="mensagem erro" role="alert">
+                                <%= mensagemErro %>
+                            </div>
+                            <% } %>
+
+                                <% if (mensagemSucesso) { %>
+                                    <div class="mensagem sucesso" role="status">
+                                        <%= mensagemSucesso %>
+                                    </div>
+                                    <% } %>
+
+                                        <section class="card">
+                                            <h2>Cadastrar nova localidade</h2>
+
+                                            <form class="formulario" action="/organizacao/localidades" method="POST">
+                                                <div class="campos-grid">
+                                                    <div class="campo">
+                                                        <label for="cidade">Cidade</label>
+                                                        <input type="text" id="cidade" name="cidade" maxlength="100"
+                                                            placeholder="Ex.: Campinas" required>
+                                                    </div>
+
+                                                    <div class="campo">
+                                                        <label for="estado">Estado (UF)</label>
+                                                        <input type="text" id="estado" name="estado" maxlength="2"
+                                                            minlength="2" pattern="[A-Za-z]{2}" placeholder="Ex.: SP"
+                                                            required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="campo campo-botao">
+                                                    <button type="submit" class="botao">
+                                                        Cadastrar localidade
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </section>
+
+                                        <section class="card">
+                                            <h2>Localidades cadastradas</h2>
+
+                                            <div class="tabela-container">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cidade</th>
+                                                            <th>Estado</th>
+                                                            <th>Data do cadastro</th>
+                                                            <th>Ação</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        <% if (localidades && localidades.length> 0) { %>
+                                                            <% localidades.forEach(function(localidade) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= localidade.cidade %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= localidade.estado %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= new
+                                                                            Date(localidade.dataCadastro).toLocaleDateString('pt-BR')
+                                                                            %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <form
+                                                                            action="/organizacao/localidades/<%= localidade.idLocalidade %>/remover"
+                                                                            method="POST"
+                                                                            onsubmit="return confirm('Deseja remover esta localidade?');">
+                                                                            <button type="submit" class="btn-remover">
+                                                                                Remover
+                                                                            </button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }); %>
+                                                                    <% } else { %>
+                                                                        <tr>
+                                                                            <td colspan="4" class="vazio">
+                                                                                Nenhuma localidade disponível no Nexus.
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% } %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </section>
             </div>
-        <% } %>
-
-        <% if (mensagemSucesso) { %>
-            <div class="mensagem sucesso" role="status">
-                <%= mensagemSucesso %>
-            </div>
-        <% } %>
-
-        <section class="card">
-            <h2>Cadastrar nova localidade</h2>
-
-            <form
-                class="formulario"
-                action="/organizacao/localidades"
-                method="POST"
-            >
-                <div class="campos-grid">
-                    <div class="campo">
-                        <label for="cidade">Cidade</label>
-                        <input
-                            type="text"
-                            id="cidade"
-                            name="cidade"
-                            maxlength="100"
-                            placeholder="Ex.: Campinas"
-                            required
-                        >
-                    </div>
-
-                    <div class="campo">
-                        <label for="estado">Estado (UF)</label>
-                        <input
-                            type="text"
-                            id="estado"
-                            name="estado"
-                            maxlength="2"
-                            minlength="2"
-                            pattern="[A-Za-z]{2}"
-                            placeholder="Ex.: SP"
-                            required
-                        >
-                    </div>
-                </div>
-
-                <div class="campo campo-botao">
-                    <button type="submit" class="botao">
-                        Cadastrar localidade
-                    </button>
-                </div>
-            </form>
-        </section>
-
-        <section class="card">
-            <h2>Localidades cadastradas</h2>
-
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Cidade</th>
-                            <th>Estado</th>
-                            <th>Data do cadastro</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <% if (localidades && localidades.length > 0) { %>
-                            <% localidades.forEach(function(localidade) { %>
-                                <tr>
-                                    <td><%= localidade.cidade %></td>
-                                    <td><%= localidade.estado %></td>
-                                    <td>
-                                        <%= new Date(localidade.dataCadastro).toLocaleDateString('pt-BR') %>
-                                    </td>
-                                    <td>
-                                        <form
-                                            action="/organizacao/localidades/<%= localidade.idLocalidade %>/remover"
-                                            method="POST"
-                                            onsubmit="return confirm('Deseja remover esta localidade?');"
-                                        >
-                                            <button type="submit" class="btn-remover">
-                                                Remover
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="4" class="vazio">
-                                    Nenhuma localidade disponível no Nexus.
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+        </div>
 
 </body>
+
 </html>
