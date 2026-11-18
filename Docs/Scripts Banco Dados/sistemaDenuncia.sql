@@ -340,6 +340,7 @@ CREATE TABLE MENSAGEM_DENUNCIA (
     idMensagem INT PRIMARY KEY AUTO_INCREMENT,
     idDenuncia INT NOT NULL,
     idUsuario INT NOT NULL,
+    idFiscal INT NULL,
     texto TEXT NOT NULL,
     dataHora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -353,6 +354,12 @@ CREATE TABLE MENSAGEM_DENUNCIA (
         REFERENCES USUARIO(id)
         ON DELETE CASCADE,
 
+    CONSTRAINT fk_mensagem_fiscal
+        FOREIGN KEY (idFiscal)
+        REFERENCES FISCAL(id)
+        ON DELETE CASCADE,
+        
     INDEX idx_mensagem_denuncia (idDenuncia),
-    INDEX idx_mensagem_usuario (idUsuario)
+    INDEX idx_mensagem_usuario (idUsuario),
+    INDEX idx_mensagem_fiscal (idFiscal)
 );

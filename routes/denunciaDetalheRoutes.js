@@ -101,7 +101,7 @@ if (tipoUsuario === "superusuario") {
              FROM DENUNCIA d
              INNER JOIN LOCALIZACAO l
                 ON d.idLocalizacao = l.idLocalizacao
-             INNER JOIN USUARIO u
+             LEFT JOIN USUARIO u
                 ON d.idUsuario = u.id
              LEFT JOIN FISCAL f
                 ON d.fiscal_id = f.id
