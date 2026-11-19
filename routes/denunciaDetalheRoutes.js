@@ -14,7 +14,7 @@ function verificarAcesso(req, res, next) {
     }
 
     const { tipo } = req.session.usuario;
-    
+
     if (!["usuario", "fiscal", "superusuario"].includes(tipo)) {
         return res.status(403).send("Acesso negado.");
     }
@@ -41,13 +41,13 @@ router.get("/:id", verificarAcesso, async (req, res) => {
     try {
         const tipoUsuario = req.session.usuario.tipo;
 
-let filtroAcesso = "";
-const parametros = [idDenuncia];
+        let filtroAcesso = "";
+        const parametros = [idDenuncia];
 
-if (tipoUsuario === "fiscal") {
-    const idFiscal = Number(req.session.usuario.id);
+        if (tipoUsuario === "fiscal") {
+            const idFiscal = Number(req.session.usuario.id);
 
-    filtroAcesso = `
+            filtroAcesso = `
         AND EXISTS (
             SELECT 1
             FROM FISCAL_LOCALIDADE fl
@@ -56,58 +56,66 @@ if (tipoUsuario === "fiscal") {
         )
     `;
 
-    parametros.push(idFiscal);
-}
+            parametros.push(idFiscal);
+        }
 
-if (tipoUsuario === "superusuario") {
-    const idOrganizacao = Number(
-        req.session.usuario.idOrganizacao
-    );
+        if (tipoUsuario === "superusuario") {
+            const idSuperusuario = idValido(
+                req.session.usuario.id
+            );
 
-    if (
-        !Number.isInteger(idOrganizacao) ||
-        idOrganizacao <= 0
-    ) {
-        return res.status(403).send(
-            "Sua conta não está vinculada a uma organização."
-        );
-    }
+            if (!idSuperusuario) {
+                return res.status(403).send(
+                    "Superusuário inválido."
+                );
+            }
 
-    filtroAcesso = " AND d.idOrganizacao = ?";
-    parametros.push(idOrganizacao);
-}
+            filtroAcesso = `
+        AND EXISTS (
+            SELECT 1
+            FROM FISCAL fiscal
+            INNER JOIN FISCAL_LOCALIDADE fl
+                ON fl.idFiscal = fiscal.id
+            WHERE fiscal.idSuperusuario = ?
+              AND fl.idLocalidade = d.idLocalidade
+        )
+    `;
+
+            parametros.push(idSuperusuario);
+        }
+
         const resultado = await executarQuery(
             `SELECT
-                d.idDenuncia,
-                d.idUsuario,
-                d.titulo,
-                d.tipo,
-                d.visibilidade,
-                DATE_FORMAT(
-                    d.dataOcorrencia,
-                    '%d/%m/%Y'
-                ) AS dataOcorrenciaFormatada,
-                d.descricao,
-                d.status,
-                d.prioridade,
-                d.fiscal_id AS idFiscalResponsavel,
-                DATE_FORMAT(
-                    d.dataAbertura,
-                    '%d/%m/%Y às %H:%i'
-                ) AS dataAberturaFormatada,
-                l.endereco,
-                u.nome AS nomeUsuario,
-                f.nome AS nomeFiscal
-             FROM DENUNCIA d
-             INNER JOIN LOCALIZACAO l
-                ON d.idLocalizacao = l.idLocalizacao
-             LEFT JOIN USUARIO u
-                ON d.idUsuario = u.id
-             LEFT JOIN FISCAL f
-                ON d.fiscal_id = f.id
-             WHERE d.idDenuncia = ?
-             ${filtroAcesso}
-             LIMIT 1`,
+        d.idDenuncia,
+        d.idUsuario,
+        d.titulo,
+        d.tipo,
+        d.visibilidade,
+        DATE_FORMAT(
+            d.dataOcorrencia,
+            '%d/%m/%Y'
+        ) AS dataOcorrenciaFormatada,
+        d.descricao,
+        d.status,
+        d.prioridade,
+        d.fiscal_id AS idFiscalResponsavel,
+        DATE_FORMAT(
+            d.dataAbertura,
+            '%d/%m/%Y às %H:%i'
+        ) AS dataAberturaFormatada,
+        l.endereco,
+        u.nome AS nomeUsuario,
+        f.nome AS nomeFiscal
+     FROM DENUNCIA d
+     INNER JOIN LOCALIZACAO l
+        ON d.idLocalizacao = l.idLocalizacao
+     LEFT JOIN USUARIO u
+        ON d.idUsuario = u.id
+     LEFT JOIN FISCAL f
+        ON d.fiscal_id = f.id
+     WHERE d.idDenuncia = ?
+     ${filtroAcesso}
+     LIMIT 1`,
             parametros
         );
 
@@ -261,7 +269,7 @@ if (tipoUsuario === "superusuario") {
             
             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
             [
-                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0, 
+                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0,
                 idDenuncia
             ]
         );
@@ -280,7 +288,7 @@ if (tipoUsuario === "superusuario") {
             podeEnviarMensagemFiscal:
                 req.session.usuario.tipo === "fiscal" &&
                 Number(req.session.usuario.id) ===
-                Number(denuncia.idFiscalResponsavel) 
+                Number(denuncia.idFiscalResponsavel)
         });
 
     } catch (erro) {
