@@ -7,13 +7,20 @@ const fs = require("fs");
 
 const { executarTransacao } = require("../db/dbConnect");
 const { verificarUsuario } = require("../middlewares/autenticacao");
+const { criarNotificacao } = require("../services/notificacaoService");
+
+// =====================================================
+// CONFIGURAÇÃO DOS UPLOADS
+// =====================================================
 
 const pastaUploads = path.join(__dirname, "..", "public", "uploads");
 
 fs.mkdirSync(pastaUploads, { recursive: true });
 
 const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, pastaUploads),
+    destination: (_req, _file, cb) => {
+        cb(null, pastaUploads);
+    },
 
     filename: (_req, file, cb) => {
         const extensao = path.extname(file.originalname);
@@ -46,19 +53,28 @@ const upload = multer({
     }
 });
 
-// Remove arquivos enviados caso o cadastro não seja concluído.
+// =====================================================
+// REMOVER ARQUIVOS CASO O CADASTRO FALHE
+// =====================================================
+
 async function removerArquivos(files = []) {
     await Promise.allSettled(
         files.map(arquivo => fs.promises.unlink(arquivo.path))
     );
 }
 
-// Exibe a página de cadastro.
+// =====================================================
+// EXIBIR PÁGINA DE CADASTRO
+// =====================================================
+
 router.get("/", verificarUsuario, (req, res) => {
     res.render("denunciaUsuario");
 });
 
-// Cadastra uma nova denúncia.
+// =====================================================
+// CADASTRAR NOVA DENÚNCIA
+// =====================================================
+
 router.post(
     "/",
     verificarUsuario,
@@ -79,7 +95,8 @@ router.post(
         const idUsuario = req.session.usuario.id;
         const arquivos = req.files || [];
 
-        // Validação dos campos obrigatórios.
+        // 1. Validação dos campos obrigatórios.
+
         if (
             !categoria?.trim() ||
             !titulo?.trim() ||
@@ -87,7 +104,6 @@ router.post(
             !local?.trim() ||
             !cidade?.trim() ||
             !estado?.trim()
-
         ) {
             await removerArquivos(arquivos);
 
@@ -98,27 +114,29 @@ router.post(
 
         try {
 
-
             const idDenuncia = await executarTransacao(async conn => {
 
-                // 1. Busca a localidade no cadastro global.
+                // =================================================
+                // 2. BUSCAR LOCALIDADE
+                // =================================================
+
                 const resultadoLocalidade = await conn.query(
                     `SELECT idLocalidade
-         FROM LOCALIDADE
-         WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
-           AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
-         LIMIT 1`,
+                     FROM LOCALIDADE
+                     WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
+                       AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
+                     LIMIT 1`,
                     [
                         cidade.trim(),
                         estado.trim()
                     ]
                 );
 
-                // Verifica se a localidade existe.
                 if (resultadoLocalidade.length === 0) {
                     const erro = new Error(
                         "A cidade e o estado informados não estão cadastrados."
                     );
+
                     erro.codigo = "LOCALIDADE_NAO_ENCONTRADA";
                     throw erro;
                 }
@@ -127,11 +145,53 @@ router.post(
                     resultadoLocalidade[0].idLocalidade
                 );
 
-                // 2. Cadastra a localização.
+                
+// =================================================
+// 3. IDENTIFICAR ORGANIZAÇÃO PELA LOCALIDADE
+// =================================================
+
+const organizacoesResponsaveis = await conn.query(
+    `SELECT DISTINCT f.idOrganizacao
+     FROM FISCAL f
+     INNER JOIN FISCAL_LOCALIDADE fl
+        ON fl.idFiscal = f.id
+     WHERE fl.idLocalidade = ?
+       AND f.status = 'ativo'
+       AND f.idOrganizacao IS NOT NULL`,
+    [idLocalidade]
+);
+
+if (organizacoesResponsaveis.length === 0) {
+    const erro = new Error(
+        "Não existe fiscal ativo responsável por essa localidade."
+    );
+
+    erro.codigo = "FISCAL_NAO_ENCONTRADO";
+    throw erro;
+}
+
+if (organizacoesResponsaveis.length > 1) {
+    const erro = new Error(
+        "Existem várias organizações responsáveis por essa localidade."
+    );
+
+    erro.codigo = "VARIAS_ORGANIZACOES";
+    throw erro;
+}
+
+const idOrganizacao = Number(
+    organizacoesResponsaveis[0].idOrganizacao
+);
+
+
+                // =================================================
+                // 4. CADASTRAR LOCALIZAÇÃO
+                // =================================================
+
                 const resultadoLocalizacao = await conn.query(
                     `INSERT INTO LOCALIZACAO
-            (tipo, endereco, cidade, estado)
-         VALUES (?, ?, ?, ?)`,
+                     (tipo, endereco, cidade, estado)
+                     VALUES (?, ?, ?, ?)`,
                     [
                         "Manual",
                         local.trim(),
@@ -144,25 +204,29 @@ router.post(
                     resultadoLocalizacao.insertId
                 );
 
-                // 3. Cadastra a denúncia vinculada à localidade.
+                // =================================================
+                // 5. CADASTRAR DENÚNCIA
+                // =================================================
+
                 const resultadoDenuncia = await conn.query(
                     `INSERT INTO DENUNCIA
-            (
-                idUsuario,
-                idOrganizacao,
-                idLocalidade,
-                titulo,
-                tipo,
-                descricao,
-                dataOcorrencia,
-                visibilidade,
-                status,
-                prioridade,
-                idLocalizacao
-            )
-         VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    (
+                        idUsuario,
+                        idOrganizacao,
+                        idLocalidade,
+                        titulo,
+                        tipo,
+                        descricao,
+                        dataOcorrencia,
+                        visibilidade,
+                        status,
+                        prioridade,
+                        idLocalizacao
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         idUsuario,
+                        idOrganizacao,
                         idLocalidade,
                         titulo.trim(),
                         categoria.trim(),
@@ -181,30 +245,91 @@ router.post(
                     resultadoDenuncia.insertId
                 );
 
-                // 4. Registra o histórico inicial.
-                await conn.query(
-                    `INSERT INTO HISTORICO_DENUNCIA
-            (idDenuncia, titulo)
-         VALUES (?, ?)`,
+                // =================================================
+                // 6. BUSCAR FISCAIS RESPONSÁVEIS
+                // =================================================
+
+                const fiscaisResponsaveis = await conn.query(
+                    `SELECT DISTINCT f.id
+                     FROM FISCAL f
+                     INNER JOIN FISCAL_LOCALIDADE fl
+                        ON fl.idFiscal = f.id
+                     WHERE f.idOrganizacao = ?
+                       AND fl.idLocalidade = ?
+                       AND f.status = 'ativo'`,
                     [
-                        novoIdDenuncia,
-                        "Denúncia registrada"
+                        idOrganizacao,
+                        idLocalidade
                     ]
                 );
 
-                // 5. Cria uma notificação para o usuário.
-                await conn.query(
-                    `INSERT INTO NOTIFICACAO
-            (idDenuncia, idUsuario, conteudo)
-         VALUES (?, ?, ?)`,
-                    [
-                        novoIdDenuncia,
-                        idUsuario,
-                        `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
-                    ]
+                // =================================================
+                // 7. NOTIFICAR O CIDADÃO
+                // =================================================
+
+                await criarNotificacao(conn, {
+                    idDenuncia: novoIdDenuncia,
+                    idUsuario,
+
+                    titulo: "Denúncia registrada",
+                    tipo: "nova_denuncia",
+
+                    conteudo: `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
+                });
+
+                // =================================================
+                // 8. NOTIFICAR OS FISCAIS RESPONSÁVEIS
+                // =================================================
+
+                for (const fiscal of fiscaisResponsaveis) {
+
+                    await criarNotificacao(conn, {
+                        idDenuncia: novoIdDenuncia,
+                        idFiscal: Number(fiscal.id),
+
+                        titulo: "Nova denúncia recebida",
+                        tipo: "nova_denuncia",
+
+                        conteudo: `Uma nova denúncia da categoria "${categoria}" foi registrada na sua localidade de atendimento.`
+                    });
+                }
+
+                // =================================================
+                // 9. BUSCAR SUPERUSUÁRIO DA ORGANIZAÇÃO
+                // =================================================
+
+                const superusuarios = await conn.query(
+                    `SELECT idSuperusuario
+                     FROM SUPERUSUARIO
+                     WHERE idOrganizacao = ?
+                     LIMIT 1`,
+                    [idOrganizacao]
                 );
 
-                // 6. Registra todas as evidências.
+                // =================================================
+                // 10. NOTIFICAR SUPERUSUÁRIO
+                // =================================================
+
+                if (superusuarios.length > 0) {
+
+                    await criarNotificacao(conn, {
+                        idDenuncia: novoIdDenuncia,
+
+                        idSuperusuario: Number(
+                            superusuarios[0].idSuperusuario
+                        ),
+
+                        titulo: "Nova denúncia na organização",
+                        tipo: "nova_denuncia",
+
+                        conteudo: `Uma nova denúncia da categoria "${categoria}" foi recebida pela organização.`
+                    });
+                }
+
+                // =================================================
+                // 11. CADASTRAR EVIDÊNCIAS
+                // =================================================
+
                 for (const arquivo of arquivos) {
 
                     const tipoEvidencia =
@@ -214,13 +339,13 @@ router.post(
 
                     await conn.query(
                         `INSERT INTO EVIDENCIA
-                (
-                    idDenuncia,
-                    tipoEvidencia,
-                    fotoVideoAudio,
-                    dadosEvidencia
-                )
-             VALUES (?, ?, ?, ?)`,
+                        (
+                            idDenuncia,
+                            tipoEvidencia,
+                            fotoVideoAudio,
+                            dadosEvidencia
+                        )
+                        VALUES (?, ?, ?, ?)`,
                         [
                             novoIdDenuncia,
                             tipoEvidencia,
@@ -230,12 +355,18 @@ router.post(
                     );
                 }
 
-                // Retorna o ID para finalizar a transação.
+                // =================================================
+                // 12. FINALIZAR TRANSAÇÃO
+                // =================================================
+
                 return novoIdDenuncia;
+
             });
 
+            // =====================================================
+            // 13. REDIRECIONAR PARA DETALHES
+            // =====================================================
 
-            // 8. Redireciona para os detalhes da denúncia.
             return res.redirect(
                 `/denunciaDetalhe/${idDenuncia}`
             );
@@ -247,19 +378,25 @@ router.post(
                 erro
             );
 
-            // Remove os arquivos caso a transação falhe.
             await removerArquivos(arquivos);
 
-            // Erro quando a localidade não está cadastrada.
-            if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
-                return res.status(400).send(erro.message);
-            }
-
-            return res.status(500).send(
-                "Erro ao cadastrar denúncia."
-            );
-        }
+    if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
+        return res.status(400).send(erro.message);
     }
+
+    if (erro.codigo === "FISCAL_NAO_ENCONTRADO") {
+        return res.status(400).send(erro.message);
+    }
+
+    if (erro.codigo === "VARIAS_ORGANIZACOES") {
+        return res.status(400).send(erro.message);
+    }
+
+    return res.status(500).send(
+        "Erro ao cadastrar denúncia."
+    );
+}
+        }
 );
 
 module.exports = router;
