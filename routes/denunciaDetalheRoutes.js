@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -19,7 +18,6 @@ function verificarAcesso(req, res, next) {
         return res.status(403).send("Acesso negado.");
     }
 
-
     next();
 }
 
@@ -31,6 +29,7 @@ function idValido(valor) {
         : null;
 }
 
+// DETALHES DA DENÚNCIA
 router.get("/:id", verificarAcesso, async (req, res) => {
     const idDenuncia = idValido(req.params.id);
 
@@ -45,16 +44,20 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         const parametros = [idDenuncia];
 
         if (tipoUsuario === "fiscal") {
-            const idFiscal = Number(req.session.usuario.id);
+            const idFiscal = idValido(req.session.usuario.id);
+
+            if (!idFiscal) {
+                return res.status(403).send("Fiscal inválido.");
+            }
 
             filtroAcesso = `
-        AND EXISTS (
-            SELECT 1
-            FROM FISCAL_LOCALIDADE fl
-            WHERE fl.idFiscal = ?
-              AND fl.idLocalidade = d.idLocalidade
-        )
-    `;
+                AND EXISTS (
+                    SELECT 1
+                    FROM FISCAL_LOCALIDADE fl
+                    WHERE fl.idFiscal = ?
+                      AND fl.idLocalidade = d.idLocalidade
+                )
+            `;
 
             parametros.push(idFiscal);
         }
@@ -71,51 +74,51 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             }
 
             filtroAcesso = `
-        AND EXISTS (
-            SELECT 1
-            FROM FISCAL fiscal
-            INNER JOIN FISCAL_LOCALIDADE fl
-                ON fl.idFiscal = fiscal.id
-            WHERE fiscal.idSuperusuario = ?
-              AND fl.idLocalidade = d.idLocalidade
-        )
-    `;
+                AND EXISTS (
+                    SELECT 1
+                    FROM FISCAL fiscal
+                    INNER JOIN FISCAL_LOCALIDADE fl
+                        ON fl.idFiscal = fiscal.id
+                    WHERE fiscal.idSuperusuario = ?
+                      AND fl.idLocalidade = d.idLocalidade
+                )
+            `;
 
             parametros.push(idSuperusuario);
         }
 
         const resultado = await executarQuery(
             `SELECT
-        d.idDenuncia,
-        d.idUsuario,
-        d.titulo,
-        d.tipo,
-        d.visibilidade,
-        DATE_FORMAT(
-            d.dataOcorrencia,
-            '%d/%m/%Y'
-        ) AS dataOcorrenciaFormatada,
-        d.descricao,
-        d.status,
-        d.prioridade,
-        d.fiscal_id AS idFiscalResponsavel,
-        DATE_FORMAT(
-            d.dataAbertura,
-            '%d/%m/%Y às %H:%i'
-        ) AS dataAberturaFormatada,
-        l.endereco,
-        u.nome AS nomeUsuario,
-        f.nome AS nomeFiscal
-     FROM DENUNCIA d
-     INNER JOIN LOCALIZACAO l
-        ON d.idLocalizacao = l.idLocalizacao
-     LEFT JOIN USUARIO u
-        ON d.idUsuario = u.id
-     LEFT JOIN FISCAL f
-        ON d.fiscal_id = f.id
-     WHERE d.idDenuncia = ?
-     ${filtroAcesso}
-     LIMIT 1`,
+                d.idDenuncia,
+                d.idUsuario,
+                d.titulo,
+                d.tipo,
+                d.visibilidade,
+                DATE_FORMAT(
+                    d.dataOcorrencia,
+                    '%d/%m/%Y'
+                ) AS dataOcorrenciaFormatada,
+                d.descricao,
+                d.status,
+                d.prioridade,
+                d.fiscal_id AS idFiscalResponsavel,
+                DATE_FORMAT(
+                    d.dataAbertura,
+                    '%d/%m/%Y às %H:%i'
+                ) AS dataAberturaFormatada,
+                l.endereco,
+                u.nome AS nomeUsuario,
+                f.nome AS nomeFiscal
+            FROM DENUNCIA d
+            INNER JOIN LOCALIZACAO l
+                ON d.idLocalizacao = l.idLocalizacao
+            LEFT JOIN USUARIO u
+                ON d.idUsuario = u.id
+            LEFT JOIN FISCAL f
+                ON d.fiscal_id = f.id
+            WHERE d.idDenuncia = ?
+            ${filtroAcesso}
+            LIMIT 1`,
             parametros
         );
 
@@ -127,13 +130,15 @@ router.get("/:id", verificarAcesso, async (req, res) => {
 
         const denuncia = resultado[0];
 
-        // Compatibilidade com denúncias antigas.
+        //* Compatibilidade com denúncias antigas.
         const descricaoOriginal = String(denuncia.descricao || "");
         const linhasDescricao = descricaoOriginal.split(/\r?\n/);
 
         const extrairCampoAntigo = (rotulo) => {
             const linha = linhasDescricao.find(item =>
-                item.trim().toLowerCase().startsWith(`${rotulo.toLowerCase()}:`)
+                item.trim().toLowerCase().startsWith(
+                    `${rotulo.toLowerCase()}:`
+                )
             );
 
             return linha
@@ -142,7 +147,9 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         };
 
         const possuiDadosAntigos = linhasDescricao.some(linha =>
-            /^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+            /^(título|visibilidade|data da ocorrência):/i.test(
+                linha.trim()
+            )
         );
 
         if (!denuncia.titulo) {
@@ -150,7 +157,8 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         }
 
         if (possuiDadosAntigos) {
-            const visibilidadeAntiga = extrairCampoAntigo("Visibilidade");
+            const visibilidadeAntiga =
+                extrairCampoAntigo("Visibilidade");
 
             if (visibilidadeAntiga) {
                 denuncia.visibilidade =
@@ -159,7 +167,8 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                         : "anonimo";
             }
 
-            const dataAntiga = extrairCampoAntigo("Data da ocorrência");
+            const dataAntiga =
+                extrairCampoAntigo("Data da ocorrência");
 
             if (!denuncia.dataOcorrenciaFormatada && dataAntiga) {
                 const partesData = dataAntiga.match(
@@ -172,7 +181,8 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             }
 
             const indiceSeparador = linhasDescricao.findIndex(
-                (linha, indice) => indice > 0 && linha.trim() === ""
+                (linha, indice) =>
+                    indice > 0 && linha.trim() === ""
             );
 
             if (indiceSeparador >= 0) {
@@ -183,7 +193,9 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             } else {
                 denuncia.descricao = linhasDescricao
                     .filter(linha =>
-                        !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+                        !/^(título|visibilidade|data da ocorrência):/i.test(
+                            linha.trim()
+                        )
                     )
                     .join("\n")
                     .trim();
@@ -191,6 +203,7 @@ router.get("/:id", verificarAcesso, async (req, res) => {
         }
 
         const tipoVisualizador = req.session.usuario.tipo;
+
         const equipePodeVerIdentidade =
             ["fiscal", "superusuario"].includes(tipoVisualizador);
 
@@ -201,16 +214,20 @@ router.get("/:id", verificarAcesso, async (req, res) => {
             .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase();
 
-        const denunciaAnonima = visibilidadeNormalizada === "anonimo";
+        const denunciaAnonima =
+            visibilidadeNormalizada === "anonimo";
 
-        // A identidade de uma denúncia anônima só é exibida à equipe.
+        //* A identidade de uma denúncia anônima só é exibida à equipe.
         denuncia.nomeExibicao =
             !denunciaAnonima || equipePodeVerIdentidade
                 ? denuncia.nomeUsuario
                 : "Anônimo";
 
         const evidencias = await executarQuery(
-            `SELECT idEvidencia, tipoEvidencia, dadosEvidencia
+            `SELECT
+                idEvidencia,
+                tipoEvidencia,
+                dadosEvidencia
              FROM EVIDENCIA
              WHERE idDenuncia = ?
              ORDER BY idEvidencia ASC`,
@@ -246,30 +263,25 @@ router.get("/:id", verificarAcesso, async (req, res) => {
                         AND LOWER(COALESCE(d.visibilidade, 'anonimo')) = 'anonimo'
                         AND ? = 0
                     THEN 'Anônimo'
-                    ELSE COALESCE (u.nome, f.nome, 'Remetente')
+                    ELSE COALESCE(u.nome, f.nome, 'Remetente')
                 END AS autor,
                 CASE
                     WHEN m.idFiscal IS NOT NULL THEN 'Fiscal'
                     ELSE 'Cidadão'
                 END AS tipoRemetente
-
             FROM MENSAGEM_DENUNCIA m
-
             INNER JOIN DENUNCIA d
-            ON m.idDenuncia = d.idDenuncia
-
+                ON m.idDenuncia = d.idDenuncia
             LEFT JOIN USUARIO u
                 ON m.idUsuario = u.id
-
-            LEFT JOIN FISCAL f 
+            LEFT JOIN FISCAL f
                 ON m.idFiscal = f.id
-
             WHERE m.idDenuncia = ?
-
-            
             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
             [
-                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0,
+                ["fiscal", "superusuario"].includes(
+                    req.session.usuario.tipo
+                ) ? 1 : 0,
                 idDenuncia
             ]
         );
@@ -301,6 +313,7 @@ router.get("/:id", verificarAcesso, async (req, res) => {
 });
 
 
+// ENVIO DE MENSAGENS
 router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
     const idDenuncia = idValido(req.params.id);
     const usuarioSessao = req.session.usuario;
@@ -318,7 +331,10 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
 
     try {
         const resultado = await executarQuery(
-            `SELECT idUsuario, fiscal_id
+            `SELECT
+                idUsuario,
+                fiscal_id,
+                idLocalidade
              FROM DENUNCIA
              WHERE idDenuncia = ?
              LIMIT 1`,
@@ -362,6 +378,21 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
                 );
             }
 
+            const fiscalAtendeLocalidade = await executarQuery(
+                `SELECT 1
+                 FROM FISCAL_LOCALIDADE
+                 WHERE idFiscal = ?
+                   AND idLocalidade = ?
+                 LIMIT 1`,
+                [idSessao, denuncia.idLocalidade]
+            );
+
+            if (!fiscalAtendeLocalidade.length) {
+                return res.status(403).send(
+                    "Você não tem permissão para responder nesta localidade."
+                );
+            }
+
             idFiscal = idSessao;
 
         } else {
@@ -389,6 +420,5 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
         );
     }
 });
-
 
 module.exports = router;
