@@ -12,6 +12,8 @@ async function listarDenunciasPorFiscal(idFiscal) {
             d.status,
             d.prioridade,
             l.endereco,
+            l.latitude,
+            l.longitude,
             u.nome AS nomeUsuario,
             d.fiscal_id AS idFiscalResponsavel,
             f.nome AS nomeFiscalResponsavel

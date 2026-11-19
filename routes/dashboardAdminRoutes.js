@@ -43,9 +43,34 @@ router.get('/', verificarPainelOrganizacao, async (req, res) => {
             ).length
         };
 
+        const features = denuncias
+            .filter(d => d.latitude != null && d.longitude != null)
+            .map(d => {
+                const latitude = Number(d.latitude);
+                const longitude = Number(d.longitude);
+
+                if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+                    return null;
+                }
+
+                return {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    },
+                    properties: {
+                        titulo: d.tipo || 'Denúncia',
+                        endereco: d.endereco,
+                        status: d.status
+                    }
+                };
+            })
+            .filter(Boolean);
+
         const geojson = {
             type: 'FeatureCollection',
-            features: []
+            features
         };
 
         return res.render('dashboardAdmin', {

@@ -4,7 +4,7 @@ const router = express.Router();
 const { executarQuery } = require("../db/dbConnect");
 
 const {
-    verificarUsuario
+    verificarFiscalAtivo
 } = require("../middlewares/autenticacao");
 
 function verificarAcesso(req, res, next) {
@@ -18,7 +18,7 @@ function verificarAcesso(req, res, next) {
         return res.status(403).send("Acesso negado.");
     }
 
-    next();
+    return verificarFiscalAtivo(req, res, next);
 }
 
 function idValido(valor) {
