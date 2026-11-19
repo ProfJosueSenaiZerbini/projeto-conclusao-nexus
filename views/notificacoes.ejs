@@ -1,92 +1,142 @@
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notificações</title>
 
+    <title>SafeZone | Notificações</title>
+
+    <!-- CSS compartilhado -->
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/menu.css">
+
+    <!-- CSS da página -->
     <link rel="stylesheet" href="/css/notificacoes.css">
 
-    <link rel="stylesheet" href="/css/header.css">
-
-    <link rel="stylesheet" href="/css/menu.css">
+    <!-- Ícones -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
 
+    <!-- CABEÇALHO -->
     <%- include("partials/header") %>
 
-        <div class="pagina">
+    <div class="pagina">
+        <div class="container">
 
-            <div class="conteudo">
+            <!-- MENU LATERAL -->
+            <% if (usuario && (usuario.tipo === "fiscal" || usuario.tipo === "superusuario")) { %>
+                <%- include("partials/menuAdm") %>
+            <% } else { %>
+                <%- include("partials/menu") %>
+            <% } %>
 
-                <%- include(usuario && ['fiscal', 'superusuario'].includes(usuario.tipo) 
-                        ? "partials/menuAdm" : "partials/menu") %>
+            <!-- CONTEÚDO PRINCIPAL -->
+            <main class="area-notificacoes">
 
-                    <main class="area-notificacoes">
-                        <div class="cabecalho-notificacoes">
-                            <div>
-                                <h1>Notificações</h1>
-                                <p>Acompanhe as atualizações das suas denúncias.</p>
-                            </div>
-                            <form action="/notificacoes/marcar-todas-lidas" method="POST">
-                                <button class="marcar-lidas" type="submit">Marcar todas como lidas</button>
-                            </form>
-                        </div>
+                <!-- TÍTULO -->
+                <section class="cabecalho-notificacoes">
 
-                        <!-- LISTA DE NOTIFICAÇÕES -->
-                        <div class="lista-notificacoes">
-                            <% if (notificacoes && notificacoes.length> 0) { %>
-                                <% notificacoes.forEach(n=> { %>
-                                    <!-- O LINK ENVOLVE O CARD INTEIRO -->
-                                    <a href="/denunciaDetalhe/<%= n.denuncia_id %>" class="link-notificacao"
-                                        style="text-decoration: none; color: inherit;">
-                                        <article class="notificacao-item <%= n.lida ? '' : 'nao-lida' %>">
-                                            <div class="notificacao-indicador"></div>
-                                            <div class="notificacao-icone">
-                                                <%= n.lida ? '✓' : '🔔' %>
-                                            </div>
-                                            <div class="notificacao-conteudo">
-                                                <div class="notificacao-cabecalho">
-                                                    <h2>
-                                                        <%= n.titulo %>
-                                                    </h2>
-                                                    <span class="notificacao-horario">
-                                                        <%= n.horario %>
-                                                    </span>
-                                                </div>
-                                                <p>
-                                                    <%= n.mensagem %>
-                                                </p>
-                                                <span class="notificacao-data">
-                                                    <%= n.data %>
-                                                </span>
-                                            </div>
-                                        </article>
-                                    </a>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p class="sem-notificacoes">Nenhuma notificação no momento.</p>
-                                            <% } %>
-                        </div>
-                    </main>
-                    <!-- MODAL DE CONFIRMAÇÃO ESTILIZADO -->
-                    <div id="modal-confirmacao" class="modal-overlay hidden">
-                        <div class="modal-card">
-                            <h3>Marcar como lidas</h3>
-                            <p>Deseja realmente marcar todas as notificações como lidas?</p>
-                            <div class="modal-acoes">
-                                <button id="btn-cancelar" class="btn-secundario">Cancelar</button>
-                                <button id="btn-confirmar" class="btn-principal">Confirmar</button>
-                            </div>
-                        </div>
+                    <div>
+                        <h1>Notificações</h1>
+
+                        <p>
+                            Você possui
+                            <strong><%= totalNaoLidas || 0 %></strong>
+                            notificações não lidas.
+                        </p>
                     </div>
-            </div>
+
+                    <% if (notificacoes && notificacoes.some(n => Number(n.lida) === 0)) { %>
+
+                        <form
+                            action="/notificacoes/marcar-todas-lidas"
+                            method="POST"
+                        >
+                            <button
+                                type="submit"
+                                class="marcar-lidas"
+                            >
+                                Marcar todas como lidas
+                            </button>
+                        </form>
+
+                    <% } %>
+
+                </section>
+
+                <!-- LISTA DE NOTIFICAÇÕES -->
+                <section class="lista-notificacoes">
+
+                    <% if (notificacoes && notificacoes.length > 0) { %>
+
+                        <% notificacoes.forEach(n => { %>
+
+                            <a
+                                href="/denunciaDetalhe/<%= n.denuncia_id %>"
+                                class="link-notificacao"
+                                data-id="<%= n.idNotificacao %>"
+                                data-url="/denunciaDetalhe/<%= n.denuncia_id %>"
+                            >
+
+                                <article class="notificacao-item <%= Number(n.lida) === 0 ? 'nao-lida' : '' %>">
+
+                                    <div class="notificacao-indicador"></div>
+
+                                    <div class="notificacao-icone">
+                                        <%= Number(n.lida) === 1 ? '✓' : '🔔' %>
+                                    </div>
+
+                                    <div class="notificacao-conteudo">
+
+                                        <div class="notificacao-cabecalho">
+
+                                            <h2>
+                                                <%= n.titulo %>
+                                            </h2>
+
+                                            <span class="notificacao-horario">
+                                                <%= n.horario %>
+                                            </span>
+
+                                        </div>
+
+                                        <p>
+                                            <%= n.mensagem %>
+                                        </p>
+
+                                        <span class="notificacao-data">
+                                            <%= n.data %>
+                                        </span>
+
+                                    </div>
+
+                                </article>
+
+                            </a>
+
+                        <% }) %>
+
+                    <% } else { %>
+
+                        <p class="sem-notificacoes">
+                            Nenhuma notificação no momento.
+                        </p>
+
+                    <% } %>
+
+                </section>
+
+            </main>
+
         </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="/js/notificacoes.js"></script>
 
 </body>
-
-<script src="/js/notificacoes.js"></script>
-
 </html>

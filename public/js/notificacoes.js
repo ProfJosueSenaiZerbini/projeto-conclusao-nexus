@@ -35,20 +35,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     linksNotificacao.forEach(link => {
         /* Escuta o clique em cada card */
-        link.addEventListener('click', () => {
-            const card = link.querySelector('.notificacao-item');
-            const icone = link.querySelector('.notificacao-icone');
+        link.addEventListener('click', async event => {
 
-            /* Se o card ainda tiver o destaque de "não lida" */
-            if(card && card.classList.contains('nao-lida')) {
-                /* Remove a cor de destaque do card imediatamente */
-                card.classList.remove('nao-lida');
+            event.preventDefault();
 
-                /* Troca o ícone de sininho para check */
-                if(icone){
-                    icone.textContent = '✓';
+            const id = link.dataset.id;
+            const destino = link.dataset.url;
+
+           const card = link.querySelector(".notificacao-item");
+
+        // Se já estiver lida, apenas abre a denúncia.
+        if (!card.classList.contains("nao-lida")) {
+            window.location.href = destino;
+            return;
+        }
+
+        try {
+
+            const resposta = await fetch(
+                `/notificacoes/${id}/marcar-lida`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
                 }
+            );
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok || !resultado.sucesso) {
+                throw new Error(resultado.mensagem);
             }
-        })
-    })
-})
+
+            card.classList.remove("nao-lida");
+
+            const icone = link.querySelector(
+                ".notificacao-icone"
+            );
+
+            if (icone) {
+                icone.textContent = "✓";
+            }
+
+            window.location.href = destino;
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao marcar notificação:",
+                erro
+            );
+
+            alert(
+                "Não foi possível atualizar a notificação."
+            );
+        }
+
+    });
+});
+});
+
