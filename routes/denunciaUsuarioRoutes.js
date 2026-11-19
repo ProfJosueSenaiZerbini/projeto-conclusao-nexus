@@ -95,7 +95,7 @@ router.post(
         const idUsuario = req.session.usuario.id;
         const arquivos = req.files || [];
 
-        // 1. Validação dos campos obrigatórios.
+        // 1. VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
 
         if (
             !categoria?.trim() ||
@@ -116,9 +116,7 @@ router.post(
 
             const idDenuncia = await executarTransacao(async conn => {
 
-                // =================================================
                 // 2. BUSCAR LOCALIDADE
-                // =================================================
 
                 const resultadoLocalidade = await conn.query(
                     `SELECT idLocalidade
@@ -145,48 +143,30 @@ router.post(
                     resultadoLocalidade[0].idLocalidade
                 );
 
-                
-// =================================================
-// 3. IDENTIFICAR ORGANIZAÇÃO PELA LOCALIDADE
-// =================================================
+                // 3. IDENTIFICAR FISCAIS PELA LOCALIDADE
 
-const organizacoesResponsaveis = await conn.query(
-    `SELECT DISTINCT f.idOrganizacao
-     FROM FISCAL f
-     INNER JOIN FISCAL_LOCALIDADE fl
-        ON fl.idFiscal = f.id
-     WHERE fl.idLocalidade = ?
-       AND f.status = 'ativo'
-       AND f.idOrganizacao IS NOT NULL`,
-    [idLocalidade]
-);
+                const fiscaisResponsaveis = await conn.query(
+                    `SELECT DISTINCT
+                        f.id,
+                        f.idSuperusuario
+                     FROM FISCAL f
+                     INNER JOIN FISCAL_LOCALIDADE fl
+                        ON fl.idFiscal = f.id
+                     WHERE fl.idLocalidade = ?
+                       AND f.status = 'ativo'`,
+                    [idLocalidade]
+                );
 
-if (organizacoesResponsaveis.length === 0) {
-    const erro = new Error(
-        "Não existe fiscal ativo responsável por essa localidade."
-    );
+                if (fiscaisResponsaveis.length === 0) {
+                    const erro = new Error(
+                        "Não existe fiscal ativo responsável por essa localidade."
+                    );
 
-    erro.codigo = "FISCAL_NAO_ENCONTRADO";
-    throw erro;
-}
+                    erro.codigo = "FISCAL_NAO_ENCONTRADO";
+                    throw erro;
+                }
 
-if (organizacoesResponsaveis.length > 1) {
-    const erro = new Error(
-        "Existem várias organizações responsáveis por essa localidade."
-    );
-
-    erro.codigo = "VARIAS_ORGANIZACOES";
-    throw erro;
-}
-
-const idOrganizacao = Number(
-    organizacoesResponsaveis[0].idOrganizacao
-);
-
-
-                // =================================================
                 // 4. CADASTRAR LOCALIZAÇÃO
-                // =================================================
 
                 const resultadoLocalizacao = await conn.query(
                     `INSERT INTO LOCALIZACAO
@@ -204,9 +184,7 @@ const idOrganizacao = Number(
                     resultadoLocalizacao.insertId
                 );
 
-                // =================================================
                 // 5. CADASTRAR DENÚNCIA
-                // =================================================
 
                 const resultadoDenuncia = await conn.query(
                     `INSERT INTO DENUNCIA
@@ -226,7 +204,7 @@ const idOrganizacao = Number(
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         idUsuario,
-                        idOrganizacao,
+                        null,
                         idLocalidade,
                         titulo.trim(),
                         categoria.trim(),
@@ -245,27 +223,7 @@ const idOrganizacao = Number(
                     resultadoDenuncia.insertId
                 );
 
-                // =================================================
-                // 6. BUSCAR FISCAIS RESPONSÁVEIS
-                // =================================================
-
-                const fiscaisResponsaveis = await conn.query(
-                    `SELECT DISTINCT f.id
-                     FROM FISCAL f
-                     INNER JOIN FISCAL_LOCALIDADE fl
-                        ON fl.idFiscal = f.id
-                     WHERE f.idOrganizacao = ?
-                       AND fl.idLocalidade = ?
-                       AND f.status = 'ativo'`,
-                    [
-                        idOrganizacao,
-                        idLocalidade
-                    ]
-                );
-
-                // =================================================
-                // 7. NOTIFICAR O CIDADÃO
-                // =================================================
+                // 6. NOTIFICAR O CIDADÃO
 
                 await criarNotificacao(conn, {
                     idDenuncia: novoIdDenuncia,
@@ -277,9 +235,7 @@ const idOrganizacao = Number(
                     conteudo: `Sua denúncia "${titulo.trim()}" foi registrada com sucesso.`
                 });
 
-                // =================================================
-                // 8. NOTIFICAR OS FISCAIS RESPONSÁVEIS
-                // =================================================
+                // 7. NOTIFICAR OS FISCAIS RESPONSÁVEIS
 
                 for (const fiscal of fiscaisResponsaveis) {
 
@@ -294,41 +250,30 @@ const idOrganizacao = Number(
                     });
                 }
 
-                // =================================================
-                // 9. BUSCAR SUPERUSUÁRIO DA ORGANIZAÇÃO
-                // =================================================
+                // 8. NOTIFICAR OS SUPERUSUÁRIOS DOS FISCAIS
 
-                const superusuarios = await conn.query(
-                    `SELECT idSuperusuario
-                     FROM SUPERUSUARIO
-                     WHERE idOrganizacao = ?
-                     LIMIT 1`,
-                    [idOrganizacao]
-                );
+                const idsSuperusuarios = [
+                    ...new Set(
+                        fiscaisResponsaveis
+                            .map(fiscal => Number(fiscal.idSuperusuario))
+                            .filter(id => Number.isInteger(id) && id > 0)
+                    )
+                ];
 
-                // =================================================
-                // 10. NOTIFICAR SUPERUSUÁRIO
-                // =================================================
-
-                if (superusuarios.length > 0) {
+                for (const idSuperusuario of idsSuperusuarios) {
 
                     await criarNotificacao(conn, {
                         idDenuncia: novoIdDenuncia,
+                        idSuperusuario,
 
-                        idSuperusuario: Number(
-                            superusuarios[0].idSuperusuario
-                        ),
-
-                        titulo: "Nova denúncia na organização",
+                        titulo: "Nova denúncia na sua localidade",
                         tipo: "nova_denuncia",
 
-                        conteudo: `Uma nova denúncia da categoria "${categoria}" foi recebida pela organização.`
+                        conteudo: `Uma nova denúncia da categoria "${categoria}" foi registrada em uma localidade atendida por um dos seus fiscais.`
                     });
                 }
 
-                // =================================================
-                // 11. CADASTRAR EVIDÊNCIAS
-                // =================================================
+                // 9. CADASTRAR EVIDÊNCIAS
 
                 for (const arquivo of arquivos) {
 
@@ -355,17 +300,13 @@ const idOrganizacao = Number(
                     );
                 }
 
-                // =================================================
-                // 12. FINALIZAR TRANSAÇÃO
-                // =================================================
+                // 10. FINALIZAR TRANSAÇÃO
 
                 return novoIdDenuncia;
 
             });
 
-            // =====================================================
-            // 13. REDIRECIONAR PARA DETALHES
-            // =====================================================
+            // 11. REDIRECIONAR PARA DETALHES
 
             return res.redirect(
                 `/denunciaDetalhe/${idDenuncia}`
@@ -380,23 +321,19 @@ const idOrganizacao = Number(
 
             await removerArquivos(arquivos);
 
-    if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
-        return res.status(400).send(erro.message);
-    }
+            if (erro.codigo === "LOCALIDADE_NAO_ENCONTRADA") {
+                return res.status(400).send(erro.message);
+            }
 
-    if (erro.codigo === "FISCAL_NAO_ENCONTRADO") {
-        return res.status(400).send(erro.message);
-    }
+            if (erro.codigo === "FISCAL_NAO_ENCONTRADO") {
+                return res.status(400).send(erro.message);
+            }
 
-    if (erro.codigo === "VARIAS_ORGANIZACOES") {
-        return res.status(400).send(erro.message);
-    }
-
-    return res.status(500).send(
-        "Erro ao cadastrar denúncia."
-    );
-}
+            return res.status(500).send(
+                "Erro ao cadastrar denúncia."
+            );
         }
+    }
 );
 
 module.exports = router;

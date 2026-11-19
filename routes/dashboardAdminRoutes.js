@@ -70,7 +70,25 @@ router.get('/', verificarPainelOrganizacao, async (req, res) => {
 
         const geojson = {
             type: 'FeatureCollection',
-            features
+            features: denuncias
+                .filter(d =>
+                    d.latitude != null &&
+                    d.longitude != null
+                )
+                .map(d => ({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [
+                            Number(d.longitude),
+                            Number(d.latitude)
+                        ]
+                    },
+                    properties: {
+                        titulo: d.tipo,
+                        status: d.status
+                    }
+                }))
         };
 
         return res.render('dashboardAdmin', {
