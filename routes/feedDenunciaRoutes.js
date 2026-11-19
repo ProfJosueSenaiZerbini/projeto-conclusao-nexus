@@ -123,19 +123,29 @@ router.get("/", verificarAutenticado, async (req, res) => {
             parametros.push(idFiscal);
 
         } else if (tipoUsuario === "superusuario") {
-            const idOrganizacao = Number(usuario.idOrganizacao);
+            const idSuperusuario = Number(usuario.id);
 
             if (
-                !Number.isInteger(idOrganizacao) ||
-                idOrganizacao <= 0
+                !Number.isInteger(idSuperusuario) ||
+                idSuperusuario <= 0
             ) {
                 return res.status(403).send(
-                    "Sua conta não está vinculada a uma organização."
+                    "Superusuário inválido."
                 );
             }
 
-            sql += " AND d.idOrganizacao = ?";
-            parametros.push(idOrganizacao);
+            sql += `
+        AND EXISTS (
+            SELECT 1
+            FROM FISCAL fiscal
+            INNER JOIN FISCAL_LOCALIDADE fl
+                ON fl.idFiscal = fiscal.id
+            WHERE fiscal.idSuperusuario = ?
+              AND fl.idLocalidade = d.idLocalidade
+        )
+    `;
+
+            parametros.push(idSuperusuario);
         }
 
         sql += `

@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -14,11 +13,10 @@ function verificarAcesso(req, res, next) {
     }
 
     const { tipo } = req.session.usuario;
-    
+
     if (!["usuario", "fiscal", "superusuario"].includes(tipo)) {
         return res.status(403).send("Acesso negado.");
     }
-
 
     next();
 }
@@ -31,6 +29,7 @@ function idValido(valor) {
         : null;
 }
 
+// DETALHES DA DENÚNCIA
 router.get("/:id", verificarAcesso, async (req, res) => {
     const idDenuncia = idValido(req.params.id);
 
@@ -41,41 +40,53 @@ router.get("/:id", verificarAcesso, async (req, res) => {
     try {
         const tipoUsuario = req.session.usuario.tipo;
 
-let filtroAcesso = "";
-const parametros = [idDenuncia];
+        let filtroAcesso = "";
+        const parametros = [idDenuncia];
 
-if (tipoUsuario === "fiscal") {
-    const idFiscal = Number(req.session.usuario.id);
+        if (tipoUsuario === "fiscal") {
+            const idFiscal = idValido(req.session.usuario.id);
 
-    filtroAcesso = `
-        AND EXISTS (
-            SELECT 1
-            FROM FISCAL_LOCALIDADE fl
-            WHERE fl.idFiscal = ?
-              AND fl.idLocalidade = d.idLocalidade
-        )
-    `;
+            if (!idFiscal) {
+                return res.status(403).send("Fiscal inválido.");
+            }
 
-    parametros.push(idFiscal);
-}
+            filtroAcesso = `
+                AND EXISTS (
+                    SELECT 1
+                    FROM FISCAL_LOCALIDADE fl
+                    WHERE fl.idFiscal = ?
+                      AND fl.idLocalidade = d.idLocalidade
+                )
+            `;
 
-if (tipoUsuario === "superusuario") {
-    const idOrganizacao = Number(
-        req.session.usuario.idOrganizacao
-    );
+            parametros.push(idFiscal);
+        }
 
-    if (
-        !Number.isInteger(idOrganizacao) ||
-        idOrganizacao <= 0
-    ) {
-        return res.status(403).send(
-            "Sua conta não está vinculada a uma organização."
-        );
-    }
+        if (tipoUsuario === "superusuario") {
+            const idSuperusuario = idValido(
+                req.session.usuario.id
+            );
 
-    filtroAcesso = " AND d.idOrganizacao = ?";
-    parametros.push(idOrganizacao);
-}
+            if (!idSuperusuario) {
+                return res.status(403).send(
+                    "Superusuário inválido."
+                );
+            }
+
+            filtroAcesso = `
+                AND EXISTS (
+                    SELECT 1
+                    FROM FISCAL fiscal
+                    INNER JOIN FISCAL_LOCALIDADE fl
+                        ON fl.idFiscal = fiscal.id
+                    WHERE fiscal.idSuperusuario = ?
+                      AND fl.idLocalidade = d.idLocalidade
+                )
+            `;
+
+            parametros.push(idSuperusuario);
+        }
+
         const resultado = await executarQuery(
             `SELECT
                 d.idDenuncia,
@@ -98,16 +109,16 @@ if (tipoUsuario === "superusuario") {
                 l.endereco,
                 u.nome AS nomeUsuario,
                 f.nome AS nomeFiscal
-             FROM DENUNCIA d
-             INNER JOIN LOCALIZACAO l
+            FROM DENUNCIA d
+            INNER JOIN LOCALIZACAO l
                 ON d.idLocalizacao = l.idLocalizacao
-             LEFT JOIN USUARIO u
+            LEFT JOIN USUARIO u
                 ON d.idUsuario = u.id
-             LEFT JOIN FISCAL f
+            LEFT JOIN FISCAL f
                 ON d.fiscal_id = f.id
-             WHERE d.idDenuncia = ?
-             ${filtroAcesso}
-             LIMIT 1`,
+            WHERE d.idDenuncia = ?
+            ${filtroAcesso}
+            LIMIT 1`,
             parametros
         );
 
@@ -119,13 +130,15 @@ if (tipoUsuario === "superusuario") {
 
         const denuncia = resultado[0];
 
-        // Compatibilidade com denúncias antigas.
+        //* Compatibilidade com denúncias antigas.
         const descricaoOriginal = String(denuncia.descricao || "");
         const linhasDescricao = descricaoOriginal.split(/\r?\n/);
 
         const extrairCampoAntigo = (rotulo) => {
             const linha = linhasDescricao.find(item =>
-                item.trim().toLowerCase().startsWith(`${rotulo.toLowerCase()}:`)
+                item.trim().toLowerCase().startsWith(
+                    `${rotulo.toLowerCase()}:`
+                )
             );
 
             return linha
@@ -134,7 +147,9 @@ if (tipoUsuario === "superusuario") {
         };
 
         const possuiDadosAntigos = linhasDescricao.some(linha =>
-            /^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+            /^(título|visibilidade|data da ocorrência):/i.test(
+                linha.trim()
+            )
         );
 
         if (!denuncia.titulo) {
@@ -142,7 +157,8 @@ if (tipoUsuario === "superusuario") {
         }
 
         if (possuiDadosAntigos) {
-            const visibilidadeAntiga = extrairCampoAntigo("Visibilidade");
+            const visibilidadeAntiga =
+                extrairCampoAntigo("Visibilidade");
 
             if (visibilidadeAntiga) {
                 denuncia.visibilidade =
@@ -151,7 +167,8 @@ if (tipoUsuario === "superusuario") {
                         : "anonimo";
             }
 
-            const dataAntiga = extrairCampoAntigo("Data da ocorrência");
+            const dataAntiga =
+                extrairCampoAntigo("Data da ocorrência");
 
             if (!denuncia.dataOcorrenciaFormatada && dataAntiga) {
                 const partesData = dataAntiga.match(
@@ -164,7 +181,8 @@ if (tipoUsuario === "superusuario") {
             }
 
             const indiceSeparador = linhasDescricao.findIndex(
-                (linha, indice) => indice > 0 && linha.trim() === ""
+                (linha, indice) =>
+                    indice > 0 && linha.trim() === ""
             );
 
             if (indiceSeparador >= 0) {
@@ -175,7 +193,9 @@ if (tipoUsuario === "superusuario") {
             } else {
                 denuncia.descricao = linhasDescricao
                     .filter(linha =>
-                        !/^(título|visibilidade|data da ocorrência):/i.test(linha.trim())
+                        !/^(título|visibilidade|data da ocorrência):/i.test(
+                            linha.trim()
+                        )
                     )
                     .join("\n")
                     .trim();
@@ -183,6 +203,7 @@ if (tipoUsuario === "superusuario") {
         }
 
         const tipoVisualizador = req.session.usuario.tipo;
+
         const equipePodeVerIdentidade =
             ["fiscal", "superusuario"].includes(tipoVisualizador);
 
@@ -193,16 +214,20 @@ if (tipoUsuario === "superusuario") {
             .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase();
 
-        const denunciaAnonima = visibilidadeNormalizada === "anonimo";
+        const denunciaAnonima =
+            visibilidadeNormalizada === "anonimo";
 
-        // A identidade de uma denúncia anônima só é exibida à equipe.
+        //* A identidade de uma denúncia anônima só é exibida à equipe.
         denuncia.nomeExibicao =
             !denunciaAnonima || equipePodeVerIdentidade
                 ? denuncia.nomeUsuario
                 : "Anônimo";
 
         const evidencias = await executarQuery(
-            `SELECT idEvidencia, tipoEvidencia, dadosEvidencia
+            `SELECT
+                idEvidencia,
+                tipoEvidencia,
+                dadosEvidencia
              FROM EVIDENCIA
              WHERE idDenuncia = ?
              ORDER BY idEvidencia ASC`,
@@ -238,30 +263,25 @@ if (tipoUsuario === "superusuario") {
                         AND LOWER(COALESCE(d.visibilidade, 'anonimo')) = 'anonimo'
                         AND ? = 0
                     THEN 'Anônimo'
-                    ELSE COALESCE (u.nome, f.nome, 'Remetente')
+                    ELSE COALESCE(u.nome, f.nome, 'Remetente')
                 END AS autor,
                 CASE
                     WHEN m.idFiscal IS NOT NULL THEN 'Fiscal'
                     ELSE 'Cidadão'
                 END AS tipoRemetente
-
             FROM MENSAGEM_DENUNCIA m
-
             INNER JOIN DENUNCIA d
-            ON m.idDenuncia = d.idDenuncia
-
+                ON m.idDenuncia = d.idDenuncia
             LEFT JOIN USUARIO u
                 ON m.idUsuario = u.id
-
-            LEFT JOIN FISCAL f 
+            LEFT JOIN FISCAL f
                 ON m.idFiscal = f.id
-
             WHERE m.idDenuncia = ?
-
-            
             ORDER BY m.dataHora ASC, m.idMensagem ASC`,
             [
-                ["fiscal", "superusuario"].includes(req.session.usuario.tipo) ? 1 : 0, 
+                ["fiscal", "superusuario"].includes(
+                    req.session.usuario.tipo
+                ) ? 1 : 0,
                 idDenuncia
             ]
         );
@@ -280,7 +300,7 @@ if (tipoUsuario === "superusuario") {
             podeEnviarMensagemFiscal:
                 req.session.usuario.tipo === "fiscal" &&
                 Number(req.session.usuario.id) ===
-                Number(denuncia.idFiscalResponsavel) 
+                Number(denuncia.idFiscalResponsavel)
         });
 
     } catch (erro) {
@@ -293,6 +313,7 @@ if (tipoUsuario === "superusuario") {
 });
 
 
+// ENVIO DE MENSAGENS
 router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
     const idDenuncia = idValido(req.params.id);
     const usuarioSessao = req.session.usuario;
@@ -310,7 +331,10 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
 
     try {
         const resultado = await executarQuery(
-            `SELECT idUsuario, fiscal_id
+            `SELECT
+                idUsuario,
+                fiscal_id,
+                idLocalidade
              FROM DENUNCIA
              WHERE idDenuncia = ?
              LIMIT 1`,
@@ -354,6 +378,21 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
                 );
             }
 
+            const fiscalAtendeLocalidade = await executarQuery(
+                `SELECT 1
+                 FROM FISCAL_LOCALIDADE
+                 WHERE idFiscal = ?
+                   AND idLocalidade = ?
+                 LIMIT 1`,
+                [idSessao, denuncia.idLocalidade]
+            );
+
+            if (!fiscalAtendeLocalidade.length) {
+                return res.status(403).send(
+                    "Você não tem permissão para responder nesta localidade."
+                );
+            }
+
             idFiscal = idSessao;
 
         } else {
@@ -381,6 +420,5 @@ router.post("/:id/mensagem", verificarAcesso, async (req, res) => {
         );
     }
 });
-
 
 module.exports = router;
