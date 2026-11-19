@@ -8,6 +8,7 @@ const fs = require("fs");
 const { executarTransacao } = require("../db/dbConnect");
 const { verificarUsuario } = require("../middlewares/autenticacao");
 const { criarNotificacao } = require("../services/notificacaoService");
+const { geocodificarLocalizacao } = require("../services/geocodificacaoService");
 
 // =====================================================
 // CONFIGURAÇÃO DOS UPLOADS
@@ -113,8 +114,7 @@ router.post(
         }
 
         try {
-
-            const idDenuncia = await executarTransacao(async conn => {
+            const resultadoCadastro = await executarTransacao(async conn => {
 
                 // 2. BUSCAR LOCALIDADE
 
@@ -238,7 +238,6 @@ router.post(
                 // 7. NOTIFICAR OS FISCAIS RESPONSÁVEIS
 
                 for (const fiscal of fiscaisResponsaveis) {
-
                     await criarNotificacao(conn, {
                         idDenuncia: novoIdDenuncia,
                         idFiscal: Number(fiscal.id),
@@ -261,7 +260,6 @@ router.post(
                 ];
 
                 for (const idSuperusuario of idsSuperusuarios) {
-
                     await criarNotificacao(conn, {
                         idDenuncia: novoIdDenuncia,
                         idSuperusuario,
@@ -276,7 +274,6 @@ router.post(
                 // 9. CADASTRAR EVIDÊNCIAS
 
                 for (const arquivo of arquivos) {
-
                     const tipoEvidencia =
                         arquivo.mimetype.startsWith("image/")
                             ? "imagem"
@@ -300,24 +297,31 @@ router.post(
                     );
                 }
 
-                // 10. FINALIZAR TRANSAÇÃO
+                // 10. RETORNAR OS IDs PARA A GEOCODIFICAÇÃO
 
-                return novoIdDenuncia;
-
+                return {
+                    idDenuncia: novoIdDenuncia,
+                    idLocalizacao
+                };
             });
 
-            // 11. REDIRECIONAR PARA DETALHES
+            // 11. GEOCODIFICAR A LOCALIZAÇÃO EM SEGUNDO PLANO
 
-            return res.redirect(
-                `/denunciaDetalhe/${idDenuncia}`
-            );
+            const { idDenuncia, idLocalizacao } = resultadoCadastro;
+
+            geocodificarLocalizacao(idLocalizacao).catch(erro => {
+                console.error(
+                    "Erro na geocodificação:",
+                    erro.message
+                );
+            });
+
+            // 12. REDIRECIONAR PARA DETALHES
+
+            return res.redirect(`/denunciaDetalhe/${idDenuncia}`);
 
         } catch (erro) {
-
-            console.error(
-                "Erro ao cadastrar denúncia:",
-                erro
-            );
+            console.error("Erro ao cadastrar denúncia:", erro);
 
             await removerArquivos(arquivos);
 
