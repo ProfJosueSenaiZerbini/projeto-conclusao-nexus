@@ -306,12 +306,12 @@ CREATE TABLE NOTIFICACAO (
     idUsuario INT NULL,
     idFiscal INT NULL,
     idSuperusuario INT NULL,
+
     titulo VARCHAR(150) NOT NULL DEFAULT 'Nova notificação',
     tipo VARCHAR(50) NOT NULL DEFAULT 'geral',
     conteudo TEXT NOT NULL,
 
     lida TINYINT(1) NOT NULL DEFAULT 0,
-
     dataHora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_notificacao_denuncia
@@ -324,24 +324,21 @@ CREATE TABLE NOTIFICACAO (
         REFERENCES USUARIO(id)
         ON DELETE CASCADE,
 
-        CONSTRAINT fk_notificacao_fiscal
+    CONSTRAINT fk_notificacao_fiscal
         FOREIGN KEY (idFiscal)
         REFERENCES FISCAL(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_convite_superusuario
-    FOREIGN KEY (idSuperusuario)
-    REFERENCES SUPERUSUARIO(idSuperusuario)
-    ON DELETE CASCADE,
-
+        FOREIGN KEY (idSuperusuario)
+        REFERENCES SUPERUSUARIO(idSuperusuario)
+        ON DELETE CASCADE,
 
     INDEX idx_notificacao_usuario (idUsuario),
     INDEX idx_notificacao_lida (lida),
     INDEX idx_notificacao_data (dataHora),
-    INDEX idx_notificacao_fiscal
-    ON NOTIFICACAO(idFiscal),
-        INDEX id_notificacao_superusuario
-        ON NOTIFICACAO(idSuperusuario)
+    INDEX idx_notificacao_fiscal (idFiscal),
+    INDEX idx_notificacao_superusuario (idSuperusuario)
 );
 
 -- 12. HISTORICO_DENUNCIA
