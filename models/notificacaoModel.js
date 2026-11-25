@@ -38,8 +38,20 @@ async function marcarTodasComoLidas(coluna, id) {
     );
 }
 
+async function contarNaoLidas(coluna, id) {
+    return await executarQuery(
+        `SELECT COUNT(*) AS total
+        FROM NOTIFICACAO
+        WHERE ${coluna} = ?
+        AND lida = 0`,
+        [id]
+    );
+    
+}
+
 module.exports = {
     listarNotificacoes,
     marcarComoLida,
-    marcarTodasComoLidas
+    marcarTodasComoLidas,
+    contarNaoLidas
 };

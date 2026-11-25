@@ -28,4 +28,10 @@ router.post(
     notificacaoController.marcarTodasComoLidas
 );
 
+router.get(
+    "/nao-lidas",
+    verificarAutenticado,
+    notificacaoController.consultarNaoLidas
+);
+
 module.exports = router;

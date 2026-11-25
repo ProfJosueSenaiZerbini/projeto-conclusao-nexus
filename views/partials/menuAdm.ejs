@@ -9,11 +9,14 @@
     </a>
 
     <a href="/notificacoes" class="item-menu">
-        <span>Notificações</span>
-        <% if (typeof totalNaoLidas !== 'undefined' && totalNaoLidas > 0) { %>
-            <span class="wa-badge"><%= totalNaoLidas %></span>
-        <% } %>
-    </a>
+    <span>Notificações</span>
+
+    <span
+        class="wa-badge"
+        id="contador-notificacoes"
+        <%= totalNaoLidas > 0 ? '' : 'hidden' %>
+    ><%= totalNaoLidas %></span>
+</a>
 
     <% if (usuario && usuario.tipo === 'superusuario') { %>
         <a href="/gerenciarFiscais" class="item-menu">
@@ -37,3 +40,5 @@
         </form>
     </div>
 </aside>
+
+<script src="/js/contadorNotificacoes.js"></script>
