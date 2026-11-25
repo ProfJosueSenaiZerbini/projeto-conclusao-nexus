@@ -123,8 +123,36 @@ async function marcarTodasComoLidas(req, res) {
     }
 }
 
+async function consultarNaoLidas(req, res) {
+    try {
+        const { coluna, id } = obterDestinatario(
+            req.session.usuario
+        );
+
+        const resultado = await notificacaoModel.contarNaoLidas(
+            coluna,
+            id
+        );
+
+        return res.json({
+            sucesso:true,
+            totalNaoLidas: Number(resultado[0].total)
+        });
+
+    } catch (erro) {
+        console.error("Erro ao consultar notificações:", erro);
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem: "Erro ao consultar notificações."
+        });
+    }
+    
+}
+
 module.exports = {
     listar,
     marcarComoLida,
-    marcarTodasComoLidas
+    marcarTodasComoLidas,
+    consultarNaoLidas
 };

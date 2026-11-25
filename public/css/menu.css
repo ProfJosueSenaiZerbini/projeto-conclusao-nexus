@@ -154,4 +154,9 @@
     .sidebar-overlay.visible {
         display: block;
     }
+
+    .wa-badge[hidden] {
+    display: none !important;
+}
+
 }
