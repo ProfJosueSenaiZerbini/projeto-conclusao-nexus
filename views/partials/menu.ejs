@@ -11,10 +11,13 @@
 
     <a href="/notificacoes" class="item-menu">
         <span>Notificações</span>
-        <!-- Renderiza a bolinha APENAS se houver notificações não lidas (maior que 0) -->
-    <% if (typeof totalNaoLidas !== 'undefined' && totalNaoLidas > 0) { %>
-        <span class="wa-badge"><%= totalNaoLidas %></span>
-    <% } %>
+        
+        <span 
+        class="wa-badge"
+        id="contador-notificacoes"
+        <%= totalNaoLidas >0 ? '' : 'hidden' %>
+    ><% totalNaoLidas %></span>
+    
     </a>
 
     <a href="/feedDenuncia" class="item-menu">
@@ -31,3 +34,5 @@
     </div>
 
 </aside>
+
+<script src="/js/contadorNotificacoes.js"></script>

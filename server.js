@@ -65,9 +65,48 @@ app.use(session({
     }
 }));
 
-// Disponibiliza o usuário autenticado para as views.
-app.use((req, res, next) => {
+const notificacaoModel = require("./models/notificacaoModel");
+
+// Disponibiliza usuário e notificações para todas as páginas.
+app.use(async (req, res, next) => {
+
     res.locals.usuario = req.session.usuario || null;
+    res.locals.totalNaoLidas = 0;
+
+    const usuario = req.session.usuario;
+
+    if (!usuario) {
+        return next();
+    }
+
+    const colunasDestinatario = {
+        usuario: "idUsuario",
+        fiscal: "idFiscal",
+        superusuario: "idSuperusuario"
+    };
+
+    const coluna = colunasDestinatario[usuario.tipo];
+    const id = Number(usuario.id);
+
+    if (!coluna || !Number.isInteger(id) || id <= 0) {
+        return next();
+    }
+
+    try {
+        const resultado = await notificacaoModel.contarNaoLidas(
+            coluna,
+            id
+        );
+
+        res.locals.totalNaoLidas = Number(resultado[0].total);
+
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar contador de notificações:",
+            erro
+        );
+    }
+
     next();
 });
 
