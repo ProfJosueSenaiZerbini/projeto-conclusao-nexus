@@ -8,10 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!campoPesquisa) return;
 
-    const normalizar = (texto) => texto
+    const normalizar = (texto) => String(texto || "")
         .normalize("NFD")
-        .replace(/[\\u0300-\\u036f]/g, "")
+        .replace(/[\u0300-\u036f]/g, "")
         .toLocaleLowerCase("pt-BR")
+        .replace(/\s+/g, " ")
         .trim();
 
     const atualizarPesquisa = () => {
@@ -19,15 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let encontrados = 0;
 
         cards.forEach((card) => {
-            const conteudo = normalizar(card.innerText || card.textContent || "");
-            const corresponde = !termo || conteudo.includes(termo);
-
+            const conteudo = normalizar(card.innerText || card.textContent);
+            const corresponde = termo === "" || conteudo.includes(termo);
             card.hidden = !corresponde;
             if (corresponde) encontrados++;
         });
 
         if (estadoVazio) {
-            estadoVazio.hidden = encontrados > 0;
+            estadoVazio.hidden = encontrados !== 0;
             if (mensagemVazia) {
                 mensagemVazia.textContent = cards.length === 0
                     ? "Não há denúncias públicas no momento."
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "";
         }
 
-        if (botaoLimpar) botaoLimpar.hidden = !campoPesquisa.value;
+        if (botaoLimpar) botaoLimpar.hidden = campoPesquisa.value.trim() === "";
     };
 
     campoPesquisa.addEventListener("input", atualizarPesquisa);
