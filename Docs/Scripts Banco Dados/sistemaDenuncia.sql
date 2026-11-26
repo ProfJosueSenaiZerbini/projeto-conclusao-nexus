@@ -56,14 +56,14 @@ CREATE TABLE ORGANIZACAO_LOCALIDADE (
 -- Cadastro independente de organização.
 CREATE TABLE LOCALIDADE (
     idLocalidade INT PRIMARY KEY AUTO_INCREMENT,
+    bairro VARCHAR(100) NOT NULL DEFAULT 'Não informado',
     cidade VARCHAR(100) NOT NULL,
     estado CHAR(2) NOT NULL,
     dataCadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT uq_localidade_cidade_estado
-        UNIQUE (cidade, estado),
+    CONSTRAINT uq_localidade_bairro_cidade_estado
+        UNIQUE (bairro,cidade, estado)
 
-    INDEX idx_localidade_cidade_estado (cidade, estado)
 );
 
 -- 2. ORGANIZACAO_TIPO_DENUNCIA
@@ -155,7 +155,10 @@ CREATE TABLE USUARIO (
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     cpf VARCHAR(14) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL
+    senha VARCHAR(255) NOT NULL,
+    bairro VARCHAR(100) NULL,
+    cidade VARCHAR(100) NULL,
+    estado CHAR(2) NULL
 );
 
 -- 7. FISCAL
@@ -218,13 +221,15 @@ CREATE TABLE FISCAL_LOCALIDADE (
 CREATE TABLE LOCALIZACAO (
     idLocalizacao INT PRIMARY KEY AUTO_INCREMENT,
     tipo VARCHAR(50) NOT NULL,
+    bairro VARCHAR(100) NULL,
     endereco TEXT NOT NULL,
     cidade VARCHAR(100) NOT NULL,
     estado CHAR(2) NOT NULL,
     latitude DECIMAL(10, 8) NULL,
     longitude DECIMAL(11, 8) NULL,
 
-    INDEX idx_localizacao_cidade_estado (cidade, estado)
+    INDEX idx_localizacao_bairro_cidade_estado
+        (bairro, cidade, estado)
 );
 
 -- 9. DENUNCIA
