@@ -12,6 +12,14 @@ async function listarFiscais(idSuperusuario) {
             f.nome,
             f.email,
             f.cpf,
+            CONCAT_WS(', ',
+            f.logradouro,
+            f.numero,
+            f.complemento,
+            f.bairro,
+             CONCAT(f.cidade, ' - ', f.estado),
+            f.cep
+            ) AS endereco,
             f.status,
             f.dataCadastro,
             f.dataDesativacao,
@@ -28,7 +36,14 @@ async function listarFiscais(idSuperusuario) {
          WHERE f.idSuperusuario = ?
          GROUP BY
             f.id, f.nome, f.email, f.cpf,
-            f.status, f.dataCadastro, f.dataDesativacao
+            f.status, f.dataCadastro, f.dataDesativacao,
+            f.logradouro,
+            f.numero,
+            f.complemento,
+            f.bairro,
+            f.cep,
+            f.cidade,
+            f.estado
          ORDER BY f.nome ASC`,
         [idSuperusuario]
     );
@@ -96,6 +111,13 @@ async function cadastrarFiscal({
     email,
     cpf,
     senha,
+    logradouro,
+    numero,
+    complemento,
+    bairro,
+    cep,
+    cidade,
+    estado,
     localidades,
     idSuperusuario
 }) {
@@ -123,11 +145,40 @@ async function cadastrarFiscal({
 
         // O fiscal não pertence a uma organização específica.
         const resultado = await conn.query(
-            `INSERT INTO FISCAL
-                (idOrganizacao, idSuperusuario, nome, email, cpf, senha, status)
-             VALUES (NULL, ?, ?, ?, ?, ?, 'ativo')`,
-            [idSuperusuario, nome, email, cpf, senhaHash]
-        );
+    `INSERT INTO FISCAL (
+        idOrganizacao,
+        idSuperusuario,
+        nome,
+        email,
+        cpf,
+        senha,
+        logradouro,
+        numero,
+        complemento,
+        bairro,
+        cep,
+        cidade,
+        estado,
+        status
+    )
+    VALUES (
+        NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ativo'
+    )`,
+    [
+        idSuperusuario,
+        nome,
+        email,
+        cpf,
+        senhaHash,
+        logradouro,
+        numero,
+        complemento || null,
+        bairro,
+        cep,
+        cidade,
+        estado
+    ]
+);
 
         const idFiscal = resultado.insertId;
 

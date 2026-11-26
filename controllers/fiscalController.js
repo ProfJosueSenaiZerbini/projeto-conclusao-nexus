@@ -61,7 +61,13 @@ async function exibirGerenciarFiscais(req, res) {
 async function cadastrarFiscal(req, res) {
     const nome = String(req.body.nome || '').trim();
     const email = String(req.body.email || '').trim().toLowerCase();
-
+    const logradouro = String(req.body.logradouro || '').trim();
+    const numero = String(req.body.numero || '').trim();
+    const complemento = String(req.body.complemento || '').trim();
+    const bairro = String(req.body.bairro || '').trim();
+    const cep = String(req.body.cep || '').trim();
+    const cidade = String(req.body.cidade || '').trim();
+    const estado = String(req.body.estado || '').trim().toUpperCase();
     const cpfNumeros = String(req.body.cpf || '').replace(/\D/g, '');
     const cpf = formatarCpf(req.body.cpf);
 
@@ -81,13 +87,34 @@ async function cadastrarFiscal(req, res) {
         )
     ];
 
-    if (!nome || !email || !cpf || !senha) {
+    if (!nome || !email || !cpf || !senha ||
+        !logradouro || !numero || !bairro ||
+        !cep || !cidade || !estado
+    ) {
         return renderGerenciar(
             req,
             res,
             400,
             'Preencha todos os campos obrigatórios e informe um CPF válido.'
         );
+    }
+
+    if (!/^\d{5}-?\d{3}$/.test(cep)) {
+    return renderGerenciar(
+        req,
+        res,
+        400,
+        'Informe um CEP válido.'
+         );
+    }
+
+     if (!/^[A-Z]{2}$/.test(estado)) {
+    return renderGerenciar(
+        req,
+        res,
+        400,
+        'Informe uma sigla de estado válida.'
+         );
     }
 
     if (senha.length < 8) {
@@ -135,6 +162,13 @@ async function cadastrarFiscal(req, res) {
             email,
             cpf,
             senha,
+            logradouro,
+            numero,
+            complemento,
+            bairro,
+            cep,
+            cidade,
+            estado,
             localidades,
             idSuperusuario: req.session.usuario.id
         });

@@ -168,6 +168,15 @@ CREATE TABLE FISCAL (
     idOrganizacao INT NULL,
     idSuperusuario INT NULL,
 
+    -- ENDEREÇO DO FISCAL
+    logradouro VARCHAR(255) NULL,
+    numero VARCHAR(20) NULL,
+    complemento VARCHAR(100) NULL,
+    bairro VARCHAR(100) NULL,
+    cep VARCHAR(10) NULL,
+    cidade VARCHAR(100) NULL,
+    estado CHAR(2) NULL,
+
     status ENUM(
         'ativo',
         'desativado'
