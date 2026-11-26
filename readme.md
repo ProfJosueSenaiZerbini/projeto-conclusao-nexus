@@ -124,10 +124,10 @@ O script SQL é a referência da estrutura do banco utilizada pelo projeto. Caso
 Crie um arquivo chamado `.env` na raiz do projeto, usando o `.env.example` como modelo:
 
 ```env
-PORTA=3000
-DBHOST=localhost
-DBUSER=root
-DBNAME=sistema_denuncia
+PORTA=coloque_sua_porta
+DBHOST=coloque_seu_hospedeiro
+DBUSER=coloque_seu_usuario
+DBNAME=coloque_o_nome_do_seu_banco
 DBPASS=sua_senha_do_banco
 SESSION_SECRET=coloque_uma_chave_secreta_forte
 ```
