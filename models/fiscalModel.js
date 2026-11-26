@@ -1,10 +1,7 @@
 const bcrypt = require('bcrypt');
-const {
-    executarQuery,
-    executarTransacao
-} = require('../db/dbConnect');
+const { executarQuery, executarTransacao } = require('../db/dbConnect');
 
-// Lista todos os fiscais e suas localidades.
+// Lista os fiscais e mantém a exibição de localidades já vinculadas.
 async function listarFiscais(idSuperusuario) {
     return executarQuery(
         `SELECT
@@ -12,14 +9,6 @@ async function listarFiscais(idSuperusuario) {
             f.nome,
             f.email,
             f.cpf,
-            CONCAT_WS(', ',
-            f.logradouro,
-            f.numero,
-            f.complemento,
-            f.bairro,
-             CONCAT(f.cidade, ' - ', f.estado),
-            f.cep
-            ) AS endereco,
             f.status,
             f.dataCadastro,
             f.dataDesativacao,
@@ -36,25 +25,18 @@ async function listarFiscais(idSuperusuario) {
          WHERE f.idSuperusuario = ?
          GROUP BY
             f.id, f.nome, f.email, f.cpf,
-            f.status, f.dataCadastro, f.dataDesativacao,
-            f.logradouro,
-            f.numero,
-            f.complemento,
-            f.bairro,
-            f.cep,
-            f.cidade,
-            f.estado
+            f.status, f.dataCadastro, f.dataDesativacao
          ORDER BY f.nome ASC`,
         [idSuperusuario]
     );
 }
 
-// Lista as localidades disponíveis para atribuição.
+// Lista as localidades já cadastradas para atribuição aos fiscais.
 async function listarLocalidades() {
     return executarQuery(
         `SELECT idLocalidade, cidade, estado
          FROM LOCALIDADE
-         ORDER BY estado, cidade`
+         ORDER BY estado ASC, cidade ASC`
     );
 }
 
@@ -105,29 +87,19 @@ async function buscarCpfExistente(cpfNumeros) {
     );
 }
 
-// Cadastra o fiscal e associa suas localidades.
+// Cadastra o fiscal apenas com os dados básicos e associa as localidades escolhidas.
 async function cadastrarFiscal({
     nome,
     email,
     cpf,
     senha,
-    logradouro,
-    numero,
-    complemento,
-    bairro,
-    cep,
-    cidade,
-    estado,
     localidades,
     idSuperusuario
 }) {
     const senhaHash = await bcrypt.hash(senha, 12);
 
     return executarTransacao(async (conn) => {
-
-        // Confere se todas as localidades ainda existem.
         const placeholders = localidades.map(() => '?').join(',');
-
         const existentes = await conn.query(
             `SELECT idLocalidade
              FROM LOCALIDADE
@@ -136,59 +108,23 @@ async function cadastrarFiscal({
         );
 
         if (existentes.length !== localidades.length) {
-            const erro = new Error(
-                'Uma ou mais localidades são inválidas.'
-            );
+            const erro = new Error('Uma ou mais localidades são inválidas.');
             erro.code = 'LOCALIDADES_INVALIDAS';
             throw erro;
         }
 
-        // O fiscal não pertence a uma organização específica.
         const resultado = await conn.query(
-    `INSERT INTO FISCAL (
-        idOrganizacao,
-        idSuperusuario,
-        nome,
-        email,
-        cpf,
-        senha,
-        logradouro,
-        numero,
-        complemento,
-        bairro,
-        cep,
-        cidade,
-        estado,
-        status
-    )
-    VALUES (
-        NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ativo'
-    )`,
-    [
-        idSuperusuario,
-        nome,
-        email,
-        cpf,
-        senhaHash,
-        logradouro,
-        numero,
-        complemento || null,
-        bairro,
-        cep,
-        cidade,
-        estado
-    ]
-);
+            `INSERT INTO FISCAL (
+                idOrganizacao, idSuperusuario, nome, email, cpf, senha, status
+             ) VALUES (NULL, ?, ?, ?, ?, ?, 'ativo')`,
+            [idSuperusuario, nome, email, cpf, senhaHash]
+        );
 
-        const idFiscal = resultado.insertId;
-
-        // Vincula o fiscal a cada localidade selecionada.
         for (const idLocalidade of localidades) {
             await conn.query(
-                `INSERT INTO FISCAL_LOCALIDADE
-                    (idFiscal, idLocalidade)
+                `INSERT INTO FISCAL_LOCALIDADE (idFiscal, idLocalidade)
                  VALUES (?, ?)`,
-                [idFiscal, idLocalidade]
+                [resultado.insertId, idLocalidade]
             );
         }
 

@@ -61,36 +61,19 @@ async function exibirGerenciarFiscais(req, res) {
 async function cadastrarFiscal(req, res) {
     const nome = String(req.body.nome || '').trim();
     const email = String(req.body.email || '').trim().toLowerCase();
-    const logradouro = String(req.body.logradouro || '').trim();
-    const numero = String(req.body.numero || '').trim();
-    const complemento = String(req.body.complemento || '').trim();
-    const bairro = String(req.body.bairro || '').trim();
-    const cep = String(req.body.cep || '').trim();
-    const cidade = String(req.body.cidade || '').trim();
-    const estado = String(req.body.estado || '').trim().toUpperCase();
     const cpfNumeros = String(req.body.cpf || '').replace(/\D/g, '');
     const cpf = formatarCpf(req.body.cpf);
 
     const senha = req.body.senha;
-
-    // Recebe uma ou várias localidades.
     const localidadesRecebidas = req.body.localidades;
+    const localidades = [...new Set(
+        (Array.isArray(localidadesRecebidas)
+            ? localidadesRecebidas
+            : localidadesRecebidas ? [localidadesRecebidas] : []
+        ).map(Number)
+    )];
 
-    const localidades = [
-        ...new Set(
-            (Array.isArray(localidadesRecebidas)
-                ? localidadesRecebidas
-                : localidadesRecebidas
-                    ? [localidadesRecebidas]
-                    : []
-            ).map(Number)
-        )
-    ];
-
-    if (!nome || !email || !cpf || !senha ||
-        !logradouro || !numero || !bairro ||
-        !cep || !cidade || !estado
-    ) {
+    if (!nome || !email || !cpf || !senha) {
         return renderGerenciar(
             req,
             res,
@@ -99,22 +82,13 @@ async function cadastrarFiscal(req, res) {
         );
     }
 
-    if (!/^\d{5}-?\d{3}$/.test(cep)) {
-    return renderGerenciar(
-        req,
-        res,
-        400,
-        'Informe um CEP válido.'
-         );
-    }
-
-     if (!/^[A-Z]{2}$/.test(estado)) {
-    return renderGerenciar(
-        req,
-        res,
-        400,
-        'Informe uma sigla de estado válida.'
-         );
+    if (localidades.length === 0 || localidades.some(id => !Number.isInteger(id) || id <= 0)) {
+        return renderGerenciar(
+            req,
+            res,
+            400,
+            'Selecione pelo menos uma localidade válida.'
+        );
     }
 
     if (senha.length < 8) {
@@ -123,18 +97,6 @@ async function cadastrarFiscal(req, res) {
             res,
             400,
             'A senha precisa ter pelo menos 8 caracteres.'
-        );
-    }
-
-    if (
-        localidades.length === 0 ||
-        localidades.some(id => !Number.isInteger(id) || id <= 0)
-    ) {
-        return renderGerenciar(
-            req,
-            res,
-            400,
-            'Selecione pelo menos uma localidade válida.'
         );
     }
 
@@ -162,13 +124,6 @@ async function cadastrarFiscal(req, res) {
             email,
             cpf,
             senha,
-            logradouro,
-            numero,
-            complemento,
-            bairro,
-            cep,
-            cidade,
-            estado,
             localidades,
             idSuperusuario: req.session.usuario.id
         });
@@ -178,20 +133,13 @@ async function cadastrarFiscal(req, res) {
     } catch (erro) {
         console.error('Erro ao cadastrar fiscal:', erro);
 
-        if (erro.code === 'LOCALIDADES_INVALIDAS') {
-            return renderGerenciar(
-                req,
-                res,
-                400,
-                'Uma das localidades selecionadas não existe mais.'
-            );
-        }
-
         return renderGerenciar(
             req,
             res,
-            500,
-            'Não foi possível cadastrar o fiscal. Verifique os dados e tente novamente.'
+            erro.code === 'LOCALIDADES_INVALIDAS' ? 400 : 500,
+            erro.code === 'LOCALIDADES_INVALIDAS'
+                ? 'Uma das localidades selecionadas não existe mais.'
+                : 'Não foi possível cadastrar o fiscal. Verifique os dados e tente novamente.'
         );
     }
 }
