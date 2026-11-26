@@ -5,7 +5,7 @@ const esperar = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function geocodificar() {
     const locais = await executarQuery(`
-        SELECT idLocalizacao, endereco, cidade, estado
+        SELECT idLocalizacao, endereco, bairro, cidade, estado
         FROM LOCALIZACAO
         WHERE latitude IS NULL OR longitude IS NULL
     `);
@@ -16,6 +16,7 @@ async function geocodificar() {
         try {
             const endereco = [
                 local.endereco,
+                local.bairro,
                 local.cidade,
                 local.estado,
                 "Brasil"

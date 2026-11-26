@@ -1,4 +1,3 @@
-
 const { executarQuery } = require("../db/dbConnect");
 
 const esperar = ms =>
@@ -10,7 +9,7 @@ let filaGeocodificacao = Promise.resolve();
 
 async function consultarCoordenadas(idLocalizacao) {
     const locais = await executarQuery(
-        `SELECT idLocalizacao, endereco, cidade, estado, latitude, longitude
+        `SELECT idLocalizacao, endereco, bairro, cidade, estado, latitude, longitude
          FROM LOCALIZACAO
          WHERE idLocalizacao = ?`,
         [idLocalizacao]
@@ -29,6 +28,7 @@ async function consultarCoordenadas(idLocalizacao) {
 
     const endereco = [
         local.endereco,
+        local.bairro,
         local.cidade,
         local.estado,
         "Brasil"

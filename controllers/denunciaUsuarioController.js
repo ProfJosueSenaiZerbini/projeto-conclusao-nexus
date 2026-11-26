@@ -1,4 +1,3 @@
-
 const fs = require("fs");
 
 const denunciaUsuarioModel = require(
@@ -33,6 +32,7 @@ async function cadastrar(req, res) {
         titulo,
         descricao,
         local,
+        bairro,
         cidade,
         estado,
         data
@@ -47,6 +47,7 @@ async function cadastrar(req, res) {
         !titulo?.trim() ||
         !descricao?.trim() ||
         !local?.trim() ||
+        !bairro?.trim() ||
         !cidade?.trim() ||
         !estado?.trim()
     ) {
@@ -67,6 +68,7 @@ async function cadastrar(req, res) {
                     titulo: titulo.trim(),
                     descricao: descricao.trim(),
                     local: local.trim(),
+                    bairro: bairro.trim(),
                     cidade: cidade.trim(),
                     estado: estado.trim(),
                     data

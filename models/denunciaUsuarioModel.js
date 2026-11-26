@@ -1,4 +1,3 @@
-
 const { executarTransacao } = require("../db/dbConnect");
 
 async function cadastrarDenuncia(dados, arquivos, registrarNotificacoes) {
@@ -8,10 +7,12 @@ async function cadastrarDenuncia(dados, arquivos, registrarNotificacoes) {
         const resultadoLocalidade = await conn.query(
             `SELECT idLocalidade
              FROM LOCALIDADE
-             WHERE UPPER(TRIM(cidade)) = UPPER(TRIM(?))
+             WHERE UPPER(TRIM(bairro)) = UPPER(TRIM(?))
+               AND UPPER(TRIM(cidade)) = UPPER(TRIM(?))
                AND UPPER(TRIM(estado)) = UPPER(TRIM(?))
              LIMIT 1`,
             [
+                dados.bairro,
                 dados.cidade,
                 dados.estado
             ]
@@ -19,7 +20,7 @@ async function cadastrarDenuncia(dados, arquivos, registrarNotificacoes) {
 
         if (resultadoLocalidade.length === 0) {
             const erro = new Error(
-                "A cidade e o estado informados não estão cadastrados."
+                "O bairro, a cidade e o estado informados não correspondem a uma localidade cadastrada."
             );
 
             erro.codigo = "LOCALIDADE_NAO_ENCONTRADA";
@@ -55,11 +56,12 @@ async function cadastrarDenuncia(dados, arquivos, registrarNotificacoes) {
         // 3. CADASTRAR LOCALIZAÇÃO
         const resultadoLocalizacao = await conn.query(
             `INSERT INTO LOCALIZACAO
-             (tipo, endereco, cidade, estado)
-             VALUES (?, ?, ?, ?)`,
+             (tipo, endereco, bairro, cidade, estado)
+             VALUES (?, ?, ?, ?, ?)`,
             [
                 "Manual",
                 dados.local,
+                dados.bairro,
                 dados.cidade,
                 dados.estado.toUpperCase()
             ]

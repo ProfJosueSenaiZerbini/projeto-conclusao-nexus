@@ -84,7 +84,7 @@
                                                             <% localidades.forEach(function(localidade) { %>
                                                                 <label class="opcao-localidade">
                                                                     <input type="checkbox" name="localidades" value="<%= localidade.idLocalidade %>">
-                                                                    <span><%= localidade.cidade %> - <%= localidade.estado %></span>
+                                                                    <span><%= localidade.bairro %> - <%= localidade.cidade %> - <%= localidade.estado %></span>
                                                                 </label>
                                                             <% }); %>
                                                         </div>
