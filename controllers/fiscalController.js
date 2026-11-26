@@ -61,25 +61,17 @@ async function exibirGerenciarFiscais(req, res) {
 async function cadastrarFiscal(req, res) {
     const nome = String(req.body.nome || '').trim();
     const email = String(req.body.email || '').trim().toLowerCase();
-
     const cpfNumeros = String(req.body.cpf || '').replace(/\D/g, '');
     const cpf = formatarCpf(req.body.cpf);
 
     const senha = req.body.senha;
-
-    // Recebe uma ou várias localidades.
     const localidadesRecebidas = req.body.localidades;
-
-    const localidades = [
-        ...new Set(
-            (Array.isArray(localidadesRecebidas)
-                ? localidadesRecebidas
-                : localidadesRecebidas
-                    ? [localidadesRecebidas]
-                    : []
-            ).map(Number)
-        )
-    ];
+    const localidades = [...new Set(
+        (Array.isArray(localidadesRecebidas)
+            ? localidadesRecebidas
+            : localidadesRecebidas ? [localidadesRecebidas] : []
+        ).map(Number)
+    )];
 
     if (!nome || !email || !cpf || !senha) {
         return renderGerenciar(
@@ -90,24 +82,21 @@ async function cadastrarFiscal(req, res) {
         );
     }
 
+    if (localidades.length === 0 || localidades.some(id => !Number.isInteger(id) || id <= 0)) {
+        return renderGerenciar(
+            req,
+            res,
+            400,
+            'Selecione pelo menos uma localidade válida.'
+        );
+    }
+
     if (senha.length < 8) {
         return renderGerenciar(
             req,
             res,
             400,
             'A senha precisa ter pelo menos 8 caracteres.'
-        );
-    }
-
-    if (
-        localidades.length === 0 ||
-        localidades.some(id => !Number.isInteger(id) || id <= 0)
-    ) {
-        return renderGerenciar(
-            req,
-            res,
-            400,
-            'Selecione pelo menos uma localidade válida.'
         );
     }
 
@@ -144,20 +133,13 @@ async function cadastrarFiscal(req, res) {
     } catch (erro) {
         console.error('Erro ao cadastrar fiscal:', erro);
 
-        if (erro.code === 'LOCALIDADES_INVALIDAS') {
-            return renderGerenciar(
-                req,
-                res,
-                400,
-                'Uma das localidades selecionadas não existe mais.'
-            );
-        }
-
         return renderGerenciar(
             req,
             res,
-            500,
-            'Não foi possível cadastrar o fiscal. Verifique os dados e tente novamente.'
+            erro.code === 'LOCALIDADES_INVALIDAS' ? 400 : 500,
+            erro.code === 'LOCALIDADES_INVALIDAS'
+                ? 'Uma das localidades selecionadas não existe mais.'
+                : 'Não foi possível cadastrar o fiscal. Verifique os dados e tente novamente.'
         );
     }
 }
