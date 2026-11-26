@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Cadastro concluído | SafeZone</title>
+        <link rel="stylesheet" href="/css/footer.css">
     </head>
 
 <body>
@@ -15,6 +16,8 @@
                 <p><a href="<%= linkConfirmacaoTeste %>"><%= typeof linkLabel !== 'undefined' && linkLabel ? linkLabel : 'Confirmar e-mail de teste' %></a></p><% } %>
             <a href="/login">Ir para o login</a>       
     </main>
+
+    <%- include("partials/footer") %>
 </body>
 
 </html>

@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Convite inválido | SafeZone</title>
+        <link rel="stylesheet" href="/css/footer.css">
     </head>
 <body>
     <main>
@@ -11,5 +12,7 @@
         <p><%= typeof mensagem !== 'undefined' && mensagem ? mensagem : 'Este convite é inválido, expirou, foi revogado ou já foi utilizado.' %></p>
         <a href="/login">Voltar ao login</a>
     </main>
+
+    <%- include("partials/footer") %>
 </body>
 </html>
